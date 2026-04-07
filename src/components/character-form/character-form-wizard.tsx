@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
+import { OriginBackgroundFields } from "@/components/character-form/origin-background-fields";
 import { FormProgress } from "@/components/character-form/form-progress";
 import { StepRail } from "@/components/character-form/step-rail";
 import { Button } from "@/components/ui/button";
@@ -179,9 +180,11 @@ export function CharacterFormWizard({ className }: { className?: string }) {
               <CardContent className="space-y-6 pt-6">
                 {step?.id === "basic" ? (
                   <BasicInfoFields />
+                ) : step?.id === "origin" ? (
+                  <OriginBackgroundFields />
                 ) : (
                   <p className="text-body text-muted-foreground">
-                    Os campos desta etapa entram nas tarefas M1-F05 em diante.
+                    Os campos desta etapa entram nas tarefas M1-F06 em diante.
                     Use a navegação para percorrer o fluxo, a barra de progresso
                     e os atalhos de teclado.
                   </p>

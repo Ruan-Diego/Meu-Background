@@ -10,6 +10,11 @@ export const defaultCharacterFormValues = {
   age: "",
   race: "",
   characterClass: "",
+  birthplace: "",
+  familyBackground: "",
+  socialClass: "",
+  formativeEvents: "",
+  occupation: "",
 } as const;
 
 /**
@@ -22,6 +27,11 @@ export const characterFormSchema = z.object({
   age: trimmed,
   race: trimmed,
   characterClass: trimmed,
+  birthplace: trimmed,
+  familyBackground: trimmed,
+  socialClass: trimmed,
+  formativeEvents: trimmed,
+  occupation: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -34,10 +44,18 @@ const basicStepSchema = characterFormSchema.pick({
   characterClass: true,
 });
 
+const originStepSchema = characterFormSchema.pick({
+  birthplace: true,
+  familyBackground: true,
+  socialClass: true,
+  formativeEvents: true,
+  occupation: true,
+});
+
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   basic: basicStepSchema,
-  origin: z.object({}),
+  origin: originStepSchema,
   personality: z.object({}),
   relationships: z.object({}),
   goals: z.object({}),
@@ -54,7 +72,13 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "race",
     "characterClass",
   ],
-  origin: [],
+  origin: [
+    "birthplace",
+    "familyBackground",
+    "socialClass",
+    "formativeEvents",
+    "occupation",
+  ],
   personality: [],
   relationships: [],
   goals: [],
