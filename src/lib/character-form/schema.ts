@@ -1,21 +1,26 @@
 import { z } from "zod";
 
+import { ORIGIN_COUNTRY_OPTIONS } from "@/lib/character-form/origin-constants";
 import { FORM_STEPS, type FormStepId } from "@/lib/character-form/steps";
 
 const trimmed = z.string().trim();
 
-export const defaultCharacterFormValues = {
-  characterName: "",
-  playerName: "",
-  age: "",
-  race: "",
-  characterClass: "",
-  birthplace: "",
-  familyBackground: "",
-  socialClass: "",
-  formativeEvents: "",
-  occupation: "",
-} as const;
+const originCountrySchema = z.union([
+  z.literal(""),
+  z.enum(ORIGIN_COUNTRY_OPTIONS),
+]);
+
+const relativeRowSchema = z.object({
+  kinship: trimmed,
+  name: trimmed,
+  background: trimmed,
+});
+
+const shapingEventRowSchema = z.object({
+  eventName: trimmed,
+  myAge: trimmed,
+  description: trimmed,
+});
 
 /**
  * Single source of truth for the character form. Further steps add fields
@@ -27,14 +32,29 @@ export const characterFormSchema = z.object({
   age: trimmed,
   race: trimmed,
   characterClass: trimmed,
-  birthplace: trimmed,
-  familyBackground: trimmed,
-  socialClass: trimmed,
-  formativeEvents: trimmed,
+  birthCountry: originCountrySchema,
+  birthRegion: trimmed,
+  birthCity: trimmed,
+  relatives: z.array(relativeRowSchema),
+  shapingEvents: z.array(shapingEventRowSchema),
   occupation: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
+
+export const defaultCharacterFormValues: CharacterFormValues = {
+  characterName: "",
+  playerName: "",
+  age: "",
+  race: "",
+  characterClass: "",
+  birthCountry: "",
+  birthRegion: "",
+  birthCity: "",
+  relatives: [],
+  shapingEvents: [],
+  occupation: "",
+};
 
 const basicStepSchema = characterFormSchema.pick({
   characterName: true,
@@ -45,10 +65,11 @@ const basicStepSchema = characterFormSchema.pick({
 });
 
 const originStepSchema = characterFormSchema.pick({
-  birthplace: true,
-  familyBackground: true,
-  socialClass: true,
-  formativeEvents: true,
+  birthCountry: true,
+  birthRegion: true,
+  birthCity: true,
+  relatives: true,
+  shapingEvents: true,
   occupation: true,
 });
 
@@ -72,13 +93,7 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "race",
     "characterClass",
   ],
-  origin: [
-    "birthplace",
-    "familyBackground",
-    "socialClass",
-    "formativeEvents",
-    "occupation",
-  ],
+  origin: [],
   personality: [],
   relationships: [],
   goals: [],
@@ -86,9 +101,40 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   freeNotes: [],
 };
 
-export function getFieldsForStepIndex(stepIndex: number): string[] {
+/** Paths to pass to RHF `trigger()` for the step (includes dynamic array fields for `origin`). */
+export function getTriggerPathsForStepIndex(
+  stepIndex: number,
+  values: CharacterFormValues
+): string[] {
   const step = FORM_STEPS[stepIndex];
   if (!step) return [];
+
+  if (step.id === "origin") {
+    const paths: string[] = [
+      "birthCountry",
+      "birthRegion",
+      "birthCity",
+      "occupation",
+    ];
+    const rel = values.relatives ?? [];
+    rel.forEach((_, i) => {
+      paths.push(
+        `relatives.${i}.kinship`,
+        `relatives.${i}.name`,
+        `relatives.${i}.background`
+      );
+    });
+    const ev = values.shapingEvents ?? [];
+    ev.forEach((_, i) => {
+      paths.push(
+        `shapingEvents.${i}.eventName`,
+        `shapingEvents.${i}.myAge`,
+        `shapingEvents.${i}.description`
+      );
+    });
+    return paths;
+  }
+
   return [...STEP_FIELD_PATHS[step.id]];
 }
 
@@ -101,6 +147,24 @@ export function validateStepValues(
   values: CharacterFormValues
 ): { ok: true } | { ok: false; message: string } {
   const schema = stepSchemas[stepId];
+
+  if (stepId === "origin") {
+    const parsed = schema.safeParse({
+      birthCountry: values.birthCountry,
+      birthRegion: values.birthRegion,
+      birthCity: values.birthCity,
+      relatives: values.relatives ?? [],
+      shapingEvents: values.shapingEvents ?? [],
+      occupation: values.occupation,
+    });
+    if (parsed.success) return { ok: true };
+    const first = parsed.error.issues[0];
+    return {
+      ok: false,
+      message: first?.message ?? "Verifique os campos desta etapa.",
+    };
+  }
+
   const paths = STEP_FIELD_PATHS[stepId];
   const slice =
     paths.length === 0

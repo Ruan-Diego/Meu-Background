@@ -19,7 +19,7 @@ import {
 import {
   characterFormSchema,
   defaultCharacterFormValues,
-  getFieldsForStepIndex,
+  getTriggerPathsForStepIndex,
   validateStepValues,
   type CharacterFormValues,
 } from "@/lib/character-form/schema";
@@ -57,13 +57,14 @@ export function CharacterFormWizard({ className }: { className?: string }) {
     const stepMeta = FORM_STEPS[currentStepIndex];
     if (!stepMeta) return;
 
-    const paths = getFieldsForStepIndex(currentStepIndex);
+    const values = getValues();
+    const paths = getTriggerPathsForStepIndex(currentStepIndex, values);
     if (paths.length > 0) {
       const ok = await trigger(paths as never);
       if (!ok) return;
     }
 
-    const zodResult = validateStepValues(stepMeta.id, getValues());
+    const zodResult = validateStepValues(stepMeta.id, values);
     if (!zodResult.ok) {
       setError("root", { message: zodResult.message });
       return;
