@@ -2,7 +2,6 @@ export type FormStepId =
   | "basic"
   | "origin"
   | "personality"
-  | "relationships"
   | "goals"
   | "appearance"
   | "freeNotes";
@@ -15,7 +14,10 @@ export type FormStepMeta = {
   description: string;
 };
 
-/** Order matches roadmap M1-F04–F10. */
+/**
+ * Wizard order. Family / relationship ties are captured in `origin` (M1-F05);
+ * there is no separate Relationships step (roadmap M1-F07 removed).
+ */
 export const FORM_STEPS: readonly FormStepMeta[] = [
   {
     id: "basic",
@@ -38,26 +40,20 @@ export const FORM_STEPS: readonly FormStepMeta[] = [
       "Temperamento, valores, fraquezas, medos, hábitos e peculiaridades.",
   },
   {
-    id: "relationships",
-    indexLabel: 4,
-    title: "Relacionamentos",
-    description: "Aliados, rivais, mentores e laços familiares.",
-  },
-  {
     id: "goals",
-    indexLabel: 5,
+    indexLabel: 4,
     title: "Objetivos e motivações",
     description: "Metas, ambições, segredos e dilemas morais.",
   },
   {
     id: "appearance",
-    indexLabel: 6,
+    indexLabel: 5,
     title: "Aparência",
     description: "Descrição física, marcas distintivas e estilo.",
   },
   {
     id: "freeNotes",
-    indexLabel: 7,
+    indexLabel: 6,
     title: "Notas livres",
     description: "Qualquer detalhe que não couber nas etapas anteriores.",
   },

@@ -27,7 +27,7 @@ The wizard needs a structured place for origem e histórico beyond nome/idade/cl
 |------|--------|
 | Rich placeholders, hints, “como preencher”, examples | Milestone 3 (M3-F01–F04) |
 | Campaign locks beyond fixed country list | Future templates (M4) |
-| Export / preview body content | M1-F11+ consume the same schema keys |
+| Export / preview body content | M1-F10+ consume the same schema keys |
 
 ## Acceptance criteria (WHEN / THEN)
 

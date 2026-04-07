@@ -4,7 +4,7 @@
 
 **For:** Tabletop RPG players and Game Masters (D&D, Pathfinder, Call of Cthulhu, and system-agnostic).
 
-**Solves:** Creating a detailed, well-structured character background is time-consuming and often results in incomplete or disorganized stories. Meu Background guides the player through each narrative pillar — origin, personality, relationships, motivations — ensuring nothing is missed, and outputs a polished document in standard formats.
+**Solves:** Creating a detailed, well-structured character background is time-consuming and often results in incomplete or disorganized stories. Meu Background guides the player through each narrative pillar — origin (including family ties), personality, motivations — ensuring nothing is missed, and outputs a polished document in standard formats.
 
 **Guidance (core product value):** The app’s job is not only to collect fields, but to **help the player think and write** a coherent story. The step-by-step flow is the first layer of that guidance. **Richer in-form help** (examples, prompts, expandable tips, section intros) is intentionally light in v1 but is **one of the highest-priority directions** after the MVP — all editorial, human-written content in the UI, **not** automated or AI-generated suggestions.
 
@@ -51,7 +51,7 @@
 **v1 (MVP) includes:**
 
 - Multi-step guided form with progress indicator (steps themselves are the primary guidance; **no** rich per-field suggestions, examples, or coaching copy beyond basic labels — that comes in post-MVP guidance work)
-- Sections: Basic Info, Origin & Background, Personality & Traits, Relationships & Connections, Goals & Motivations, Appearance & Description, Free Notes
+- Sections: Basic Info, Origin & Background (includes family / relationship ties), Personality & Traits, Goals & Motivations, Appearance & Description, Free Notes
 - Live preview of the generated document
 - Export as Markdown (.md)
 - Export as Plain Text (.txt)

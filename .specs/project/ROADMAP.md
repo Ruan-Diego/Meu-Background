@@ -11,17 +11,16 @@
 | M1-F02 | Design system & layout     | App shell, theme toggle (dark/light), responsive layout, typography tokens | M    |
 | M1-F03 | Multi-step form engine     | Step navigation, progress bar, validation per step, keyboard nav           | L    |
 | M1-F04 | Step: Basic Info           | Character name, player name, RPG system, campaign name, level/tier         | S    |
-| M1-F05 | Step: Origin & Background  | Birthplace, family, social class, formative events, occupation             | M    |
+| M1-F05 | Step: Origin & Background  | Birthplace, family & relationship ties, social class, formative events, occupation | M    |
 | M1-F06 | Step: Personality & Traits | Temperament, values, flaws, fears, habits, quirks                          | M    |
-| M1-F07 | Step: Relationships        | Allies, enemies, mentors, rivals, family ties (dynamic list)               | M    |
-| M1-F08 | Step: Goals & Motivations  | Short-term goals, long-term ambitions, secrets, moral dilemmas             | M    |
-| M1-F09 | Step: Appearance           | Physical description, distinctive marks, clothing style, mannerisms        | S    |
-| M1-F10 | Step: Free Notes           | Open text area for anything that doesn't fit above                         | S    |
-| M1-F11 | Document preview           | Live rendered preview of the full character document                       | M    |
-| M1-F12 | Export: Markdown (.md)     | Generate and download a well-formatted .md file                            | M    |
-| M1-F13 | Export: Plain Text (.txt)  | Generate and download a clean .txt file                                    | S    |
-| M1-F14 | Export: PDF (.pdf)         | Generate and download a styled PDF via @react-pdf/renderer                 | L    |
-| M1-F15 | Auto-save (localStorage)   | Persist form state to localStorage; restore on revisit                     | S    |
+| M1-F07 | Step: Goals & Motivations  | Short-term goals, long-term ambitions, secrets, moral dilemmas             | M    |
+| M1-F08 | Step: Appearance           | Physical description, distinctive marks, clothing style, mannerisms        | S    |
+| M1-F09 | Step: Free Notes           | Open text area for anything that doesn't fit above                         | S    |
+| M1-F10 | Document preview           | Live rendered preview of the full character document                       | M    |
+| M1-F11 | Export: Markdown (.md)     | Generate and download a well-formatted .md file                            | M    |
+| M1-F12 | Export: Plain Text (.txt)  | Generate and download a clean .txt file                                    | S    |
+| M1-F13 | Export: PDF (.pdf)         | Generate and download a styled PDF via @react-pdf/renderer                 | L    |
+| M1-F14 | Auto-save (localStorage)   | Persist form state to localStorage; restore on revisit                     | S    |
 
 
 **Definition of Done for M1:** A user can open the site, fill out all steps, preview the document, and download it in all three formats — with data surviving a page refresh.
