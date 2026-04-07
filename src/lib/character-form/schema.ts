@@ -34,6 +34,11 @@ const personalityFearRowSchema = z.object({
   background: trimmed,
 });
 
+/** One “descrição” block per item (metas / objetivo de vida). */
+const goalDescriptionRowSchema = z.object({
+  description: trimmed,
+});
+
 /**
  * Single source of truth for the character form. Further steps add fields
  * in M1-F05+ and register keys under the matching step in `STEP_FIELD_PATHS`.
@@ -56,10 +61,8 @@ export const characterFormSchema = z.object({
   fears: z.array(personalityFearRowSchema),
   habits: z.array(personalitySingleLineRowSchema),
   quirks: z.array(personalitySingleLineRowSchema),
-  shortTermGoals: trimmed,
-  longTermAmbitions: trimmed,
-  secrets: trimmed,
-  moralDilemmas: trimmed,
+  shortTermGoals: z.array(goalDescriptionRowSchema),
+  lifeGoals: z.array(goalDescriptionRowSchema),
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -82,11 +85,42 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   fears: [],
   habits: [],
   quirks: [],
-  shortTermGoals: "",
-  longTermAmbitions: "",
-  secrets: "",
-  moralDilemmas: "",
+  shortTermGoals: [],
+  lifeGoals: [],
 };
+
+const LEGACY_GOALS_KEYS = [
+  "longTermAmbitions",
+  "secrets",
+  "moralDilemmas",
+] as const;
+
+/**
+ * Merge persisted draft into defaults; drops removed fields and coerces
+ * pre–M1-F07 string shapes to empty arrays. Output matches `characterFormSchema`.
+ */
+export function mergeInitialFormValues(
+  draft: Partial<CharacterFormValues> & Record<string, unknown>
+): CharacterFormValues {
+  const d = { ...draft } as Record<string, unknown>;
+  for (const k of LEGACY_GOALS_KEYS) {
+    delete d[k];
+  }
+  const shortTermGoals = Array.isArray(d.shortTermGoals)
+    ? d.shortTermGoals
+    : defaultCharacterFormValues.shortTermGoals;
+  const lifeGoals = Array.isArray(d.lifeGoals)
+    ? d.lifeGoals
+    : defaultCharacterFormValues.lifeGoals;
+  const merged = {
+    ...defaultCharacterFormValues,
+    ...d,
+    shortTermGoals,
+    lifeGoals,
+  };
+  const parsed = characterFormSchema.safeParse(merged);
+  return parsed.success ? parsed.data : defaultCharacterFormValues;
+}
 
 const basicStepSchema = characterFormSchema.pick({
   characterName: true,
@@ -116,9 +150,7 @@ const personalityStepSchema = characterFormSchema.pick({
 
 const goalsStepSchema = characterFormSchema.pick({
   shortTermGoals: true,
-  longTermAmbitions: true,
-  secrets: true,
-  moralDilemmas: true,
+  lifeGoals: true,
 });
 
 /** Zod schema slice validated before leaving each step (extend per milestone). */
@@ -143,12 +175,7 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   ],
   origin: [],
   personality: [],
-  goals: [
-    "shortTermGoals",
-    "longTermAmbitions",
-    "secrets",
-    "moralDilemmas",
-  ],
+  goals: [],
   appearance: [],
   freeNotes: [],
 };
@@ -207,6 +234,19 @@ export function getTriggerPathsForStepIndex(
     return paths;
   }
 
+  if (step.id === "goals") {
+    const paths: string[] = [];
+    const metas = values.shortTermGoals ?? [];
+    metas.forEach((_, i) => {
+      paths.push(`shortTermGoals.${i}.description`);
+    });
+    const life = values.lifeGoals ?? [];
+    life.forEach((_, i) => {
+      paths.push(`lifeGoals.${i}.description`);
+    });
+    return paths;
+  }
+
   return [...STEP_FIELD_PATHS[step.id]];
 }
 
@@ -244,6 +284,19 @@ export function validateStepValues(
       fears: values.fears ?? [],
       habits: values.habits ?? [],
       quirks: values.quirks ?? [],
+    });
+    if (parsed.success) return { ok: true };
+    const first = parsed.error.issues[0];
+    return {
+      ok: false,
+      message: first?.message ?? "Verifique os campos desta etapa.",
+    };
+  }
+
+  if (stepId === "goals") {
+    const parsed = schema.safeParse({
+      shortTermGoals: values.shortTermGoals ?? [],
+      lifeGoals: values.lifeGoals ?? [],
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];

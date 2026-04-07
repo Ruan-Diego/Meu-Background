@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import {
   defaultCharacterFormValues,
+  mergeInitialFormValues,
   type CharacterFormValues,
 } from "@/lib/character-form/schema";
 import { clampStepIndex } from "@/lib/character-form/steps";
@@ -24,7 +25,12 @@ export const useCharacterStore = create<CharacterState>((set) => ({
   draft: initialDraft,
   currentStepIndex: 0,
   setDraft: (partial) =>
-    set((s) => ({ draft: { ...s.draft, ...partial } })),
+    set((s) => ({
+      draft: mergeInitialFormValues({
+        ...s.draft,
+        ...partial,
+      } as CharacterDraft),
+    })),
   setCurrentStepIndex: (index) =>
     set({ currentStepIndex: clampStepIndex(index) }),
   reset: () =>

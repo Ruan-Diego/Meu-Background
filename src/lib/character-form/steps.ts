@@ -43,7 +43,7 @@ export const FORM_STEPS: readonly FormStepMeta[] = [
     id: "goals",
     indexLabel: 4,
     title: "Objetivos e motivações",
-    description: "Metas, ambições, segredos e dilemas morais.",
+    description: "Metas de curto prazo e objetivos de vida, em blocos de descrição.",
   },
   {
     id: "appearance",

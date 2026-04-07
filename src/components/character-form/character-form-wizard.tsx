@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/card";
 import {
   characterFormSchema,
-  defaultCharacterFormValues,
   getTriggerPathsForStepIndex,
+  mergeInitialFormValues,
   validateStepValues,
   type CharacterFormValues,
 } from "@/lib/character-form/schema";
@@ -42,10 +42,9 @@ export function CharacterFormWizard({ className }: { className?: string }) {
 
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
-    defaultValues: {
-      ...defaultCharacterFormValues,
-      ...(draft as Partial<CharacterFormValues>),
-    },
+    defaultValues: mergeInitialFormValues(
+      draft as Partial<CharacterFormValues> & Record<string, unknown>
+    ),
     mode: "onTouched",
   });
 
