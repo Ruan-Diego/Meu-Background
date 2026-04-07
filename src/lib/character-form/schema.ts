@@ -62,6 +62,7 @@ const basicStepSchema = characterFormSchema.pick({
   age: true,
   race: true,
   characterClass: true,
+  occupation: true,
 });
 
 const originStepSchema = characterFormSchema.pick({
@@ -70,7 +71,6 @@ const originStepSchema = characterFormSchema.pick({
   birthCity: true,
   relatives: true,
   shapingEvents: true,
-  occupation: true,
 });
 
 /** Zod schema slice validated before leaving each step (extend per milestone). */
@@ -92,6 +92,7 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "age",
     "race",
     "characterClass",
+    "occupation",
   ],
   origin: [],
   personality: [],
@@ -110,12 +111,7 @@ export function getTriggerPathsForStepIndex(
   if (!step) return [];
 
   if (step.id === "origin") {
-    const paths: string[] = [
-      "birthCountry",
-      "birthRegion",
-      "birthCity",
-      "occupation",
-    ];
+    const paths: string[] = ["birthCountry", "birthRegion", "birthCity"];
     const rel = values.relatives ?? [];
     rel.forEach((_, i) => {
       paths.push(
@@ -155,7 +151,6 @@ export function validateStepValues(
       birthCity: values.birthCity,
       relatives: values.relatives ?? [],
       shapingEvents: values.shapingEvents ?? [],
-      occupation: values.occupation,
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];

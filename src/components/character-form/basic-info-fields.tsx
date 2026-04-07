@@ -138,6 +138,26 @@ export function BasicInfoFields() {
           />
         ) : null}
       </FieldGroup>
+
+      <FieldGroup id="occupation" label="Ocupação atual">
+        <input
+          id="occupation"
+          type="text"
+          autoComplete="off"
+          aria-invalid={errors.occupation ? true : undefined}
+          aria-describedby={
+            errors.occupation ? "occupation-error" : undefined
+          }
+          className={inputClassName}
+          {...register("occupation")}
+        />
+        {errors.occupation ? (
+          <FieldError
+            id="occupation-error"
+            message={errors.occupation.message}
+          />
+        ) : null}
+      </FieldGroup>
     </div>
   );
 }

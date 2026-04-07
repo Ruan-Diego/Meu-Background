@@ -1,7 +1,8 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
-import { useFormContext, useFieldArray } from "react-hook-form";
+import { useCallback, useState } from "react";
+import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
 
 import {
   ORIGIN_COUNTRY_OPTIONS,
@@ -71,6 +72,19 @@ export function OriginBackgroundFields() {
     control,
     name: "shapingEvents",
   });
+
+  const relativesValues = useWatch({ control, name: "relatives" }) ?? [];
+  const [backgroundRevealedIds, setBackgroundRevealedIds] = useState(
+    () => new Set<string>()
+  );
+
+  const revealRelativeBackground = useCallback((rowId: string) => {
+    setBackgroundRevealedIds((prev) => {
+      const next = new Set(prev);
+      next.add(rowId);
+      return next;
+    });
+  }, []);
 
   return (
     <div className="space-y-10">
@@ -193,6 +207,9 @@ export function OriginBackgroundFields() {
           <ul className="space-y-4">
             {relativesArray.fields.map((field, index) => {
               const rowErrors = errors.relatives?.[index];
+              const bgStored = (relativesValues[index]?.background ?? "").trim();
+              const showBackground =
+                bgStored !== "" || backgroundRevealedIds.has(field.id);
               return (
                 <li
                   key={field.id}
@@ -217,7 +234,7 @@ export function OriginBackgroundFields() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <FieldGroup
                       id={`relatives-${field.id}-kinship`}
-                      label="Parentesco"
+                      label="Vínculo"
                     >
                       <input
                         id={`relatives-${field.id}-kinship`}
@@ -260,33 +277,46 @@ export function OriginBackgroundFields() {
                         />
                       ) : null}
                     </FieldGroup>
-                    <div className="sm:col-span-2">
-                      <FieldGroup
-                        id={`relatives-${field.id}-background`}
-                        label="Background (opcional)"
-                      >
-                        <input
+                    <div className="sm:col-span-2 space-y-2">
+                      {!showBackground ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="w-fit"
+                          onClick={() => revealRelativeBackground(field.id)}
+                        >
+                          Adicionar background
+                        </Button>
+                      ) : null}
+                      <div className={showBackground ? "space-y-2" : "hidden"}>
+                        <FieldGroup
                           id={`relatives-${field.id}-background`}
-                          type="text"
-                          autoComplete="off"
-                          aria-invalid={
-                            rowErrors?.background ? true : undefined
-                          }
-                          aria-describedby={
-                            rowErrors?.background
-                              ? `relatives-${field.id}-background-error`
-                              : undefined
-                          }
-                          className={inputClassName}
-                          {...register(`relatives.${index}.background`)}
-                        />
-                        {rowErrors?.background ? (
-                          <FieldError
-                            id={`relatives-${field.id}-background-error`}
-                            message={rowErrors.background.message}
+                          label="Background"
+                        >
+                          <input
+                            id={`relatives-${field.id}-background`}
+                            type="text"
+                            autoComplete="off"
+                            aria-invalid={
+                              rowErrors?.background ? true : undefined
+                            }
+                            aria-describedby={
+                              rowErrors?.background
+                                ? `relatives-${field.id}-background-error`
+                                : undefined
+                            }
+                            className={inputClassName}
+                            {...register(`relatives.${index}.background`)}
                           />
-                        ) : null}
-                      </FieldGroup>
+                          {rowErrors?.background ? (
+                            <FieldError
+                              id={`relatives-${field.id}-background-error`}
+                              message={rowErrors.background.message}
+                            />
+                          ) : null}
+                        </FieldGroup>
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -435,36 +465,6 @@ export function OriginBackgroundFields() {
             })}
           </ul>
         )}
-      </section>
-
-      <section aria-labelledby="origin-occupation-heading">
-        <h3
-          id="origin-occupation-heading"
-          className="sr-only"
-        >
-          Ocupação
-        </h3>
-        <div className="grid gap-6 sm:grid-cols-2">
-          <FieldGroup id="occupation" label="Ocupação atual">
-            <input
-              id="occupation"
-              type="text"
-              autoComplete="off"
-              aria-invalid={errors.occupation ? true : undefined}
-              aria-describedby={
-                errors.occupation ? "occupation-error" : undefined
-              }
-              className={inputClassName}
-              {...register("occupation")}
-            />
-            {errors.occupation ? (
-              <FieldError
-                id="occupation-error"
-                message={errors.occupation.message}
-              />
-            ) : null}
-          </FieldGroup>
-        </div>
       </section>
     </div>
   );
