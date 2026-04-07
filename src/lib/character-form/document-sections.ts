@@ -279,7 +279,7 @@ function buildFreeNotesSection(
  * Section order follows the wizard: Basic Info (→ header), Origin, Personality,
  * Goals, Appearance, Free Notes. Empty sections are omitted.
  *
- * Reuse this function in export features (M1-F11/F12/F13) so the document
+ * Reuse this function in export features (M1-F11 Markdown, M1-F12/F13) so the document
  * structure is defined in a single place.
  */
 export function buildCharacterDocument(
