@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
+import { DocumentPreview } from "@/components/character-form/document-preview";
 import { OriginBackgroundFields } from "@/components/character-form/origin-background-fields";
 import { AppearanceFields } from "@/components/character-form/appearance-fields";
 import { FreeNotesFields } from "@/components/character-form/free-notes-fields";
@@ -194,6 +195,8 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                   <AppearanceFields />
                 ) : step?.id === "freeNotes" ? (
                   <FreeNotesFields />
+                ) : step?.id === "review" ? (
+                  <DocumentPreview />
                 ) : (
                   <p className="text-body text-muted-foreground">
                     Esta etapa ainda não tem campos definidos.
