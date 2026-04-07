@@ -25,11 +25,13 @@ const shapingEventRowSchema = z.object({
 
 const personalitySingleLineRowSchema = z.object({
   text: trimmed,
+  background: trimmed,
 });
 
 const personalityFearRowSchema = z.object({
   description: trimmed,
   level: z.enum(PERSONALITY_FEAR_LEVELS),
+  background: trimmed,
 });
 
 /**
@@ -49,7 +51,6 @@ export const characterFormSchema = z.object({
   shapingEvents: z.array(shapingEventRowSchema),
   occupation: trimmed,
   temperamentTags: z.array(z.string()),
-  temperamentNotes: trimmed,
   valueTags: z.array(z.string()),
   flaws: z.array(personalitySingleLineRowSchema),
   fears: z.array(personalityFearRowSchema),
@@ -72,7 +73,6 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   shapingEvents: [],
   occupation: "",
   temperamentTags: [],
-  temperamentNotes: "",
   valueTags: [],
   flaws: [],
   fears: [],
@@ -99,7 +99,6 @@ const originStepSchema = characterFormSchema.pick({
 
 const personalityStepSchema = characterFormSchema.pick({
   temperamentTags: true,
-  temperamentNotes: true,
   valueTags: true,
   flaws: true,
   fears: true,
@@ -166,21 +165,27 @@ export function getTriggerPathsForStepIndex(
   }
 
   if (step.id === "personality") {
-    const paths: string[] = [
-      "temperamentTags",
-      "temperamentNotes",
-      "valueTags",
-    ];
+    const paths: string[] = ["temperamentTags", "valueTags"];
     const flaws = values.flaws ?? [];
-    flaws.forEach((_, i) => paths.push(`flaws.${i}.text`));
+    flaws.forEach((_, i) => {
+      paths.push(`flaws.${i}.text`, `flaws.${i}.background`);
+    });
     const fears = values.fears ?? [];
     fears.forEach((_, i) => {
-      paths.push(`fears.${i}.description`, `fears.${i}.level`);
+      paths.push(
+        `fears.${i}.description`,
+        `fears.${i}.level`,
+        `fears.${i}.background`
+      );
     });
     const habits = values.habits ?? [];
-    habits.forEach((_, i) => paths.push(`habits.${i}.text`));
+    habits.forEach((_, i) => {
+      paths.push(`habits.${i}.text`, `habits.${i}.background`);
+    });
     const quirks = values.quirks ?? [];
-    quirks.forEach((_, i) => paths.push(`quirks.${i}.text`));
+    quirks.forEach((_, i) => {
+      paths.push(`quirks.${i}.text`, `quirks.${i}.background`);
+    });
     return paths;
   }
 
@@ -216,7 +221,6 @@ export function validateStepValues(
   if (stepId === "personality") {
     const parsed = schema.safeParse({
       temperamentTags: values.temperamentTags ?? [],
-      temperamentNotes: values.temperamentNotes ?? "",
       valueTags: values.valueTags ?? [],
       flaws: values.flaws ?? [],
       fears: values.fears ?? [],

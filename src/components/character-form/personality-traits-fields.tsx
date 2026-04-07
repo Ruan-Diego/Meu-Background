@@ -1,8 +1,13 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { useCallback, useState } from "react";
-import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
+import {
+  useFormContext,
+  useFieldArray,
+  useWatch,
+  type FieldErrors,
+} from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
@@ -15,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const VALUE_PRESET_SET = new Set<string>(VALUES_CHIP_OPTIONS);
+const TEMPERAMENT_PRESET_SET = new Set<string>(TEMPERAMENT_CHIP_OPTIONS);
 
 const inputClassName = cn(
   "flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-colors",
@@ -58,7 +64,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-function ChipToggle({
+function PresetChip({
   label,
   selected,
   onToggle,
@@ -67,11 +73,11 @@ function ChipToggle({
   selected: boolean;
   onToggle: () => void;
 }) {
-  const id = `chip-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  const safeId = `preset-chip-${label.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}`;
   return (
     <button
       type="button"
-      id={id}
+      id={safeId}
       aria-pressed={selected}
       onClick={onToggle}
       className={cn(
@@ -87,6 +93,122 @@ function ChipToggle({
   );
 }
 
+function CustomTagChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex max-w-full items-center gap-0.5 rounded-full border border-primary bg-primary/15 py-1 pl-3 pr-1 text-sm font-medium text-foreground"
+      )}
+    >
+      <button
+        type="button"
+        className="min-w-0 truncate text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        onClick={onRemove}
+        aria-label={`Remover ${label}`}
+      >
+        {label}
+      </button>
+      <button
+        type="button"
+        className="shrink-0 rounded-full p-1 text-muted-foreground hover:bg-background/80 hover:text-foreground"
+        aria-label={`Remover chip ${label}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+      >
+        <X className="size-3.5" aria-hidden />
+      </button>
+    </span>
+  );
+}
+
+function ChipPickerSection({
+  presets,
+  presetSet,
+  tags,
+  ariaLabel,
+  onTogglePreset,
+  onRemoveCustom,
+  draft,
+  onDraftChange,
+  onAddCustom,
+  addButtonLabel,
+  inputId,
+  inputLabel,
+}: {
+  presets: readonly string[];
+  presetSet: Set<string>;
+  tags: string[];
+  ariaLabel: string;
+  onTogglePreset: (label: string) => void;
+  onRemoveCustom: (label: string) => void;
+  draft: string;
+  onDraftChange: (value: string) => void;
+  onAddCustom: () => void;
+  addButtonLabel: string;
+  inputId: string;
+  inputLabel: string;
+}) {
+  const customTags = tags.filter((t) => !presetSet.has(t));
+
+  return (
+    <>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={ariaLabel}>
+        {presets.map((opt) => (
+          <PresetChip
+            key={opt}
+            label={opt}
+            selected={tags.includes(opt)}
+            onToggle={() => onTogglePreset(opt)}
+          />
+        ))}
+        {customTags.map((tag) => (
+          <CustomTagChip
+            key={tag}
+            label={tag}
+            onRemove={() => onRemoveCustom(tag)}
+          />
+        ))}
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <FieldGroup id={inputId} label={inputLabel}>
+          <input
+            id={inputId}
+            type="text"
+            autoComplete="off"
+            value={draft}
+            onChange={(e) => onDraftChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onAddCustom();
+              }
+            }}
+            className={inputClassName}
+          />
+        </FieldGroup>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-fit shrink-0"
+          onClick={onAddCustom}
+        >
+          <Plus data-icon="inline-start" className="size-4" />
+          {addButtonLabel}
+        </Button>
+      </div>
+    </>
+  );
+}
+
+type SingleLineRowErrors = FieldErrors<
+  CharacterFormValues["flaws"][number]
+> | undefined;
+
+type FearRowErrors = FieldErrors<CharacterFormValues["fears"][number]> | undefined;
+
 export function PersonalityTraitsFields() {
   const {
     register,
@@ -98,8 +220,24 @@ export function PersonalityTraitsFields() {
   const temperamentTags =
     useWatch({ control, name: "temperamentTags" }) ?? [];
   const valueTags = useWatch({ control, name: "valueTags" }) ?? [];
+  const flawsWatched = useWatch({ control, name: "flaws" }) ?? [];
+  const fearsWatched = useWatch({ control, name: "fears" }) ?? [];
+  const habitsWatched = useWatch({ control, name: "habits" }) ?? [];
+  const quirksWatched = useWatch({ control, name: "quirks" }) ?? [];
 
+  const [customTemperamentDraft, setCustomTemperamentDraft] = useState("");
   const [customValueDraft, setCustomValueDraft] = useState("");
+  const [backgroundRevealedIds, setBackgroundRevealedIds] = useState(
+    () => new Set<string>()
+  );
+
+  const revealBackground = useCallback((key: string) => {
+    setBackgroundRevealedIds((prev) => {
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
+  }, []);
 
   const flawsArray = useFieldArray({ control, name: "flaws" });
   const fearsArray = useFieldArray({ control, name: "fears" });
@@ -122,20 +260,45 @@ export function PersonalityTraitsFields() {
     [setValue, temperamentTags, valueTags]
   );
 
-  const addCustomValue = useCallback(() => {
-    const trimmed = customValueDraft.trim();
-    if (!trimmed) return;
-    if (valueTags.includes(trimmed)) {
-      setCustomValueDraft("");
-      return;
-    }
-    setValue("valueTags", [...valueTags, trimmed], {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
-    setCustomValueDraft("");
-  }, [customValueDraft, setValue, valueTags]);
+  const removeFromList = useCallback(
+    (field: "temperamentTags" | "valueTags", label: string) => {
+      const current =
+        field === "temperamentTags" ? temperamentTags : valueTags;
+      setValue(
+        field,
+        current.filter((t) => t !== label),
+        {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true,
+        }
+      );
+    },
+    [setValue, temperamentTags, valueTags]
+  );
+
+  const addCustomToList = useCallback(
+    (
+      field: "temperamentTags" | "valueTags",
+      draft: string,
+      clearDraft: () => void
+    ) => {
+      const trimmed = draft.trim();
+      if (!trimmed) return;
+      const current = field === "temperamentTags" ? temperamentTags : valueTags;
+      if (current.includes(trimmed)) {
+        clearDraft();
+        return;
+      }
+      setValue(field, [...current, trimmed], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+      clearDraft();
+    },
+    [setValue, temperamentTags, valueTags]
+  );
 
   return (
     <div className="space-y-10">
@@ -150,41 +313,29 @@ export function PersonalityTraitsFields() {
           Temperamento
         </h3>
         <p className="text-body text-muted-foreground">
-          Escolha uma ou mais sugestões. Você pode complementar abaixo.
+          Escolha sugestões ou inclua chips livres. Clique num chip personalizado
+          ou no X para remover.
         </p>
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Sugestões de temperamento"
-        >
-          {TEMPERAMENT_CHIP_OPTIONS.map((opt) => (
-            <ChipToggle
-              key={opt}
-              label={opt}
-              selected={temperamentTags.includes(opt)}
-              onToggle={() => toggleInList("temperamentTags", opt)}
-            />
-          ))}
-        </div>
-        <FieldGroup id="temperamentNotes" label="Quer acrescentar?">
-          <textarea
-            id="temperamentNotes"
-            autoComplete="off"
-            rows={3}
-            aria-invalid={errors.temperamentNotes ? true : undefined}
-            aria-describedby={
-              errors.temperamentNotes ? "temperamentNotes-error" : undefined
-            }
-            className={textareaClassName}
-            {...register("temperamentNotes")}
-          />
-          {errors.temperamentNotes ? (
-            <FieldError
-              id="temperamentNotes-error"
-              message={errors.temperamentNotes.message}
-            />
-          ) : null}
-        </FieldGroup>
+        <ChipPickerSection
+          presets={TEMPERAMENT_CHIP_OPTIONS}
+          presetSet={TEMPERAMENT_PRESET_SET}
+          tags={temperamentTags}
+          ariaLabel="Temperamento"
+          onTogglePreset={(opt) => toggleInList("temperamentTags", opt)}
+          onRemoveCustom={(tag) => removeFromList("temperamentTags", tag)}
+          draft={customTemperamentDraft}
+          onDraftChange={setCustomTemperamentDraft}
+          onAddCustom={() =>
+            addCustomToList(
+              "temperamentTags",
+              customTemperamentDraft,
+              () => setCustomTemperamentDraft("")
+            )
+          }
+          addButtonLabel="Incluir chip"
+          inputId="custom-temperament-input"
+          inputLabel="Adicionar temperamento"
+        />
       </section>
 
       <section className="space-y-4" aria-labelledby="personality-values-heading">
@@ -195,72 +346,27 @@ export function PersonalityTraitsFields() {
           Valores
         </h3>
         <p className="text-body text-muted-foreground">
-          Marque o que importa para o personagem e adicione outros valores livres.
+          Marque o que importa e adicione valores livres. Chips extras têm X;
+          também pode clicar no texto para remover.
         </p>
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Sugestões de valores"
-        >
-          {VALUES_CHIP_OPTIONS.map((opt) => (
-            <ChipToggle
-              key={opt}
-              label={opt}
-              selected={valueTags.includes(opt)}
-              onToggle={() => toggleInList("valueTags", opt)}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
-          <FieldGroup id="custom-value-input" label="Adicionar valor">
-            <input
-              id="custom-value-input"
-              type="text"
-              autoComplete="off"
-              value={customValueDraft}
-              onChange={(e) => setCustomValueDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addCustomValue();
-                }
-              }}
-              className={inputClassName}
-            />
-          </FieldGroup>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="w-fit shrink-0"
-            onClick={addCustomValue}
-          >
-            <Plus data-icon="inline-start" className="size-4" />
-            Incluir chip
-          </Button>
-        </div>
-        {valueTags.some((t) => !VALUE_PRESET_SET.has(t)) ? (
-          <div className="space-y-2">
-            <p className="text-caption font-medium text-muted-foreground">
-              Valores adicionados
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {valueTags
-                .filter((t) => !VALUE_PRESET_SET.has(t))
-                .map((tag) => (
-                  <ChipToggle
-                    key={tag}
-                    label={tag}
-                    selected
-                    onToggle={() => toggleInList("valueTags", tag)}
-                  />
-                ))}
-            </div>
-            <p className="text-caption text-muted-foreground">
-              Clique no chip para remover.
-            </p>
-          </div>
-        ) : null}
+        <ChipPickerSection
+          presets={VALUES_CHIP_OPTIONS}
+          presetSet={VALUE_PRESET_SET}
+          tags={valueTags}
+          ariaLabel="Valores"
+          onTogglePreset={(opt) => toggleInList("valueTags", opt)}
+          onRemoveCustom={(tag) => removeFromList("valueTags", tag)}
+          draft={customValueDraft}
+          onDraftChange={setCustomValueDraft}
+          onAddCustom={() =>
+            addCustomToList("valueTags", customValueDraft, () =>
+              setCustomValueDraft("")
+            )
+          }
+          addButtonLabel="Incluir chip"
+          inputId="custom-value-input"
+          inputLabel="Adicionar valor"
+        />
       </section>
 
       <section className="space-y-4" aria-labelledby="personality-flaws-heading">
@@ -276,7 +382,7 @@ export function PersonalityTraitsFields() {
             variant="outline"
             size="sm"
             className="w-fit"
-            onClick={() => flawsArray.append({ text: "" })}
+            onClick={() => flawsArray.append({ text: "", background: "" })}
           >
             <Plus data-icon="inline-start" className="size-4" />
             Adicionar fraqueza
@@ -289,7 +395,12 @@ export function PersonalityTraitsFields() {
         ) : (
           <ul className="space-y-4">
             {flawsArray.fields.map((field, index) => {
-              const rowErrors = errors.flaws?.[index];
+              const rowErrors = errors.flaws?.[index] as SingleLineRowErrors;
+              const bgStored =
+                (flawsWatched[index]?.background ?? "").trim();
+              const rowKey = `flaw-${field.id}`;
+              const showBg =
+                bgStored !== "" || backgroundRevealedIds.has(rowKey);
               return (
                 <li
                   key={field.id}
@@ -311,27 +422,72 @@ export function PersonalityTraitsFields() {
                       Remover
                     </Button>
                   </div>
-                  <FieldGroup id={`flaws-${field.id}-text`} label="Descrição">
-                    <input
-                      id={`flaws-${field.id}-text`}
-                      type="text"
-                      autoComplete="off"
-                      aria-invalid={rowErrors?.text ? true : undefined}
-                      aria-describedby={
-                        rowErrors?.text
-                          ? `flaws-${field.id}-text-error`
-                          : undefined
-                      }
-                      className={inputClassName}
-                      {...register(`flaws.${index}.text`)}
-                    />
-                    {rowErrors?.text ? (
-                      <FieldError
-                        id={`flaws-${field.id}-text-error`}
-                        message={rowErrors.text.message}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FieldGroup id={`flaws-${field.id}-text`} label="Fraqueza">
+                      <input
+                        id={`flaws-${field.id}-text`}
+                        type="text"
+                        autoComplete="off"
+                        aria-invalid={rowErrors?.text ? true : undefined}
+                        aria-describedby={
+                          rowErrors?.text
+                            ? `flaws-${field.id}-text-error`
+                            : undefined
+                        }
+                        className={inputClassName}
+                        {...register(`flaws.${index}.text`)}
                       />
-                    ) : null}
-                  </FieldGroup>
+                      {rowErrors?.text ? (
+                        <FieldError
+                          id={`flaws-${field.id}-text-error`}
+                          message={rowErrors.text.message}
+                        />
+                      ) : null}
+                    </FieldGroup>
+                  </div>
+                  <div className="mt-4 sm:col-span-2 space-y-2">
+                    {!showBg ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() => revealBackground(rowKey)}
+                      >
+                        Adicionar background
+                      </Button>
+                    ) : (
+                      <div className="space-y-2">
+                        <FieldGroup
+                          id={`flaws-${field.id}-background`}
+                          label="Background"
+                        >
+                          <textarea
+                            id={`flaws-${field.id}-background`}
+                            autoComplete="off"
+                            rows={3}
+                            placeholder="Qual o motivo da sua fraqueza?"
+                            aria-invalid={
+                              rowErrors?.background ? true : undefined
+                            }
+                            aria-describedby={
+                              rowErrors?.background
+                                ? `flaws-${field.id}-background-error`
+                                : undefined
+                            }
+                            className={textareaClassName}
+                            {...register(`flaws.${index}.background`)}
+                          />
+                          {rowErrors?.background ? (
+                            <FieldError
+                              id={`flaws-${field.id}-background-error`}
+                              message={rowErrors.background.message}
+                            />
+                          ) : null}
+                        </FieldGroup>
+                      </div>
+                    )}
+                  </div>
                 </li>
               );
             })}
@@ -353,7 +509,11 @@ export function PersonalityTraitsFields() {
             size="sm"
             className="w-fit"
             onClick={() =>
-              fearsArray.append({ description: "", level: "leve" })
+              fearsArray.append({
+                description: "",
+                level: "leve",
+                background: "",
+              })
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
@@ -367,7 +527,12 @@ export function PersonalityTraitsFields() {
         ) : (
           <ul className="space-y-4">
             {fearsArray.fields.map((field, index) => {
-              const rowErrors = errors.fears?.[index];
+              const rowErrors = errors.fears?.[index] as FearRowErrors;
+              const bgStored =
+                (fearsWatched[index]?.background ?? "").trim();
+              const rowKey = `fear-${field.id}`;
+              const showBg =
+                bgStored !== "" || backgroundRevealedIds.has(rowKey);
               return (
                 <li
                   key={field.id}
@@ -445,6 +610,47 @@ export function PersonalityTraitsFields() {
                       ) : null}
                     </FieldGroup>
                   </div>
+                  <div className="mt-4 space-y-2">
+                    {!showBg ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() => revealBackground(rowKey)}
+                      >
+                        Adicionar background
+                      </Button>
+                    ) : (
+                      <FieldGroup
+                        id={`fears-${field.id}-background`}
+                        label="Background"
+                      >
+                        <textarea
+                          id={`fears-${field.id}-background`}
+                          autoComplete="off"
+                          rows={3}
+                          placeholder="Qual o motivo do seu medo?"
+                          aria-invalid={
+                            rowErrors?.background ? true : undefined
+                          }
+                          aria-describedby={
+                            rowErrors?.background
+                              ? `fears-${field.id}-background-error`
+                              : undefined
+                          }
+                          className={textareaClassName}
+                          {...register(`fears.${index}.background`)}
+                        />
+                        {rowErrors?.background ? (
+                          <FieldError
+                            id={`fears-${field.id}-background-error`}
+                            message={rowErrors.background.message}
+                          />
+                        ) : null}
+                      </FieldGroup>
+                    )}
+                  </div>
                 </li>
               );
             })}
@@ -465,7 +671,7 @@ export function PersonalityTraitsFields() {
             variant="outline"
             size="sm"
             className="w-fit"
-            onClick={() => habitsArray.append({ text: "" })}
+            onClick={() => habitsArray.append({ text: "", background: "" })}
           >
             <Plus data-icon="inline-start" className="size-4" />
             Adicionar hábito
@@ -478,7 +684,12 @@ export function PersonalityTraitsFields() {
         ) : (
           <ul className="space-y-4">
             {habitsArray.fields.map((field, index) => {
-              const rowErrors = errors.habits?.[index];
+              const rowErrors = errors.habits?.[index] as SingleLineRowErrors;
+              const bgStored =
+                (habitsWatched[index]?.background ?? "").trim();
+              const rowKey = `habit-${field.id}`;
+              const showBg =
+                bgStored !== "" || backgroundRevealedIds.has(rowKey);
               return (
                 <li
                   key={field.id}
@@ -500,27 +711,70 @@ export function PersonalityTraitsFields() {
                       Remover
                     </Button>
                   </div>
-                  <FieldGroup id={`habits-${field.id}-text`} label="Descrição">
-                    <input
-                      id={`habits-${field.id}-text`}
-                      type="text"
-                      autoComplete="off"
-                      aria-invalid={rowErrors?.text ? true : undefined}
-                      aria-describedby={
-                        rowErrors?.text
-                          ? `habits-${field.id}-text-error`
-                          : undefined
-                      }
-                      className={inputClassName}
-                      {...register(`habits.${index}.text`)}
-                    />
-                    {rowErrors?.text ? (
-                      <FieldError
-                        id={`habits-${field.id}-text-error`}
-                        message={rowErrors.text.message}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FieldGroup id={`habits-${field.id}-text`} label="Hábito">
+                      <input
+                        id={`habits-${field.id}-text`}
+                        type="text"
+                        autoComplete="off"
+                        aria-invalid={rowErrors?.text ? true : undefined}
+                        aria-describedby={
+                          rowErrors?.text
+                            ? `habits-${field.id}-text-error`
+                            : undefined
+                        }
+                        className={inputClassName}
+                        {...register(`habits.${index}.text`)}
                       />
-                    ) : null}
-                  </FieldGroup>
+                      {rowErrors?.text ? (
+                        <FieldError
+                          id={`habits-${field.id}-text-error`}
+                          message={rowErrors.text.message}
+                        />
+                      ) : null}
+                    </FieldGroup>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {!showBg ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() => revealBackground(rowKey)}
+                      >
+                        Adicionar background
+                      </Button>
+                    ) : (
+                      <FieldGroup
+                        id={`habits-${field.id}-background`}
+                        label="Background"
+                      >
+                        <textarea
+                          id={`habits-${field.id}-background`}
+                          autoComplete="off"
+                          rows={3}
+                          placeholder="Qual o motivo do seu hábito?"
+                          aria-invalid={
+                            rowErrors?.background ? true : undefined
+                          }
+                          aria-describedby={
+                            rowErrors?.background
+                              ? `habits-${field.id}-background-error`
+                              : undefined
+                          }
+                          className={textareaClassName}
+                          {...register(`habits.${index}.background`)}
+                        />
+                        {rowErrors?.background ? (
+                          <FieldError
+                            id={`habits-${field.id}-background-error`}
+                            message={rowErrors.background.message}
+                          />
+                        ) : null}
+                      </FieldGroup>
+                    )}
+                  </div>
                 </li>
               );
             })}
@@ -541,7 +795,7 @@ export function PersonalityTraitsFields() {
             variant="outline"
             size="sm"
             className="w-fit"
-            onClick={() => quirksArray.append({ text: "" })}
+            onClick={() => quirksArray.append({ text: "", background: "" })}
           >
             <Plus data-icon="inline-start" className="size-4" />
             Adicionar peculiaridade
@@ -554,7 +808,12 @@ export function PersonalityTraitsFields() {
         ) : (
           <ul className="space-y-4">
             {quirksArray.fields.map((field, index) => {
-              const rowErrors = errors.quirks?.[index];
+              const rowErrors = errors.quirks?.[index] as SingleLineRowErrors;
+              const bgStored =
+                (quirksWatched[index]?.background ?? "").trim();
+              const rowKey = `quirk-${field.id}`;
+              const showBg =
+                bgStored !== "" || backgroundRevealedIds.has(rowKey);
               return (
                 <li
                   key={field.id}
@@ -576,27 +835,73 @@ export function PersonalityTraitsFields() {
                       Remover
                     </Button>
                   </div>
-                  <FieldGroup id={`quirks-${field.id}-text`} label="Descrição">
-                    <input
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FieldGroup
                       id={`quirks-${field.id}-text`}
-                      type="text"
-                      autoComplete="off"
-                      aria-invalid={rowErrors?.text ? true : undefined}
-                      aria-describedby={
-                        rowErrors?.text
-                          ? `quirks-${field.id}-text-error`
-                          : undefined
-                      }
-                      className={inputClassName}
-                      {...register(`quirks.${index}.text`)}
-                    />
-                    {rowErrors?.text ? (
-                      <FieldError
-                        id={`quirks-${field.id}-text-error`}
-                        message={rowErrors.text.message}
+                      label="Peculiaridade"
+                    >
+                      <input
+                        id={`quirks-${field.id}-text`}
+                        type="text"
+                        autoComplete="off"
+                        aria-invalid={rowErrors?.text ? true : undefined}
+                        aria-describedby={
+                          rowErrors?.text
+                            ? `quirks-${field.id}-text-error`
+                            : undefined
+                        }
+                        className={inputClassName}
+                        {...register(`quirks.${index}.text`)}
                       />
-                    ) : null}
-                  </FieldGroup>
+                      {rowErrors?.text ? (
+                        <FieldError
+                          id={`quirks-${field.id}-text-error`}
+                          message={rowErrors.text.message}
+                        />
+                      ) : null}
+                    </FieldGroup>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {!showBg ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() => revealBackground(rowKey)}
+                      >
+                        Adicionar background
+                      </Button>
+                    ) : (
+                      <FieldGroup
+                        id={`quirks-${field.id}-background`}
+                        label="Background"
+                      >
+                        <textarea
+                          id={`quirks-${field.id}-background`}
+                          autoComplete="off"
+                          rows={3}
+                          placeholder="Qual o motivo da sua peculiaridade?"
+                          aria-invalid={
+                            rowErrors?.background ? true : undefined
+                          }
+                          aria-describedby={
+                            rowErrors?.background
+                              ? `quirks-${field.id}-background-error`
+                              : undefined
+                          }
+                          className={textareaClassName}
+                          {...register(`quirks.${index}.background`)}
+                        />
+                        {rowErrors?.background ? (
+                          <FieldError
+                            id={`quirks-${field.id}-background-error`}
+                            message={rowErrors.background.message}
+                          />
+                        ) : null}
+                      </FieldGroup>
+                    )}
+                  </div>
                 </li>
               );
             })}
