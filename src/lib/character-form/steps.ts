@@ -34,7 +34,8 @@ export const FORM_STEPS: readonly FormStepMeta[] = [
     id: "personality",
     indexLabel: 3,
     title: "Personalidade e traços",
-    description: "Temperamento, valores, medos, hábitos e peculiaridades.",
+    description:
+      "Temperamento, valores, fraquezas, medos, hábitos e peculiaridades.",
   },
   {
     id: "relationships",

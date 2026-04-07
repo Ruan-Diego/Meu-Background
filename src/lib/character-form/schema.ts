@@ -38,6 +38,12 @@ export const characterFormSchema = z.object({
   relatives: z.array(relativeRowSchema),
   shapingEvents: z.array(shapingEventRowSchema),
   occupation: trimmed,
+  temperament: trimmed,
+  values: trimmed,
+  flaws: trimmed,
+  fears: trimmed,
+  habits: trimmed,
+  quirks: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -54,6 +60,12 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   relatives: [],
   shapingEvents: [],
   occupation: "",
+  temperament: "",
+  values: "",
+  flaws: "",
+  fears: "",
+  habits: "",
+  quirks: "",
 };
 
 const basicStepSchema = characterFormSchema.pick({
@@ -73,11 +85,20 @@ const originStepSchema = characterFormSchema.pick({
   shapingEvents: true,
 });
 
+const personalityStepSchema = characterFormSchema.pick({
+  temperament: true,
+  values: true,
+  flaws: true,
+  fears: true,
+  habits: true,
+  quirks: true,
+});
+
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   basic: basicStepSchema,
   origin: originStepSchema,
-  personality: z.object({}),
+  personality: personalityStepSchema,
   relationships: z.object({}),
   goals: z.object({}),
   appearance: z.object({}),
@@ -95,7 +116,14 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "occupation",
   ],
   origin: [],
-  personality: [],
+  personality: [
+    "temperament",
+    "values",
+    "flaws",
+    "fears",
+    "habits",
+    "quirks",
+  ],
   relationships: [],
   goals: [],
   appearance: [],
