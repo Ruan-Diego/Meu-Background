@@ -1,0 +1,27 @@
+---
+description: Branch before features; commit when each feature is done
+alwaysApply: true
+---
+
+# Git workflow (Meu Background)
+
+## Before implementing a feature
+
+1. Ensure `main` is current: `git checkout main && git pull` (when using a remote).
+2. Create a **dedicated branch** from `main` before editing code:
+   - Pattern: `feature/<milestone>-<short-kebab-case>`
+   - Examples: `feature/m1-f02-design-system`, `feature/m1-f03-multi-step-form`
+3. Use one branch per roadmap item (or per small, coherent slice). Do not mix unrelated features.
+
+## When the implementation is finished
+
+1. **Stage** all files that belong to the feature.
+2. **Commit** with a clear message:
+   - Prefer Conventional Commits: `feat(M1-F02): …`, `fix: …`, `chore: …`
+   - Include the roadmap ID in the subject when it maps cleanly (e.g. `M1-F02`).
+3. If the user uses pull requests, **push the branch** and open a PR; do not fast-forward `main` unless they asked for it.
+
+## Agent behavior
+
+- At the **start** of a new feature task: run git commands to create the branch (do not implement on `main` first).
+- At the **end** of the task: commit on that branch with a message that states what changed and why in one or two sentences in the body if needed.
