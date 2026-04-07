@@ -47,3 +47,4 @@ _None yet — project just initialized._
 ## Preferences
 
 - Lightweight tasks (validation, state updates) work well with faster/cheaper models.
+- **M1-F13 (PDF export):** When implementing, use branch `feature/m1-f13-export-pdf-spec` and the spec at `.specs/features/m1-f13-export-pdf/spec.md`.
