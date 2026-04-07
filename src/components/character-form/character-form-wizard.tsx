@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { FormProgress } from "@/components/character-form/form-progress";
 import { StepRail } from "@/components/character-form/step-rail";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import {
   characterFormSchema,
+  defaultCharacterFormValues,
   getFieldsForStepIndex,
   validateStepValues,
   type CharacterFormValues,
@@ -37,7 +39,10 @@ export function CharacterFormWizard({ className }: { className?: string }) {
 
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
-    defaultValues: draft as CharacterFormValues,
+    defaultValues: {
+      ...defaultCharacterFormValues,
+      ...(draft as Partial<CharacterFormValues>),
+    },
     mode: "onTouched",
   });
 
@@ -172,11 +177,15 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                 <CardDescription>{step?.description}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
-                <p className="text-body text-muted-foreground">
-                  Os campos específicos entram nas tarefas M1-F04 em diante.
-                  Por enquanto, use a navegação para experimentar o fluxo, a
-                  barra de progresso e os atalhos de teclado.
-                </p>
+                {step?.id === "basic" ? (
+                  <BasicInfoFields />
+                ) : (
+                  <p className="text-body text-muted-foreground">
+                    Os campos desta etapa entram nas tarefas M1-F05 em diante.
+                    Use a navegação para percorrer o fluxo, a barra de progresso
+                    e os atalhos de teclado.
+                  </p>
+                )}
 
                 {rootError ? (
                   <p

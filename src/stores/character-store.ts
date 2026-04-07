@@ -1,9 +1,14 @@
 import { create } from "zustand";
 
+import {
+  defaultCharacterFormValues,
+  type CharacterFormValues,
+} from "@/lib/character-form/schema";
 import { clampStepIndex } from "@/lib/character-form/steps";
 
-/** Character draft — fields will expand with the Zod schema (M1). */
-export type CharacterDraft = Record<string, unknown>;
+/** Character draft — aligned with `CharacterFormValues` as fields are added (M1). */
+export type CharacterDraft = Partial<CharacterFormValues> &
+  Record<string, unknown>;
 
 type CharacterState = {
   draft: CharacterDraft;
@@ -13,7 +18,7 @@ type CharacterState = {
   reset: () => void;
 };
 
-const initialDraft: CharacterDraft = {};
+const initialDraft: CharacterDraft = { ...defaultCharacterFormValues };
 
 export const useCharacterStore = create<CharacterState>((set) => ({
   draft: initialDraft,
@@ -22,5 +27,6 @@ export const useCharacterStore = create<CharacterState>((set) => ({
     set((s) => ({ draft: { ...s.draft, ...partial } })),
   setCurrentStepIndex: (index) =>
     set({ currentStepIndex: clampStepIndex(index) }),
-  reset: () => set({ draft: initialDraft, currentStepIndex: 0 }),
+  reset: () =>
+    set({ draft: { ...defaultCharacterFormValues }, currentStepIndex: 0 }),
 }));

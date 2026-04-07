@@ -2,19 +2,41 @@ import { z } from "zod";
 
 import { FORM_STEPS, type FormStepId } from "@/lib/character-form/steps";
 
+const trimmed = z.string().trim();
+
+export const defaultCharacterFormValues = {
+  characterName: "",
+  playerName: "",
+  rpgSystem: "",
+  campaignName: "",
+  levelOrTier: "",
+} as const;
+
 /**
- * Single source of truth for the character form. M1-F04+ will add fields
- * here and register each key under the matching step in `STEP_FIELD_PATHS`.
+ * Single source of truth for the character form. Further steps add fields
+ * in M1-F05+ and register keys under the matching step in `STEP_FIELD_PATHS`.
  */
 export const characterFormSchema = z.object({
-  // Placeholder — real fields land in M1-F04 onward.
+  characterName: trimmed.min(1, "Informe o nome do personagem."),
+  playerName: trimmed,
+  rpgSystem: trimmed,
+  campaignName: trimmed,
+  levelOrTier: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
 
+const basicStepSchema = characterFormSchema.pick({
+  characterName: true,
+  playerName: true,
+  rpgSystem: true,
+  campaignName: true,
+  levelOrTier: true,
+});
+
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
-  basic: z.object({}),
+  basic: basicStepSchema,
   origin: z.object({}),
   personality: z.object({}),
   relationships: z.object({}),
@@ -24,14 +46,21 @@ export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
 };
 
 /** RHF field names belonging to each step — used with `trigger()` before next. */
-export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> =
-  FORM_STEPS.reduce(
-    (acc, step) => {
-      acc[step.id] = [];
-      return acc;
-    },
-    {} as Record<FormStepId, readonly string[]>
-  );
+export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
+  basic: [
+    "characterName",
+    "playerName",
+    "rpgSystem",
+    "campaignName",
+    "levelOrTier",
+  ],
+  origin: [],
+  personality: [],
+  relationships: [],
+  goals: [],
+  appearance: [],
+  freeNotes: [],
+};
 
 export function getFieldsForStepIndex(stepIndex: number): string[] {
   const step = FORM_STEPS[stepIndex];
