@@ -86,19 +86,3 @@ export function characterDocumentToPlainText(doc: CharacterDocument): string {
 
   return chunks.join("\n").trimEnd() + "\n";
 }
-
-function slugifyBasename(name: string): string {
-  const trimmed = name.trim() || "personagem";
-  const ascii = trimmed
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "")
-    .toLowerCase();
-  const slug = ascii.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  return slug || "personagem";
-}
-
-export function characterDocumentPlainTextFilename(
-  doc: CharacterDocument
-): string {
-  return `${slugifyBasename(doc.header.characterName)}.txt`;
-}

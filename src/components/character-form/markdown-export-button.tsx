@@ -4,10 +4,8 @@ import { Download } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import {
-  characterDocumentMarkdownFilename,
-  characterDocumentToMarkdown,
-} from "@/lib/character-form/document-markdown";
+import { characterDocumentMarkdownFilename } from "@/lib/character-form/document-filename";
+import { characterDocumentToMarkdown } from "@/lib/character-form/document-markdown";
 import { buildCharacterDocument } from "@/lib/character-form/document-sections";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { downloadTextFile } from "@/lib/download-text-file";
