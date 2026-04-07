@@ -194,14 +194,14 @@ export function OriginBackgroundFields() {
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar parente
+            Adicionar vínculo
           </Button>
         </div>
 
         {relativesArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum parente adicionado. Use o botão acima para incluir mãe, pai,
-            tios ou outros vínculos.
+            Nenhum vínculo adicionado. Use o botão acima para incluir pais, melhores amigos,
+            parentes próximos ou outros vínculos importantes.
           </p>
         ) : (
           <ul className="space-y-4">
@@ -217,7 +217,7 @@ export function OriginBackgroundFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Parente {index + 1}
+                      Vínculo {index + 1}
                     </span>
                     <Button
                       type="button"
@@ -225,7 +225,7 @@ export function OriginBackgroundFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => relativesArray.remove(index)}
-                      aria-label={`Remover parente ${index + 1}`}
+                      aria-label={`Remover vínculo ${index + 1}`}
                     >
                       <Trash2 className="size-4" />
                       Remover
@@ -354,7 +354,7 @@ export function OriginBackgroundFields() {
 
         {eventsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum evento adicionado. Inclua momentos que moldaram o personagem.
+            Nenhum evento adicionado. Inclua momentos que moldaram o seu personagem.
           </p>
         ) : (
           <ul className="space-y-4">
