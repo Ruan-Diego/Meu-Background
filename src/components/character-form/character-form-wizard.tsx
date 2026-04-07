@@ -2,12 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { DocumentPreview } from "@/components/character-form/document-preview";
 import { MarkdownExportButton } from "@/components/character-form/markdown-export-button";
+import { PlainTextExportButton } from "@/components/character-form/plain-text-export-button";
 import { OriginBackgroundFields } from "@/components/character-form/origin-background-fields";
 import { AppearanceFields } from "@/components/character-form/appearance-fields";
 import { FreeNotesFields } from "@/components/character-form/free-notes-fields";
@@ -39,7 +40,6 @@ import {
 export function CharacterFormWizard({ className }: { className?: string }) {
   const currentStepIndex = useCharacterStore((s) => s.currentStepIndex);
   const setCurrentStepIndex = useCharacterStore((s) => s.setCurrentStepIndex);
-  const draft = useCharacterStore((s) => s.draft);
   const setDraft = useCharacterStore((s) => s.setDraft);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -47,16 +47,105 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
     defaultValues: mergeInitialFormValues(
-      draft as Partial<CharacterFormValues> & Record<string, unknown>
+      useCharacterStore.getState().draft as Partial<CharacterFormValues> &
+        Record<string, unknown>
     ),
     mode: "onTouched",
   });
 
-  const { trigger, getValues, setError, clearErrors, formState } = form;
+  const {
+    trigger,
+    getValues,
+    setError,
+    clearErrors,
+    formState: { errors: formErrors, isDirty },
+    watch,
+    reset,
+  } = form;
+  const isDirtyRef = useRef(isDirty);
+  isDirtyRef.current = isDirty;
 
   const persistDraft = useCallback(() => {
     setDraft(getValues() as CharacterDraft);
   }, [getValues, setDraft]);
+
+  const DRAFT_DEBOUNCE_MS = 300;
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushDraftToStore = useCallback(() => {
+    if (debounceTimerRef.current != null) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    persistDraft();
+  }, [persistDraft]);
+
+  const scheduleDraftToStore = useCallback(() => {
+    if (debounceTimerRef.current != null) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      debounceTimerRef.current = null;
+      persistDraft();
+    }, DRAFT_DEBOUNCE_MS);
+  }, [persistDraft]);
+
+  const resetRef = useRef(reset);
+  const watchRef = useRef(watch);
+  const scheduleDraftToStoreRef = useRef(scheduleDraftToStore);
+  const flushDraftToStoreRef = useRef(flushDraftToStore);
+  resetRef.current = reset;
+  watchRef.current = watch;
+  scheduleDraftToStoreRef.current = scheduleDraftToStore;
+  flushDraftToStoreRef.current = flushDraftToStore;
+
+  useLayoutEffect(() => {
+    const applyStoreDraftToForm = () => {
+      if (isDirtyRef.current) return;
+      const { draft: storeDraft } = useCharacterStore.getState();
+      resetRef.current(
+        mergeInitialFormValues(
+          storeDraft as Partial<CharacterFormValues> & Record<string, unknown>
+        )
+      );
+    };
+
+    if (useCharacterStore.persist.hasHydrated()) {
+      applyStoreDraftToForm();
+    }
+
+    const unsub = useCharacterStore.persist.onFinishHydration(() => {
+      applyStoreDraftToForm();
+    });
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const sub = watchRef.current(() => {
+      scheduleDraftToStoreRef.current();
+    });
+    return () => {
+      sub.unsubscribe();
+      flushDraftToStoreRef.current();
+    };
+  }, []);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flushDraftToStoreRef.current();
+    };
+    const onPageHide = () => {
+      flushDraftToStoreRef.current();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", onPageHide);
+    };
+  }, []);
 
   const goNext = useCallback(async () => {
     const stepMeta = FORM_STEPS[currentStepIndex];
@@ -150,7 +239,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const step = FORM_STEPS[currentStepIndex];
   const isFirst = currentStepIndex === 0;
   const isLast = currentStepIndex === STEP_COUNT - 1;
-  const rootError = formState.errors.root?.message;
+  const rootError = formErrors.root?.message;
 
   return (
     <div data-character-wizard className={cn("space-y-6", className)}>
@@ -200,6 +289,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                   <div className="space-y-4">
                     <div className="flex flex-wrap justify-end gap-2">
                       <MarkdownExportButton />
+                      <PlainTextExportButton />
                     </div>
                     <DocumentPreview />
                   </div>
