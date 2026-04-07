@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { CharacterFormWizard } from "@/components/character-form/character-form-wizard";
 import {
   Card,
   CardContent,
@@ -22,56 +23,18 @@ export default function CriarPage() {
           </span>
           <div className="space-y-2">
             <h1 className="text-title max-w-2xl">
-              Um layout pronto para o formulário guiado e o preview lado a lado.
+              Formulário guiado com etapas, progresso e validação por passo.
             </h1>
             <p className="text-lead max-w-3xl text-muted-foreground text-pretty">
-              Esta tela já organiza o espaço para as próximas features do MVP:
-              etapas do formulário à esquerda e documento renderizado à direita,
-              com empilhamento natural no mobile.
+              Navegue entre as seções do backstory; os campos detalhados entram
+              nas próximas entregas. À direita, o painel continua preparado para
+              o preview ao vivo.
             </p>
           </div>
         </div>
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.85fr)]">
-          <Card className="surface-panel overflow-hidden">
-            <CardHeader className="border-b border-border/70">
-              <CardTitle>Fluxo guiado</CardTitle>
-              <CardDescription>
-                Área reservada para navegação entre etapas, validação e campos
-                do personagem.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6 pt-6">
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {[
-                  "Informações básicas",
-                  "Origem",
-                  "Personalidade",
-                  "Relacionamentos",
-                  "Objetivos",
-                  "Aparência",
-                ].map((step, index) => (
-                  <div
-                    key={step}
-                    className="rounded-2xl border border-border/70 bg-background/70 p-4"
-                  >
-                    <p className="text-caption text-muted-foreground">
-                      Etapa {index + 1}
-                    </p>
-                    <p className="mt-1 font-medium">{step}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="rounded-3xl border border-dashed border-border/80 bg-background/60 p-6">
-                <p className="text-section">Canvas do formulário</p>
-                <p className="text-body mt-2 text-muted-foreground">
-                  Aqui entram o motor multi-step, os campos com React Hook Form
-                  e a persistência do progresso nas próximas tarefas.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <CharacterFormWizard />
 
           <Card className="overflow-hidden lg:sticky lg:top-28 lg:self-start">
             <CardHeader className="border-b border-border/70">
