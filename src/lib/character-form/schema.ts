@@ -70,6 +70,14 @@ export const characterFormSchema = z.object({
   quirks: z.array(personalitySingleLineRowSchema),
   shortTermGoals: z.array(shortTermGoalRowSchema),
   lifeGoals: z.array(lifeGoalRowSchema),
+  /** Detalhes que a miniatura / Hero Forge não mostram (M1-F08). */
+  heightDescription: trimmed,
+  hiddenMarksAndScars: trimmed,
+  firstImpression: trimmed,
+  voiceAndSpeech: trimmed,
+  characteristicScent: trimmed,
+  movementAndMannerisms: trimmed,
+  appearanceOtherNotes: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -94,6 +102,13 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   quirks: [],
   shortTermGoals: [],
   lifeGoals: [],
+  heightDescription: "",
+  hiddenMarksAndScars: "",
+  firstImpression: "",
+  voiceAndSpeech: "",
+  characteristicScent: "",
+  movementAndMannerisms: "",
+  appearanceOtherNotes: "",
 };
 
 const LEGACY_GOALS_KEYS = [
@@ -187,13 +202,23 @@ const goalsStepSchema = characterFormSchema.pick({
   lifeGoals: true,
 });
 
+const appearanceStepSchema = characterFormSchema.pick({
+  heightDescription: true,
+  hiddenMarksAndScars: true,
+  firstImpression: true,
+  voiceAndSpeech: true,
+  characteristicScent: true,
+  movementAndMannerisms: true,
+  appearanceOtherNotes: true,
+});
+
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   basic: basicStepSchema,
   origin: originStepSchema,
   personality: personalityStepSchema,
   goals: goalsStepSchema,
-  appearance: z.object({}),
+  appearance: appearanceStepSchema,
   freeNotes: z.object({}),
 };
 
@@ -210,7 +235,15 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   origin: [],
   personality: [],
   goals: [],
-  appearance: [],
+  appearance: [
+    "heightDescription",
+    "hiddenMarksAndScars",
+    "firstImpression",
+    "voiceAndSpeech",
+    "characteristicScent",
+    "movementAndMannerisms",
+    "appearanceOtherNotes",
+  ],
   freeNotes: [],
 };
 
@@ -337,6 +370,24 @@ export function validateStepValues(
     const parsed = schema.safeParse({
       shortTermGoals: values.shortTermGoals ?? [],
       lifeGoals: values.lifeGoals ?? [],
+    });
+    if (parsed.success) return { ok: true };
+    const first = parsed.error.issues[0];
+    return {
+      ok: false,
+      message: first?.message ?? "Verifique os campos desta etapa.",
+    };
+  }
+
+  if (stepId === "appearance") {
+    const parsed = schema.safeParse({
+      heightDescription: values.heightDescription ?? "",
+      hiddenMarksAndScars: values.hiddenMarksAndScars ?? "",
+      firstImpression: values.firstImpression ?? "",
+      voiceAndSpeech: values.voiceAndSpeech ?? "",
+      characteristicScent: values.characteristicScent ?? "",
+      movementAndMannerisms: values.movementAndMannerisms ?? "",
+      appearanceOtherNotes: values.appearanceOtherNotes ?? "",
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
