@@ -7,9 +7,9 @@ const trimmed = z.string().trim();
 export const defaultCharacterFormValues = {
   characterName: "",
   playerName: "",
-  rpgSystem: "",
-  campaignName: "",
-  levelOrTier: "",
+  age: "",
+  race: "",
+  characterClass: "",
 } as const;
 
 /**
@@ -19,9 +19,9 @@ export const defaultCharacterFormValues = {
 export const characterFormSchema = z.object({
   characterName: trimmed.min(1, "Informe o nome do personagem."),
   playerName: trimmed,
-  rpgSystem: trimmed,
-  campaignName: trimmed,
-  levelOrTier: trimmed,
+  age: trimmed,
+  race: trimmed,
+  characterClass: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -29,9 +29,9 @@ export type CharacterFormValues = z.infer<typeof characterFormSchema>;
 const basicStepSchema = characterFormSchema.pick({
   characterName: true,
   playerName: true,
-  rpgSystem: true,
-  campaignName: true,
-  levelOrTier: true,
+  age: true,
+  race: true,
+  characterClass: true,
 });
 
 /** Zod schema slice validated before leaving each step (extend per milestone). */
@@ -50,9 +50,9 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   basic: [
     "characterName",
     "playerName",
-    "rpgSystem",
-    "campaignName",
-    "levelOrTier",
+    "age",
+    "race",
+    "characterClass",
   ],
   origin: [],
   personality: [],

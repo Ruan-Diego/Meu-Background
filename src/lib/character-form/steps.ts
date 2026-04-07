@@ -22,7 +22,7 @@ export const FORM_STEPS: readonly FormStepMeta[] = [
     indexLabel: 1,
     title: "Informações básicas",
     description:
-      "Nome do personagem e do jogador, sistema, campanha e nível ou patamar.",
+      "Nome do personagem e do jogador, idade, raça e classe — foco no retrato do personagem.",
   },
   {
     id: "origin",

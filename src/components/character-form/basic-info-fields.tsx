@@ -32,6 +32,14 @@ function FieldGroup({
   );
 }
 
+function FieldError({ id, message }: { id: string; message?: string }) {
+  return (
+    <p id={id} role="alert" className="text-caption text-destructive">
+      {message ?? "Verifique este campo."}
+    </p>
+  );
+}
+
 export function BasicInfoFields() {
   const {
     register,
@@ -53,13 +61,10 @@ export function BasicInfoFields() {
           {...register("characterName")}
         />
         {errors.characterName ? (
-          <p
+          <FieldError
             id="characterName-error"
-            role="alert"
-            className="text-caption text-destructive"
-          >
-            {errors.characterName.message}
-          </p>
+            message={errors.characterName.message}
+          />
         ) : null}
       </FieldGroup>
 
@@ -69,61 +74,68 @@ export function BasicInfoFields() {
           type="text"
           autoComplete="name"
           aria-invalid={errors.playerName ? true : undefined}
+          aria-describedby={
+            errors.playerName ? "playerName-error" : undefined
+          }
           className={inputClassName}
           {...register("playerName")}
         />
         {errors.playerName ? (
-          <p role="alert" className="text-caption text-destructive">
-            {errors.playerName.message}
-          </p>
+          <FieldError
+            id="playerName-error"
+            message={errors.playerName.message}
+          />
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="rpgSystem" label="Sistema de RPG">
+      <FieldGroup id="age" label="Idade">
         <input
-          id="rpgSystem"
+          id="age"
           type="text"
+          inputMode="text"
           autoComplete="off"
-          aria-invalid={errors.rpgSystem ? true : undefined}
+          aria-invalid={errors.age ? true : undefined}
+          aria-describedby={errors.age ? "age-error" : undefined}
           className={inputClassName}
-          {...register("rpgSystem")}
+          {...register("age")}
         />
-        {errors.rpgSystem ? (
-          <p role="alert" className="text-caption text-destructive">
-            {errors.rpgSystem.message}
-          </p>
+        {errors.age ? (
+          <FieldError id="age-error" message={errors.age.message} />
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="campaignName" label="Nome da campanha">
+      <FieldGroup id="race" label="Raça">
         <input
-          id="campaignName"
+          id="race"
           type="text"
           autoComplete="off"
-          aria-invalid={errors.campaignName ? true : undefined}
+          aria-invalid={errors.race ? true : undefined}
+          aria-describedby={errors.race ? "race-error" : undefined}
           className={inputClassName}
-          {...register("campaignName")}
+          {...register("race")}
         />
-        {errors.campaignName ? (
-          <p role="alert" className="text-caption text-destructive">
-            {errors.campaignName.message}
-          </p>
+        {errors.race ? (
+          <FieldError id="race-error" message={errors.race.message} />
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="levelOrTier" label="Nível ou patamar">
+      <FieldGroup id="characterClass" label="Classe">
         <input
-          id="levelOrTier"
+          id="characterClass"
           type="text"
           autoComplete="off"
-          aria-invalid={errors.levelOrTier ? true : undefined}
+          aria-invalid={errors.characterClass ? true : undefined}
+          aria-describedby={
+            errors.characterClass ? "characterClass-error" : undefined
+          }
           className={inputClassName}
-          {...register("levelOrTier")}
+          {...register("characterClass")}
         />
-        {errors.levelOrTier ? (
-          <p role="alert" className="text-caption text-destructive">
-            {errors.levelOrTier.message}
-          </p>
+        {errors.characterClass ? (
+          <FieldError
+            id="characterClass-error"
+            message={errors.characterClass.message}
+          />
         ) : null}
       </FieldGroup>
     </div>
