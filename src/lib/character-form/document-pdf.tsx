@@ -20,8 +20,12 @@ import type {
 /** Noto Sans (latin-ext) for Portuguese / Latin Extended glyphs (PDF-05). */
 const NOTO_SANS_LATIN_EXT_400 =
   "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.2.5/files/noto-sans-latin-ext-400-normal.woff";
+const NOTO_SANS_LATIN_EXT_400_ITALIC =
+  "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.2.5/files/noto-sans-latin-ext-400-italic.woff";
 const NOTO_SANS_LATIN_EXT_700 =
   "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.2.5/files/noto-sans-latin-ext-700-normal.woff";
+const NOTO_SANS_LATIN_EXT_700_ITALIC =
+  "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.2.5/files/noto-sans-latin-ext-700-italic.woff";
 
 let fontsRegistered = false;
 
@@ -32,7 +36,17 @@ function ensureCharacterPdfFonts(): void {
     family: "NotoSans",
     fonts: [
       { src: NOTO_SANS_LATIN_EXT_400, fontWeight: 400 },
+      {
+        src: NOTO_SANS_LATIN_EXT_400_ITALIC,
+        fontWeight: 400,
+        fontStyle: "italic",
+      },
       { src: NOTO_SANS_LATIN_EXT_700, fontWeight: 700 },
+      {
+        src: NOTO_SANS_LATIN_EXT_700_ITALIC,
+        fontWeight: 700,
+        fontStyle: "italic",
+      },
     ],
   });
 }
