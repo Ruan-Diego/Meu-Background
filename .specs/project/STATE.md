@@ -6,6 +6,7 @@
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-04-07 | Theme switching uses `next-themes` with class-based dark mode | Keeps App Router theming simple, avoids custom hydration work, and matches the token strategy in `globals.css` |
 | 2026-04-06 | Next.js 15 with static export | No backend needed; deploy to any static host; React 19 features available |
 | 2026-04-06 | Zustand over Context API | Simpler API for cross-step state; built-in localStorage middleware |
 | 2026-04-06 | React Hook Form + Zod | Best multi-step form DX; Zod gives runtime + compile-time safety |
@@ -32,7 +33,8 @@ _None yet — project just initialized._
 
 ## TODOs
 
-- [ ] Scaffold Next.js project (M1-F01)
+- [x] Build design system & layout (M1-F02)
+- [x] Scaffold Next.js project (M1-F01)
 - [ ] Set up CI/CD pipeline (GitHub Actions)
 - [ ] Define character data schema (Zod)
 
