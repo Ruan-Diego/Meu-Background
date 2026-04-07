@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { FormProvider, useForm, useFormState } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { DocumentPreview } from "@/components/character-form/document-preview";
@@ -40,7 +40,6 @@ import {
 export function CharacterFormWizard({ className }: { className?: string }) {
   const currentStepIndex = useCharacterStore((s) => s.currentStepIndex);
   const setCurrentStepIndex = useCharacterStore((s) => s.setCurrentStepIndex);
-  const draft = useCharacterStore((s) => s.draft);
   const setDraft = useCharacterStore((s) => s.setDraft);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -48,16 +47,90 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
     defaultValues: mergeInitialFormValues(
-      draft as Partial<CharacterFormValues> & Record<string, unknown>
+      useCharacterStore.getState().draft as Partial<CharacterFormValues> &
+        Record<string, unknown>
     ),
     mode: "onTouched",
   });
 
-  const { trigger, getValues, setError, clearErrors, formState } = form;
+  const { trigger, getValues, setError, clearErrors, formState, watch, reset } =
+    form;
+  const { isDirty } = useFormState({ control: form.control });
+  const isDirtyRef = useRef(isDirty);
+  isDirtyRef.current = isDirty;
 
   const persistDraft = useCallback(() => {
     setDraft(getValues() as CharacterDraft);
   }, [getValues, setDraft]);
+
+  const DRAFT_DEBOUNCE_MS = 300;
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushDraftToStore = useCallback(() => {
+    if (debounceTimerRef.current != null) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    persistDraft();
+  }, [persistDraft]);
+
+  const scheduleDraftToStore = useCallback(() => {
+    if (debounceTimerRef.current != null) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      debounceTimerRef.current = null;
+      persistDraft();
+    }, DRAFT_DEBOUNCE_MS);
+  }, [persistDraft]);
+
+  useLayoutEffect(() => {
+    const applyStoreDraftToForm = () => {
+      if (isDirtyRef.current) return;
+      const { draft: storeDraft } = useCharacterStore.getState();
+      reset(
+        mergeInitialFormValues(
+          storeDraft as Partial<CharacterFormValues> & Record<string, unknown>
+        )
+      );
+    };
+
+    if (useCharacterStore.persist.hasHydrated()) {
+      applyStoreDraftToForm();
+    }
+
+    const unsub = useCharacterStore.persist.onFinishHydration(() => {
+      applyStoreDraftToForm();
+    });
+    return () => {
+      unsub();
+    };
+  }, [reset]);
+
+  useLayoutEffect(() => {
+    const sub = watch(() => {
+      scheduleDraftToStore();
+    });
+    return () => {
+      sub.unsubscribe();
+      flushDraftToStore();
+    };
+  }, [watch, scheduleDraftToStore, flushDraftToStore]);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flushDraftToStore();
+    };
+    const onPageHide = () => {
+      flushDraftToStore();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", onPageHide);
+    };
+  }, [flushDraftToStore]);
 
   const goNext = useCallback(async () => {
     const stepMeta = FORM_STEPS[currentStepIndex];
