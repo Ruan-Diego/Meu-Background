@@ -423,7 +423,8 @@ export function PersonalityTraitsFields() {
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <FieldGroup id={`flaws-${field.id}-text`} label="Fraqueza">
+                    <div className="sm:col-span-2">
+                      <FieldGroup id={`flaws-${field.id}-text`} label="Fraqueza">
                       <input
                         id={`flaws-${field.id}-text`}
                         type="text"
@@ -443,9 +444,10 @@ export function PersonalityTraitsFields() {
                           message={rowErrors.text.message}
                         />
                       ) : null}
-                    </FieldGroup>
+                      </FieldGroup>
+                    </div>
                   </div>
-                  <div className="mt-4 sm:col-span-2 space-y-2">
+                  <div className="mt-4 space-y-2">
                     {!showBg ? (
                       <Button
                         type="button"
@@ -712,7 +714,8 @@ export function PersonalityTraitsFields() {
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <FieldGroup id={`habits-${field.id}-text`} label="Hábito">
+                    <div className="sm:col-span-2">
+                      <FieldGroup id={`habits-${field.id}-text`} label="Hábito">
                       <input
                         id={`habits-${field.id}-text`}
                         type="text"
@@ -732,7 +735,8 @@ export function PersonalityTraitsFields() {
                           message={rowErrors.text.message}
                         />
                       ) : null}
-                    </FieldGroup>
+                      </FieldGroup>
+                    </div>
                   </div>
                   <div className="mt-4 space-y-2">
                     {!showBg ? (
@@ -836,10 +840,11 @@ export function PersonalityTraitsFields() {
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <FieldGroup
-                      id={`quirks-${field.id}-text`}
-                      label="Peculiaridade"
-                    >
+                    <div className="sm:col-span-2">
+                      <FieldGroup
+                        id={`quirks-${field.id}-text`}
+                        label="Peculiaridade"
+                      >
                       <input
                         id={`quirks-${field.id}-text`}
                         type="text"
@@ -859,7 +864,8 @@ export function PersonalityTraitsFields() {
                           message={rowErrors.text.message}
                         />
                       ) : null}
-                    </FieldGroup>
+                      </FieldGroup>
+                    </div>
                   </div>
                   <div className="mt-4 space-y-2">
                     {!showBg ? (
