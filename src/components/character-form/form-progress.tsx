@@ -1,4 +1,7 @@
+"use client";
+
 import { FORM_STEPS, STEP_COUNT } from "@/lib/character-form/steps";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 type FormProgressProps = {
@@ -11,8 +14,12 @@ export function FormProgress({ currentStepIndex, className }: FormProgressProps)
   const percent = Math.round(Math.min(1, Math.max(0, fraction)) * 100);
 
   return (
-    <div className={cn("space-y-3", className)}>
-      <div className="flex items-center justify-between gap-3">
+    <Progress
+      value={percent}
+      className={cn("w-full flex-col gap-3", className)}
+      aria-label={`Progresso do formulário: ${percent}%`}
+    >
+      <div className="flex w-full items-center justify-between gap-3">
         <p className="text-caption font-medium text-muted-foreground">
           Progresso
         </p>
@@ -21,19 +28,6 @@ export function FormProgress({ currentStepIndex, className }: FormProgressProps)
           de {STEP_COUNT}
         </p>
       </div>
-      <div
-        role="progressbar"
-        aria-valuenow={percent}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`Progresso do formulário: ${percent}%`}
-        className="h-2 overflow-hidden rounded-full bg-muted"
-      >
-        <div
-          className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-    </div>
+    </Progress>
   );
 }

@@ -9,7 +9,18 @@ import {
   type FieldErrors,
 } from "react-hook-form";
 
+import {
+  FieldError,
+  FieldGroup,
+  inputFieldClassName,
+  textareaFieldClassName,
+} from "@/components/character-form/form-field-parts";
+import { RhfEnumStringSelect } from "@/components/character-form/rhf-select-fields";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Toggle } from "@/components/ui/toggle";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import {
   PERSONALITY_FEAR_LEVEL_LABELS,
@@ -22,48 +33,6 @@ import { cn } from "@/lib/utils";
 const VALUE_PRESET_SET = new Set<string>(VALUES_CHIP_OPTIONS);
 const TEMPERAMENT_PRESET_SET = new Set<string>(TEMPERAMENT_CHIP_OPTIONS);
 
-const inputClassName = cn(
-  "flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-colors",
-  "placeholder:text-muted-foreground",
-  "focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-  "disabled:cursor-not-allowed disabled:opacity-50",
-  "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
-);
-
-const selectClassName = cn(inputClassName, "cursor-pointer");
-
-const textareaClassName = cn(
-  inputClassName,
-  "min-h-[88px] resize-y py-2"
-);
-
-function FieldGroup({
-  id,
-  label,
-  children,
-}: {
-  id: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <label htmlFor={id} className="text-caption font-medium text-foreground">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function FieldError({ id, message }: { id: string; message?: string }) {
-  return (
-    <p id={id} role="alert" className="text-caption text-destructive">
-      {message ?? "Verifique este campo."}
-    </p>
-  );
-}
-
 function PresetChip({
   label,
   selected,
@@ -75,42 +44,46 @@ function PresetChip({
 }) {
   const safeId = `preset-chip-${label.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}`;
   return (
-    <button
+    <Toggle
       type="button"
       id={safeId}
-      aria-pressed={selected}
-      onClick={onToggle}
+      pressed={selected}
+      onPressedChange={() => onToggle()}
+      variant="outline"
       className={cn(
-        "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        selected
-          ? "border-primary bg-primary/15 text-foreground"
-          : "border-border bg-background text-muted-foreground hover:border-ring hover:text-foreground"
+        "h-auto min-h-0 rounded-full border px-3 py-1.5 text-sm font-medium data-[state=on]:border-primary data-[state=on]:bg-primary/15 data-[state=on]:text-foreground data-[state=off]:border-border data-[state=off]:bg-background data-[state=off]:text-muted-foreground data-[state=off]:hover:border-ring data-[state=off]:hover:text-foreground"
       )}
     >
       {label}
-    </button>
+    </Toggle>
   );
 }
 
-function CustomTagChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+function CustomTagChip({
+  label,
+  onRemove,
+}: {
+  label: string;
+  onRemove: () => void;
+}) {
   return (
-    <span
-      className={cn(
-        "inline-flex max-w-full items-center gap-0.5 rounded-full border border-primary bg-primary/15 py-1 pl-3 pr-1 text-sm font-medium text-foreground"
-      )}
+    <Badge
+      variant="outline"
+      className="inline-flex h-auto max-w-full min-h-0 items-center gap-0.5 rounded-full border-primary bg-primary/15 py-1 pl-3 pr-1 text-sm font-medium text-foreground"
     >
       <button
         type="button"
-        className="min-w-0 truncate text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        className="min-w-0 truncate rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         onClick={onRemove}
         aria-label={`Remover ${label}`}
       >
         {label}
       </button>
-      <button
+      <Button
         type="button"
-        className="shrink-0 rounded-full p-1 text-muted-foreground hover:bg-background/80 hover:text-foreground"
+        variant="ghost"
+        size="icon-xs"
+        className="size-7 shrink-0 rounded-full text-muted-foreground hover:bg-background/80 hover:text-foreground"
         aria-label={`Remover chip ${label}`}
         onClick={(e) => {
           e.stopPropagation();
@@ -118,8 +91,8 @@ function CustomTagChip({ label, onRemove }: { label: string; onRemove: () => voi
         }}
       >
         <X className="size-3.5" aria-hidden />
-      </button>
-    </span>
+      </Button>
+    </Badge>
   );
 }
 
@@ -173,7 +146,7 @@ function ChipPickerSection({
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <FieldGroup id={inputId} label={inputLabel}>
-          <input
+          <Input
             id={inputId}
             type="text"
             autoComplete="off"
@@ -185,7 +158,7 @@ function ChipPickerSection({
                 onAddCustom();
               }
             }}
-            className={inputClassName}
+            className={cn(inputFieldClassName)}
           />
         </FieldGroup>
         <Button
@@ -214,6 +187,7 @@ export function PersonalityTraitsFields() {
     register,
     control,
     setValue,
+    getValues,
     formState: { errors },
   } = useFormContext<CharacterFormValues>();
 
@@ -246,8 +220,7 @@ export function PersonalityTraitsFields() {
 
   const toggleInList = useCallback(
     (field: "temperamentTags" | "valueTags", label: string) => {
-      const current =
-        field === "temperamentTags" ? temperamentTags : valueTags;
+      const current = getValues(field) ?? [];
       const next = current.includes(label)
         ? current.filter((t) => t !== label)
         : [...current, label];
@@ -257,13 +230,12 @@ export function PersonalityTraitsFields() {
         shouldValidate: true,
       });
     },
-    [setValue, temperamentTags, valueTags]
+    [setValue, getValues]
   );
 
   const removeFromList = useCallback(
     (field: "temperamentTags" | "valueTags", label: string) => {
-      const current =
-        field === "temperamentTags" ? temperamentTags : valueTags;
+      const current = getValues(field) ?? [];
       setValue(
         field,
         current.filter((t) => t !== label),
@@ -274,7 +246,7 @@ export function PersonalityTraitsFields() {
         }
       );
     },
-    [setValue, temperamentTags, valueTags]
+    [setValue, getValues]
   );
 
   const addCustomToList = useCallback(
@@ -285,7 +257,7 @@ export function PersonalityTraitsFields() {
     ) => {
       const trimmed = draft.trim();
       if (!trimmed) return;
-      const current = field === "temperamentTags" ? temperamentTags : valueTags;
+      const current = getValues(field) ?? [];
       if (current.includes(trimmed)) {
         clearDraft();
         return;
@@ -297,7 +269,7 @@ export function PersonalityTraitsFields() {
       });
       clearDraft();
     },
-    [setValue, temperamentTags, valueTags]
+    [setValue, getValues]
   );
 
   return (
@@ -425,7 +397,7 @@ export function PersonalityTraitsFields() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <FieldGroup id={`flaws-${field.id}-text`} label="Fraqueza">
-                      <input
+                      <Input
                         id={`flaws-${field.id}-text`}
                         type="text"
                         autoComplete="off"
@@ -435,7 +407,7 @@ export function PersonalityTraitsFields() {
                             ? `flaws-${field.id}-text-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`flaws.${index}.text`)}
                       />
                       {rowErrors?.text ? (
@@ -464,7 +436,7 @@ export function PersonalityTraitsFields() {
                           id={`flaws-${field.id}-background`}
                           label="Background"
                         >
-                          <textarea
+                          <Textarea
                             id={`flaws-${field.id}-background`}
                             autoComplete="off"
                             rows={3}
@@ -477,7 +449,7 @@ export function PersonalityTraitsFields() {
                                 ? `flaws-${field.id}-background-error`
                                 : undefined
                             }
-                            className={textareaClassName}
+                            className={cn(textareaFieldClassName)}
                             {...register(`flaws.${index}.background`)}
                           />
                           {rowErrors?.background ? (
@@ -561,7 +533,7 @@ export function PersonalityTraitsFields() {
                       id={`fears-${field.id}-description`}
                       label="Medo"
                     >
-                      <input
+                      <Input
                         id={`fears-${field.id}-description`}
                         type="text"
                         autoComplete="off"
@@ -573,7 +545,7 @@ export function PersonalityTraitsFields() {
                             ? `fears-${field.id}-description-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`fears.${index}.description`)}
                       />
                       {rowErrors?.description ? (
@@ -587,23 +559,23 @@ export function PersonalityTraitsFields() {
                       id={`fears-${field.id}-level`}
                       label="Intensidade"
                     >
-                      <select
+                      <RhfEnumStringSelect
+                        control={control}
+                        name={`fears.${index}.level`}
                         id={`fears-${field.id}-level`}
+                        options={PERSONALITY_FEAR_LEVELS}
+                        optionLabel={(lvl) =>
+                          PERSONALITY_FEAR_LEVEL_LABELS[
+                            lvl as keyof typeof PERSONALITY_FEAR_LEVEL_LABELS
+                          ]
+                        }
                         aria-invalid={rowErrors?.level ? true : undefined}
                         aria-describedby={
                           rowErrors?.level
                             ? `fears-${field.id}-level-error`
                             : undefined
                         }
-                        className={selectClassName}
-                        {...register(`fears.${index}.level`)}
-                      >
-                        {PERSONALITY_FEAR_LEVELS.map((lvl) => (
-                          <option key={lvl} value={lvl}>
-                            {PERSONALITY_FEAR_LEVEL_LABELS[lvl]}
-                          </option>
-                        ))}
-                      </select>
+                      />
                       {rowErrors?.level ? (
                         <FieldError
                           id={`fears-${field.id}-level-error`}
@@ -628,7 +600,7 @@ export function PersonalityTraitsFields() {
                         id={`fears-${field.id}-background`}
                         label="Background"
                       >
-                        <textarea
+                        <Textarea
                           id={`fears-${field.id}-background`}
                           autoComplete="off"
                           rows={3}
@@ -641,7 +613,7 @@ export function PersonalityTraitsFields() {
                               ? `fears-${field.id}-background-error`
                               : undefined
                           }
-                          className={textareaClassName}
+                          className={cn(textareaFieldClassName)}
                           {...register(`fears.${index}.background`)}
                         />
                         {rowErrors?.background ? (
@@ -716,7 +688,7 @@ export function PersonalityTraitsFields() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <FieldGroup id={`habits-${field.id}-text`} label="Hábito">
-                      <input
+                      <Input
                         id={`habits-${field.id}-text`}
                         type="text"
                         autoComplete="off"
@@ -726,7 +698,7 @@ export function PersonalityTraitsFields() {
                             ? `habits-${field.id}-text-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`habits.${index}.text`)}
                       />
                       {rowErrors?.text ? (
@@ -754,7 +726,7 @@ export function PersonalityTraitsFields() {
                         id={`habits-${field.id}-background`}
                         label="Background"
                       >
-                        <textarea
+                        <Textarea
                           id={`habits-${field.id}-background`}
                           autoComplete="off"
                           rows={3}
@@ -767,7 +739,7 @@ export function PersonalityTraitsFields() {
                               ? `habits-${field.id}-background-error`
                               : undefined
                           }
-                          className={textareaClassName}
+                          className={cn(textareaFieldClassName)}
                           {...register(`habits.${index}.background`)}
                         />
                         {rowErrors?.background ? (
@@ -845,7 +817,7 @@ export function PersonalityTraitsFields() {
                         id={`quirks-${field.id}-text`}
                         label="Peculiaridade"
                       >
-                      <input
+                      <Input
                         id={`quirks-${field.id}-text`}
                         type="text"
                         autoComplete="off"
@@ -855,7 +827,7 @@ export function PersonalityTraitsFields() {
                             ? `quirks-${field.id}-text-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`quirks.${index}.text`)}
                       />
                       {rowErrors?.text ? (
@@ -883,7 +855,7 @@ export function PersonalityTraitsFields() {
                         id={`quirks-${field.id}-background`}
                         label="Background"
                       >
-                        <textarea
+                        <Textarea
                           id={`quirks-${field.id}-background`}
                           autoComplete="off"
                           rows={3}
@@ -896,7 +868,7 @@ export function PersonalityTraitsFields() {
                               ? `quirks-${field.id}-background-error`
                               : undefined
                           }
-                          className={textareaClassName}
+                          className={cn(textareaFieldClassName)}
                           {...register(`quirks.${index}.background`)}
                         />
                         {rowErrors?.background ? (

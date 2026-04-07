@@ -1,4 +1,5 @@
 import { FORM_STEPS } from "@/lib/character-form/steps";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type StepRailProps = {
@@ -23,14 +24,14 @@ export function StepRail({
           const isPast = index < currentStepIndex;
           return (
             <li key={step.id}>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => onStepSelect(index)}
                 className={cn(
-                  "flex w-full flex-col rounded-2xl border px-3 py-2.5 text-left transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  "h-auto min-h-0 w-full flex-col items-stretch justify-start gap-0 rounded-2xl border px-3 py-2.5 text-left font-normal whitespace-normal transition-colors",
                   isCurrent &&
-                    "border-primary/50 bg-primary/5 shadow-sm shadow-primary/10",
+                    "border-primary/50 bg-primary/5 shadow-sm shadow-primary/10 hover:bg-primary/10",
                   !isCurrent &&
                     isPast &&
                     "border-border/70 bg-background/70 hover:bg-muted/60",
@@ -46,7 +47,7 @@ export function StepRail({
                 <span className="mt-0.5 font-medium leading-snug">
                   {step.title}
                 </span>
-              </button>
+              </Button>
             </li>
           );
         })}

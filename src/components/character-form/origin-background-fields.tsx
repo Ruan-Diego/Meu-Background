@@ -5,56 +5,23 @@ import { useCallback, useState } from "react";
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
 
 import {
+  FieldError,
+  FieldGroup,
+  inputFieldClassName,
+  textareaFieldClassName,
+} from "@/components/character-form/form-field-parts";
+import { RhfCountrySelect } from "@/components/character-form/rhf-select-fields";
+import {
   ORIGIN_COUNTRY_OPTIONS,
   ORIGIN_REGION_SUGGESTIONS,
 } from "@/lib/character-form/origin-constants";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-const inputClassName = cn(
-  "flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-colors",
-  "placeholder:text-muted-foreground",
-  "focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-  "disabled:cursor-not-allowed disabled:opacity-50",
-  "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
-);
-
-const selectClassName = cn(inputClassName, "cursor-pointer");
-
-const textareaClassName = cn(
-  inputClassName,
-  "min-h-[88px] resize-y py-2"
-);
-
 const REGION_LIST_ID = "origin-region-suggestions";
-
-function FieldGroup({
-  id,
-  label,
-  children,
-}: {
-  id: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <label htmlFor={id} className="text-caption font-medium text-foreground">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function FieldError({ id, message }: { id: string; message?: string }) {
-  return (
-    <p id={id} role="alert" className="text-caption text-destructive">
-      {message ?? "Verifique este campo."}
-    </p>
-  );
-}
 
 export function OriginBackgroundFields() {
   const {
@@ -97,22 +64,16 @@ export function OriginBackgroundFields() {
         </h3>
         <div className="grid gap-6 sm:grid-cols-2">
           <FieldGroup id="birthCountry" label="País">
-            <select
+            <RhfCountrySelect
+              control={control}
+              name="birthCountry"
               id="birthCountry"
+              options={ORIGIN_COUNTRY_OPTIONS}
               aria-invalid={errors.birthCountry ? true : undefined}
               aria-describedby={
                 errors.birthCountry ? "birthCountry-error" : undefined
               }
-              className={selectClassName}
-              {...register("birthCountry")}
-            >
-              <option value="">Selecione…</option>
-              {ORIGIN_COUNTRY_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
+            />
             {errors.birthCountry ? (
               <FieldError
                 id="birthCountry-error"
@@ -122,7 +83,7 @@ export function OriginBackgroundFields() {
           </FieldGroup>
 
           <FieldGroup id="birthRegion" label="Região">
-            <input
+            <Input
               id="birthRegion"
               type="text"
               list={REGION_LIST_ID}
@@ -132,7 +93,7 @@ export function OriginBackgroundFields() {
               aria-describedby={
                 errors.birthRegion ? "birthRegion-error" : undefined
               }
-              className={inputClassName}
+              className={cn(inputFieldClassName)}
               {...register("birthRegion")}
             />
             <datalist id={REGION_LIST_ID}>
@@ -150,7 +111,7 @@ export function OriginBackgroundFields() {
 
           <div className="sm:col-span-2">
             <FieldGroup id="birthCity" label="Cidade">
-              <input
+              <Input
                 id="birthCity"
                 type="text"
                 autoComplete="off"
@@ -158,7 +119,7 @@ export function OriginBackgroundFields() {
                 aria-describedby={
                   errors.birthCity ? "birthCity-error" : undefined
                 }
-                className={inputClassName}
+                className={cn(inputFieldClassName)}
                 {...register("birthCity")}
               />
               {errors.birthCity ? (
@@ -236,7 +197,7 @@ export function OriginBackgroundFields() {
                       id={`relatives-${field.id}-kinship`}
                       label="Vínculo"
                     >
-                      <input
+                      <Input
                         id={`relatives-${field.id}-kinship`}
                         type="text"
                         autoComplete="off"
@@ -246,7 +207,7 @@ export function OriginBackgroundFields() {
                             ? `relatives-${field.id}-kinship-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`relatives.${index}.kinship`)}
                       />
                       {rowErrors?.kinship ? (
@@ -257,7 +218,7 @@ export function OriginBackgroundFields() {
                       ) : null}
                     </FieldGroup>
                     <FieldGroup id={`relatives-${field.id}-name`} label="Nome">
-                      <input
+                      <Input
                         id={`relatives-${field.id}-name`}
                         type="text"
                         autoComplete="off"
@@ -267,7 +228,7 @@ export function OriginBackgroundFields() {
                             ? `relatives-${field.id}-name-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`relatives.${index}.name`)}
                       />
                       {rowErrors?.name ? (
@@ -294,7 +255,7 @@ export function OriginBackgroundFields() {
                           id={`relatives-${field.id}-background`}
                           label="Background"
                         >
-                          <input
+                          <Input
                             id={`relatives-${field.id}-background`}
                             type="text"
                             autoComplete="off"
@@ -306,7 +267,7 @@ export function OriginBackgroundFields() {
                                 ? `relatives-${field.id}-background-error`
                                 : undefined
                             }
-                            className={inputClassName}
+                            className={cn(inputFieldClassName)}
                             {...register(`relatives.${index}.background`)}
                           />
                           {rowErrors?.background ? (
@@ -386,7 +347,7 @@ export function OriginBackgroundFields() {
                       id={`shapingEvents-${field.id}-eventName`}
                       label="Nome do evento"
                     >
-                      <input
+                      <Input
                         id={`shapingEvents-${field.id}-eventName`}
                         type="text"
                         autoComplete="off"
@@ -396,7 +357,7 @@ export function OriginBackgroundFields() {
                             ? `shapingEvents-${field.id}-eventName-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`shapingEvents.${index}.eventName`)}
                       />
                       {rowErrors?.eventName ? (
@@ -410,7 +371,7 @@ export function OriginBackgroundFields() {
                       id={`shapingEvents-${field.id}-myAge`}
                       label="Minha idade"
                     >
-                      <input
+                      <Input
                         id={`shapingEvents-${field.id}-myAge`}
                         type="text"
                         inputMode="text"
@@ -421,7 +382,7 @@ export function OriginBackgroundFields() {
                             ? `shapingEvents-${field.id}-myAge-error`
                             : undefined
                         }
-                        className={inputClassName}
+                        className={cn(inputFieldClassName)}
                         {...register(`shapingEvents.${index}.myAge`)}
                       />
                       {rowErrors?.myAge ? (
@@ -436,7 +397,7 @@ export function OriginBackgroundFields() {
                         id={`shapingEvents-${field.id}-description`}
                         label="Descrição"
                       >
-                        <textarea
+                        <Textarea
                           id={`shapingEvents-${field.id}-description`}
                           rows={4}
                           autoComplete="off"
@@ -448,7 +409,7 @@ export function OriginBackgroundFields() {
                               ? `shapingEvents-${field.id}-description-error`
                               : undefined
                           }
-                          className={textareaClassName}
+                          className={cn(textareaFieldClassName)}
                           {...register(`shapingEvents.${index}.description`)}
                         />
                         {rowErrors?.description ? (

@@ -2,43 +2,14 @@
 
 import { useFormContext } from "react-hook-form";
 
+import {
+  FieldError,
+  FieldGroup,
+  inputFieldClassName,
+} from "@/components/character-form/form-field-parts";
+import { Input } from "@/components/ui/input";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { cn } from "@/lib/utils";
-
-const inputClassName = cn(
-  "flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-colors",
-  "placeholder:text-muted-foreground",
-  "focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-  "disabled:cursor-not-allowed disabled:opacity-50",
-  "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
-);
-
-function FieldGroup({
-  id,
-  label,
-  children,
-}: {
-  id: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <label htmlFor={id} className="text-caption font-medium text-foreground">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function FieldError({ id, message }: { id: string; message?: string }) {
-  return (
-    <p id={id} role="alert" className="text-caption text-destructive">
-      {message ?? "Verifique este campo."}
-    </p>
-  );
-}
 
 export function BasicInfoFields() {
   const {
@@ -49,7 +20,7 @@ export function BasicInfoFields() {
   return (
     <div className="grid gap-6 sm:grid-cols-2">
       <FieldGroup id="characterName" label="Nome do personagem">
-        <input
+        <Input
           id="characterName"
           type="text"
           autoComplete="off"
@@ -57,7 +28,7 @@ export function BasicInfoFields() {
           aria-describedby={
             errors.characterName ? "characterName-error" : undefined
           }
-          className={inputClassName}
+          className={cn(inputFieldClassName)}
           {...register("characterName")}
         />
         {errors.characterName ? (
@@ -69,7 +40,7 @@ export function BasicInfoFields() {
       </FieldGroup>
 
       <FieldGroup id="playerName" label="Nome do jogador">
-        <input
+        <Input
           id="playerName"
           type="text"
           autoComplete="name"
@@ -77,7 +48,7 @@ export function BasicInfoFields() {
           aria-describedby={
             errors.playerName ? "playerName-error" : undefined
           }
-          className={inputClassName}
+          className={cn(inputFieldClassName)}
           {...register("playerName")}
         />
         {errors.playerName ? (
@@ -89,14 +60,14 @@ export function BasicInfoFields() {
       </FieldGroup>
 
       <FieldGroup id="age" label="Idade">
-        <input
+        <Input
           id="age"
           type="text"
           inputMode="text"
           autoComplete="off"
           aria-invalid={errors.age ? true : undefined}
           aria-describedby={errors.age ? "age-error" : undefined}
-          className={inputClassName}
+          className={cn(inputFieldClassName)}
           {...register("age")}
         />
         {errors.age ? (
@@ -105,13 +76,13 @@ export function BasicInfoFields() {
       </FieldGroup>
 
       <FieldGroup id="race" label="Raça">
-        <input
+        <Input
           id="race"
           type="text"
           autoComplete="off"
           aria-invalid={errors.race ? true : undefined}
           aria-describedby={errors.race ? "race-error" : undefined}
-          className={inputClassName}
+          className={cn(inputFieldClassName)}
           {...register("race")}
         />
         {errors.race ? (
@@ -120,7 +91,7 @@ export function BasicInfoFields() {
       </FieldGroup>
 
       <FieldGroup id="characterClass" label="Classe">
-        <input
+        <Input
           id="characterClass"
           type="text"
           autoComplete="off"
@@ -128,7 +99,7 @@ export function BasicInfoFields() {
           aria-describedby={
             errors.characterClass ? "characterClass-error" : undefined
           }
-          className={inputClassName}
+          className={cn(inputFieldClassName)}
           {...register("characterClass")}
         />
         {errors.characterClass ? (
@@ -140,7 +111,7 @@ export function BasicInfoFields() {
       </FieldGroup>
 
       <FieldGroup id="occupation" label="Ocupação atual">
-        <input
+        <Input
           id="occupation"
           type="text"
           autoComplete="off"
@@ -148,7 +119,7 @@ export function BasicInfoFields() {
           aria-describedby={
             errors.occupation ? "occupation-error" : undefined
           }
-          className={inputClassName}
+          className={cn(inputFieldClassName)}
           {...register("occupation")}
         />
         {errors.occupation ? (
