@@ -1,14 +1,21 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
-import { useFormContext, useFieldArray } from "react-hook-form";
+import { useCallback, useState } from "react";
+import {
+  useFormContext,
+  useFieldArray,
+  useWatch,
+} from "react-hook-form";
 
 import {
   FieldError,
   FieldGroup,
+  inputFieldClassName,
   textareaFieldClassName,
 } from "@/components/character-form/form-field-parts";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { cn } from "@/lib/utils";
@@ -30,6 +37,32 @@ export function GoalsMotivationsFields() {
     name: "lifeGoals",
   });
 
+  const shortTermWatched = useWatch({ control, name: "shortTermGoals" }) ?? [];
+  const lifeGoalsWatched = useWatch({ control, name: "lifeGoals" }) ?? [];
+
+  const [metaDescRevealedIds, setMetaDescRevealedIds] = useState(
+    () => new Set<string>()
+  );
+  const [lifeDescRevealedIds, setLifeDescRevealedIds] = useState(
+    () => new Set<string>()
+  );
+
+  const revealMetaDescription = useCallback((rowId: string) => {
+    setMetaDescRevealedIds((prev) => {
+      const next = new Set(prev);
+      next.add(rowId);
+      return next;
+    });
+  }, []);
+
+  const revealLifeDescription = useCallback((rowId: string) => {
+    setLifeDescRevealedIds((prev) => {
+      const next = new Set(prev);
+      next.add(rowId);
+      return next;
+    });
+  }, []);
+
   return (
     <div className="space-y-10">
       <section className="space-y-4" aria-labelledby="goals-metas-heading">
@@ -47,23 +80,29 @@ export function GoalsMotivationsFields() {
             className="w-fit"
             onClick={() =>
               shortTermArray.append({
+                meta: "",
                 description: "",
               })
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar descrição
+            Adicionar meta
           </Button>
         </div>
 
         {shortTermArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhuma meta adicionada. Use o botão acima para incluir uma descrição.
+            Nenhuma meta adicionada. Use o botão acima para incluir.
           </p>
         ) : (
           <ul className="space-y-4">
             {shortTermArray.fields.map((field, index) => {
               const rowErrors = errors.shortTermGoals?.[index];
+              const descStored = (
+                shortTermWatched[index]?.description ?? ""
+              ).trim();
+              const showDescription =
+                descStored !== "" || metaDescRevealedIds.has(field.id);
               return (
                 <li
                   key={field.id}
@@ -85,30 +124,78 @@ export function GoalsMotivationsFields() {
                       Remover
                     </Button>
                   </div>
-                  <FieldGroup
-                    id={`shortTermGoals-${field.id}-description`}
-                    label="Descrição"
-                  >
-                    <Textarea
-                      id={`shortTermGoals-${field.id}-description`}
-                      rows={4}
-                      autoComplete="off"
-                      aria-invalid={rowErrors?.description ? true : undefined}
-                      aria-describedby={
-                        rowErrors?.description
-                          ? `shortTermGoals-${field.id}-description-error`
-                          : undefined
-                      }
-                      className={cn(textareaFieldClassName)}
-                      {...register(`shortTermGoals.${index}.description`)}
-                    />
-                    {rowErrors?.description ? (
-                      <FieldError
-                        id={`shortTermGoals-${field.id}-description-error`}
-                        message={rowErrors.description.message}
+                  <div className="space-y-4">
+                    <FieldGroup
+                      id={`shortTermGoals-${field.id}-meta`}
+                      label="Meta"
+                    >
+                      <Input
+                        id={`shortTermGoals-${field.id}-meta`}
+                        type="text"
+                        autoComplete="off"
+                        aria-invalid={rowErrors?.meta ? true : undefined}
+                        aria-describedby={
+                          rowErrors?.meta
+                            ? `shortTermGoals-${field.id}-meta-error`
+                            : undefined
+                        }
+                        className={cn(inputFieldClassName)}
+                        {...register(`shortTermGoals.${index}.meta`)}
                       />
-                    ) : null}
-                  </FieldGroup>
+                      {rowErrors?.meta ? (
+                        <FieldError
+                          id={`shortTermGoals-${field.id}-meta-error`}
+                          message={rowErrors.meta.message}
+                        />
+                      ) : null}
+                    </FieldGroup>
+
+                    <div className="space-y-2">
+                      {!showDescription ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="w-fit"
+                          onClick={() => revealMetaDescription(field.id)}
+                        >
+                          Adicionar descrição
+                        </Button>
+                      ) : null}
+                      <div
+                        className={showDescription ? "space-y-2" : "hidden"}
+                      >
+                        <FieldGroup
+                          id={`shortTermGoals-${field.id}-description`}
+                          label="Descrição"
+                        >
+                          <Textarea
+                            id={`shortTermGoals-${field.id}-description`}
+                            rows={4}
+                            autoComplete="off"
+                            aria-invalid={
+                              rowErrors?.description ? true : undefined
+                            }
+                            aria-describedby={
+                              rowErrors?.description
+                                ? `shortTermGoals-${field.id}-description-error`
+                                : undefined
+                            }
+                            className={cn(textareaFieldClassName)}
+                            {...register(
+                              `shortTermGoals.${index}.description`
+                            )}
+                          />
+                          {rowErrors?.description ? (
+                            <FieldError
+                              id={`shortTermGoals-${field.id}-description-error`}
+                              message={rowErrors.description.message}
+                            />
+                          ) : null}
+                        </FieldGroup>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               );
             })}
@@ -131,24 +218,29 @@ export function GoalsMotivationsFields() {
             className="w-fit"
             onClick={() =>
               lifeGoalsArray.append({
+                objective: "",
                 description: "",
               })
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar descrição
+            Adicionar objetivo
           </Button>
         </div>
 
         {lifeGoalsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum objetivo de vida adicionado. Use o botão acima para incluir uma
-            descrição.
+            Nenhum objetivo adicionado. Use o botão acima para incluir.
           </p>
         ) : (
           <ul className="space-y-4">
             {lifeGoalsArray.fields.map((field, index) => {
               const rowErrors = errors.lifeGoals?.[index];
+              const descStored = (
+                lifeGoalsWatched[index]?.description ?? ""
+              ).trim();
+              const showDescription =
+                descStored !== "" || lifeDescRevealedIds.has(field.id);
               return (
                 <li
                   key={field.id}
@@ -170,30 +262,78 @@ export function GoalsMotivationsFields() {
                       Remover
                     </Button>
                   </div>
-                  <FieldGroup
-                    id={`lifeGoals-${field.id}-description`}
-                    label="Descrição"
-                  >
-                    <Textarea
-                      id={`lifeGoals-${field.id}-description`}
-                      rows={4}
-                      autoComplete="off"
-                      aria-invalid={rowErrors?.description ? true : undefined}
-                      aria-describedby={
-                        rowErrors?.description
-                          ? `lifeGoals-${field.id}-description-error`
-                          : undefined
-                      }
-                      className={cn(textareaFieldClassName)}
-                      {...register(`lifeGoals.${index}.description`)}
-                    />
-                    {rowErrors?.description ? (
-                      <FieldError
-                        id={`lifeGoals-${field.id}-description-error`}
-                        message={rowErrors.description.message}
+                  <div className="space-y-4">
+                    <FieldGroup
+                      id={`lifeGoals-${field.id}-objective`}
+                      label="Objetivo"
+                    >
+                      <Input
+                        id={`lifeGoals-${field.id}-objective`}
+                        type="text"
+                        autoComplete="off"
+                        aria-invalid={
+                          rowErrors?.objective ? true : undefined
+                        }
+                        aria-describedby={
+                          rowErrors?.objective
+                            ? `lifeGoals-${field.id}-objective-error`
+                            : undefined
+                        }
+                        className={cn(inputFieldClassName)}
+                        {...register(`lifeGoals.${index}.objective`)}
                       />
-                    ) : null}
-                  </FieldGroup>
+                      {rowErrors?.objective ? (
+                        <FieldError
+                          id={`lifeGoals-${field.id}-objective-error`}
+                          message={rowErrors.objective.message}
+                        />
+                      ) : null}
+                    </FieldGroup>
+
+                    <div className="space-y-2">
+                      {!showDescription ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="w-fit"
+                          onClick={() => revealLifeDescription(field.id)}
+                        >
+                          Adicionar descrição
+                        </Button>
+                      ) : null}
+                      <div
+                        className={showDescription ? "space-y-2" : "hidden"}
+                      >
+                        <FieldGroup
+                          id={`lifeGoals-${field.id}-description`}
+                          label="Descrição"
+                        >
+                          <Textarea
+                            id={`lifeGoals-${field.id}-description`}
+                            rows={4}
+                            autoComplete="off"
+                            aria-invalid={
+                              rowErrors?.description ? true : undefined
+                            }
+                            aria-describedby={
+                              rowErrors?.description
+                                ? `lifeGoals-${field.id}-description-error`
+                                : undefined
+                            }
+                            className={cn(textareaFieldClassName)}
+                            {...register(`lifeGoals.${index}.description`)}
+                          />
+                          {rowErrors?.description ? (
+                            <FieldError
+                              id={`lifeGoals-${field.id}-description-error`}
+                              message={rowErrors.description.message}
+                            />
+                          ) : null}
+                        </FieldGroup>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               );
             })}

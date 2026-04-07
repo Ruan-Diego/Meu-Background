@@ -34,8 +34,15 @@ const personalityFearRowSchema = z.object({
   background: trimmed,
 });
 
-/** One “descrição” block per item (metas / objetivo de vida). */
-const goalDescriptionRowSchema = z.object({
+/** Metas: linha “Meta” + descrição opcional (revelada no UI). */
+const shortTermGoalRowSchema = z.object({
+  meta: trimmed,
+  description: trimmed,
+});
+
+/** Objetivo de vida: linha “Objetivo” + descrição opcional. */
+const lifeGoalRowSchema = z.object({
+  objective: trimmed,
   description: trimmed,
 });
 
@@ -61,8 +68,8 @@ export const characterFormSchema = z.object({
   fears: z.array(personalityFearRowSchema),
   habits: z.array(personalitySingleLineRowSchema),
   quirks: z.array(personalitySingleLineRowSchema),
-  shortTermGoals: z.array(goalDescriptionRowSchema),
-  lifeGoals: z.array(goalDescriptionRowSchema),
+  shortTermGoals: z.array(shortTermGoalRowSchema),
+  lifeGoals: z.array(lifeGoalRowSchema),
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -95,6 +102,37 @@ const LEGACY_GOALS_KEYS = [
   "moralDilemmas",
 ] as const;
 
+function coerceShortTermGoalRows(
+  raw: unknown
+): CharacterFormValues["shortTermGoals"] {
+  if (!Array.isArray(raw)) return defaultCharacterFormValues.shortTermGoals;
+  return raw.map((row) => {
+    if (row && typeof row === "object") {
+      const r = row as Record<string, unknown>;
+      const description =
+        typeof r.description === "string" ? r.description : "";
+      const meta = typeof r.meta === "string" ? r.meta : "";
+      return { meta, description };
+    }
+    return { meta: "", description: "" };
+  });
+}
+
+function coerceLifeGoalRows(raw: unknown): CharacterFormValues["lifeGoals"] {
+  if (!Array.isArray(raw)) return defaultCharacterFormValues.lifeGoals;
+  return raw.map((row) => {
+    if (row && typeof row === "object") {
+      const r = row as Record<string, unknown>;
+      const description =
+        typeof r.description === "string" ? r.description : "";
+      const objective =
+        typeof r.objective === "string" ? r.objective : "";
+      return { objective, description };
+    }
+    return { objective: "", description: "" };
+  });
+}
+
 /**
  * Merge persisted draft into defaults; drops removed fields and coerces
  * pre–M1-F07 string shapes to empty arrays. Output matches `characterFormSchema`.
@@ -106,12 +144,8 @@ export function mergeInitialFormValues(
   for (const k of LEGACY_GOALS_KEYS) {
     delete d[k];
   }
-  const shortTermGoals = Array.isArray(d.shortTermGoals)
-    ? d.shortTermGoals
-    : defaultCharacterFormValues.shortTermGoals;
-  const lifeGoals = Array.isArray(d.lifeGoals)
-    ? d.lifeGoals
-    : defaultCharacterFormValues.lifeGoals;
+  const shortTermGoals = coerceShortTermGoalRows(d.shortTermGoals);
+  const lifeGoals = coerceLifeGoalRows(d.lifeGoals);
   const merged = {
     ...defaultCharacterFormValues,
     ...d,
@@ -238,11 +272,17 @@ export function getTriggerPathsForStepIndex(
     const paths: string[] = [];
     const metas = values.shortTermGoals ?? [];
     metas.forEach((_, i) => {
-      paths.push(`shortTermGoals.${i}.description`);
+      paths.push(
+        `shortTermGoals.${i}.meta`,
+        `shortTermGoals.${i}.description`
+      );
     });
     const life = values.lifeGoals ?? [];
     life.forEach((_, i) => {
-      paths.push(`lifeGoals.${i}.description`);
+      paths.push(
+        `lifeGoals.${i}.objective`,
+        `lifeGoals.${i}.description`
+      );
     });
     return paths;
   }
