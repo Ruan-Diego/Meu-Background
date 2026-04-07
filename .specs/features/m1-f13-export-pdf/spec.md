@@ -121,13 +121,13 @@ Milestone 1’s definition of done requires three downloadable formats: Markdown
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PDF-01 | P1: PDF download on review step | Execute | Pending |
-| PDF-02 | P1: Structural parity with `CharacterDocument` | Execute | Pending |
-| PDF-03 | P1: Next.js + React-PDF integration | Execute | Pending |
-| PDF-04 | P2: Typography and pagination | Execute | Pending |
-| PDF-05 | P2: Portuguese / Unicode rendering | Execute | Pending |
+| PDF-01 | P1: PDF download on review step | Design | [design.md](./design.md) · [tasks.md](./tasks.md) T1, T4, T5, T6 |
+| PDF-02 | P1: Structural parity with `CharacterDocument` | Design | [design.md](./design.md) · [tasks.md](./tasks.md) T2, T6 |
+| PDF-03 | P1: Next.js + React-PDF integration | Design | [design.md](./design.md) · [tasks.md](./tasks.md) T3, T4, T5, T6 |
+| PDF-04 | P2: Typography and pagination | Design | [design.md](./design.md) · [tasks.md](./tasks.md) T2, T6 |
+| PDF-05 | P2: Portuguese / Unicode rendering | Design | [design.md](./design.md) · [tasks.md](./tasks.md) T2, T6 |
 
-**Coverage:** 5 total, 0 mapped to tasks, 5 unmapped ⚠️ (add `design.md` / `tasks.md` when breaking down implementation)
+**Coverage:** 5 total — mapped in [tasks.md](./tasks.md); execute tasks T1–T6 then set Phase → Execute / Done per requirement.
 
 ---
 
