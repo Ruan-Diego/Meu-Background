@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { ORIGIN_COUNTRY_OPTIONS } from "@/lib/character-form/origin-constants";
+import { PERSONALITY_FEAR_LEVELS } from "@/lib/character-form/personality-constants";
 import { FORM_STEPS, type FormStepId } from "@/lib/character-form/steps";
 
 const trimmed = z.string().trim();
@@ -22,6 +23,15 @@ const shapingEventRowSchema = z.object({
   description: trimmed,
 });
 
+const personalitySingleLineRowSchema = z.object({
+  text: trimmed,
+});
+
+const personalityFearRowSchema = z.object({
+  description: trimmed,
+  level: z.enum(PERSONALITY_FEAR_LEVELS),
+});
+
 /**
  * Single source of truth for the character form. Further steps add fields
  * in M1-F05+ and register keys under the matching step in `STEP_FIELD_PATHS`.
@@ -38,12 +48,13 @@ export const characterFormSchema = z.object({
   relatives: z.array(relativeRowSchema),
   shapingEvents: z.array(shapingEventRowSchema),
   occupation: trimmed,
-  temperament: trimmed,
-  values: trimmed,
-  flaws: trimmed,
-  fears: trimmed,
-  habits: trimmed,
-  quirks: trimmed,
+  temperamentTags: z.array(z.string()),
+  temperamentNotes: trimmed,
+  valueTags: z.array(z.string()),
+  flaws: z.array(personalitySingleLineRowSchema),
+  fears: z.array(personalityFearRowSchema),
+  habits: z.array(personalitySingleLineRowSchema),
+  quirks: z.array(personalitySingleLineRowSchema),
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -60,12 +71,13 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   relatives: [],
   shapingEvents: [],
   occupation: "",
-  temperament: "",
-  values: "",
-  flaws: "",
-  fears: "",
-  habits: "",
-  quirks: "",
+  temperamentTags: [],
+  temperamentNotes: "",
+  valueTags: [],
+  flaws: [],
+  fears: [],
+  habits: [],
+  quirks: [],
 };
 
 const basicStepSchema = characterFormSchema.pick({
@@ -86,8 +98,9 @@ const originStepSchema = characterFormSchema.pick({
 });
 
 const personalityStepSchema = characterFormSchema.pick({
-  temperament: true,
-  values: true,
+  temperamentTags: true,
+  temperamentNotes: true,
+  valueTags: true,
   flaws: true,
   fears: true,
   habits: true,
@@ -116,14 +129,7 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "occupation",
   ],
   origin: [],
-  personality: [
-    "temperament",
-    "values",
-    "flaws",
-    "fears",
-    "habits",
-    "quirks",
-  ],
+  personality: [],
   relationships: [],
   goals: [],
   appearance: [],
@@ -159,6 +165,25 @@ export function getTriggerPathsForStepIndex(
     return paths;
   }
 
+  if (step.id === "personality") {
+    const paths: string[] = [
+      "temperamentTags",
+      "temperamentNotes",
+      "valueTags",
+    ];
+    const flaws = values.flaws ?? [];
+    flaws.forEach((_, i) => paths.push(`flaws.${i}.text`));
+    const fears = values.fears ?? [];
+    fears.forEach((_, i) => {
+      paths.push(`fears.${i}.description`, `fears.${i}.level`);
+    });
+    const habits = values.habits ?? [];
+    habits.forEach((_, i) => paths.push(`habits.${i}.text`));
+    const quirks = values.quirks ?? [];
+    quirks.forEach((_, i) => paths.push(`quirks.${i}.text`));
+    return paths;
+  }
+
   return [...STEP_FIELD_PATHS[step.id]];
 }
 
@@ -179,6 +204,24 @@ export function validateStepValues(
       birthCity: values.birthCity,
       relatives: values.relatives ?? [],
       shapingEvents: values.shapingEvents ?? [],
+    });
+    if (parsed.success) return { ok: true };
+    const first = parsed.error.issues[0];
+    return {
+      ok: false,
+      message: first?.message ?? "Verifique os campos desta etapa.",
+    };
+  }
+
+  if (stepId === "personality") {
+    const parsed = schema.safeParse({
+      temperamentTags: values.temperamentTags ?? [],
+      temperamentNotes: values.temperamentNotes ?? "",
+      valueTags: values.valueTags ?? [],
+      flaws: values.flaws ?? [],
+      fears: values.fears ?? [],
+      habits: values.habits ?? [],
+      quirks: values.quirks ?? [],
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
