@@ -56,6 +56,10 @@ export const characterFormSchema = z.object({
   fears: z.array(personalityFearRowSchema),
   habits: z.array(personalitySingleLineRowSchema),
   quirks: z.array(personalitySingleLineRowSchema),
+  shortTermGoals: trimmed,
+  longTermAmbitions: trimmed,
+  secrets: trimmed,
+  moralDilemmas: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -78,6 +82,10 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   fears: [],
   habits: [],
   quirks: [],
+  shortTermGoals: "",
+  longTermAmbitions: "",
+  secrets: "",
+  moralDilemmas: "",
 };
 
 const basicStepSchema = characterFormSchema.pick({
@@ -106,12 +114,19 @@ const personalityStepSchema = characterFormSchema.pick({
   quirks: true,
 });
 
+const goalsStepSchema = characterFormSchema.pick({
+  shortTermGoals: true,
+  longTermAmbitions: true,
+  secrets: true,
+  moralDilemmas: true,
+});
+
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   basic: basicStepSchema,
   origin: originStepSchema,
   personality: personalityStepSchema,
-  goals: z.object({}),
+  goals: goalsStepSchema,
   appearance: z.object({}),
   freeNotes: z.object({}),
 };
@@ -128,7 +143,12 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   ],
   origin: [],
   personality: [],
-  goals: [],
+  goals: [
+    "shortTermGoals",
+    "longTermAmbitions",
+    "secrets",
+    "moralDilemmas",
+  ],
   appearance: [],
   freeNotes: [],
 };

@@ -7,6 +7,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { OriginBackgroundFields } from "@/components/character-form/origin-background-fields";
+import { GoalsMotivationsFields } from "@/components/character-form/goals-motivations-fields";
 import { PersonalityTraitsFields } from "@/components/character-form/personality-traits-fields";
 import { FormProgress } from "@/components/character-form/form-progress";
 import { StepRail } from "@/components/character-form/step-rail";
@@ -186,9 +187,11 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                   <OriginBackgroundFields />
                 ) : step?.id === "personality" ? (
                   <PersonalityTraitsFields />
+                ) : step?.id === "goals" ? (
+                  <GoalsMotivationsFields />
                 ) : (
                   <p className="text-body text-muted-foreground">
-                    Os campos desta etapa entram nas tarefas M1-F07 em diante.
+                    Os campos desta etapa entram nas tarefas M1-F08 em diante.
                     Use a navegação para percorrer o fluxo, a barra de progresso
                     e os atalhos de teclado.
                   </p>
