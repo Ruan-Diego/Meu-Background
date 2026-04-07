@@ -8,6 +8,12 @@
 
 **Guidance (core product value):** The app’s job is not only to collect fields, but to **help the player think and write** a coherent story. The step-by-step flow is the first layer of that guidance. **Richer in-form help** (examples, prompts, expandable tips, section intros) is intentionally light in v1 but is **one of the highest-priority directions** after the MVP — all editorial, human-written content in the UI, **not** automated or AI-generated suggestions.
 
+## Product requirements (facilitating the background)
+
+- **Reduce blank-page anxiety:** The experience should not feel like “many empty text areas and think alone”; where the MVP is still open-ended, we document the gap and schedule richer structure and coaching (see roadmap Milestone 3, and **M3-F07** for the Appearance step).
+- **Consistent support across steps:** Interactive patterns that already help elsewhere (chips, addable rows, optional revealed detail) should extend to narrative-heavy free-text steps over time — not only labels and placeholders.
+- **Honest MVP boundaries:** Steps that are temporarily textarea-heavy carry an in-app note so expectations stay aligned with the long-term goal: **facilitate creation**, not only store text.
+
 ## Goals
 
 - **Complete backstories:** Guide players through all essential narrative elements so no section is left blank or underdeveloped (structure and flow in v1; deeper coaching in later milestones).

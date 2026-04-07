@@ -14,7 +14,7 @@
 | M1-F05 | Step: Origin & Background  | Birthplace, family & relationship ties, social class, formative events, occupation                             | M    |
 | M1-F06 | Step: Personality & Traits | Temperament, values, flaws, fears, habits, quirks                                                              | M    |
 | M1-F07 | Step: Goals & Motivations  | Short-term goals, long-term ambitions, secrets, moral dilemmas                                                 | M    |
-| M1-F08 | Step: Appearance           | Physical description, distinctive marks, clothing style, mannerisms                                            | S    |
+| M1-F08 | Step: Appearance           | Beyond visual reference (e.g. Hero Forge): height, hidden marks, presence, voice, mannerisms — MVP uses open fields; richer guidance in **M3-F07** | S    |
 | M1-F09 | Step: Free Notes           | Open addable fieldgroup with Tópico (text input) and Descrição (text area) for anything that doesn't fit above | S    |
 | M1-F10 | Document preview           | Live rendered preview of the full character document                                                           | M    |
 | M1-F11 | Export: Markdown (.md)     | Generate and download a well-formatted .md file                                                                | M    |
@@ -58,6 +58,7 @@
 | M3-F04 | Examples & writing prompts       | Optional example snippets and question prompts per field (static, hand-authored)                     | L    |
 | M3-F05 | Completeness & quality checklist | Pre-export checklist: sections empty, tone, consistency nudges (rule-based, not generative)          | M    |
 | M3-F06 | Optional GM tips block           | Short GM-facing notes in export or sidebar (curated copy)                                            | S    |
+| M3-F07 | Appearance step: facilitation UX | Replace textarea-heavy flow with prompts, optional examples, expandable tips, progressive disclosure — same product goal as other steps: help the player think, not only type | M    |
 
 
 **Definition of Done for M3:** A new player can complete a backstory with materially more support than v1 — without any automated text generation.

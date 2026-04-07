@@ -48,7 +48,7 @@ export const FORM_STEPS: readonly FormStepMeta[] = [
   {
     id: "appearance",
     indexLabel: 5,
-    title: "Aparência além da miniatura",
+    title: "Aparência e Comportamento",
     description:
       "O que a referência visual não conta: altura, marcas escondidas, impressão, voz e hábitos corporais.",
   },

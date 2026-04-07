@@ -39,12 +39,32 @@ export function AppearanceFields() {
         </p>
       </div>
 
+      <div
+        className="rounded-lg border border-amber-500/35 bg-amber-500/10 p-4 text-body text-muted-foreground dark:border-amber-400/30 dark:bg-amber-400/10"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="font-medium text-foreground">Sobre esta etapa (MVP)</p>
+        <p className="mt-2">
+          Por enquanto ela é só caixas de texto: dá trabalho e você precisa
+          pensar sozinho em cada bloco. Isso não é o nível de apoio que o app
+          pretende ter — a ideia é{" "}
+          <strong className="font-medium text-foreground">
+            facilitar a criação do background
+          </strong>{" "}
+          com perguntas, exemplos opcionais, dicas e talvez campos menores ou
+          revelação progressiva, como nas outras etapas. Melhorias estão
+          planejadas nas próximas fases do produto (polish e orientação na
+          narrativa).
+        </p>
+      </div>
+
       <section className="space-y-4" aria-labelledby="appearance-body-heading">
         <h3
           id="appearance-body-heading"
           className="text-sm font-semibold text-foreground"
         >
-          Corpo e proporção
+          Corpo
         </h3>
         <FieldGroup
           id="heightDescription"
@@ -58,15 +78,7 @@ export function AppearanceFields() {
             rows={3}
           />
         </FieldGroup>
-      </section>
 
-      <section className="space-y-4" aria-labelledby="appearance-hidden-heading">
-        <h3
-          id="appearance-hidden-heading"
-          className="text-sm font-semibold text-foreground"
-        >
-          O que fica escondido
-        </h3>
         <FieldGroup
           id="hiddenMarksAndScars"
           label="Cicatrizes, tatuagens ou marcas sob roupa / armadura"
@@ -90,13 +102,13 @@ export function AppearanceFields() {
         </h3>
         <FieldGroup
           id="firstImpression"
-          label="Primeira impressão (o que se sente ao ver ou cruzar com a pessoa)"
+          label="Primeiras impressões"
         >
           <Textarea
             id="firstImpression"
             {...register("firstImpression")}
             className={cn(textareaFieldClassName)}
-            placeholder="Ex.: ar de cansaço mesmo calmo; parece sempre avaliando a saída; calor humano que desarma…"
+            placeholder="Ex.: ar de cansaço mesmo calmo; parece sempre avaliando a saída; calor humano que desarma; aura que desperta desconfiança…"
             rows={3}
           />
         </FieldGroup>
@@ -113,27 +125,6 @@ export function AppearanceFields() {
           />
         </FieldGroup>
         <FieldGroup
-          id="characteristicScent"
-          label="Cheiro ou aroma característico"
-        >
-          <Textarea
-            id="characteristicScent"
-            {...register("characteristicScent")}
-            className={cn(textareaFieldClassName)}
-            placeholder="Ex.: ferro e couro; ervas medicinais; tabaco; chuva na capa…"
-            rows={2}
-          />
-        </FieldGroup>
-      </section>
-
-      <section className="space-y-4" aria-labelledby="appearance-movement-heading">
-        <h3
-          id="appearance-movement-heading"
-          className="text-sm font-semibold text-foreground"
-        >
-          Movimento e hábitos
-        </h3>
-        <FieldGroup
           id="movementAndMannerisms"
           label="Como se move, postura, tiques ou gestos habituais"
         >
@@ -142,27 +133,6 @@ export function AppearanceFields() {
             {...register("movementAndMannerisms")}
             className={cn(textareaFieldClassName)}
             placeholder="Ex.: manca leve; passos silenciosos; costas muito eretas; roça o anel quando pensa; evita olhar nos olhos…"
-            rows={3}
-          />
-        </FieldGroup>
-      </section>
-
-      <section className="space-y-4" aria-labelledby="appearance-extra-heading">
-        <h3
-          id="appearance-extra-heading"
-          className="text-sm font-semibold text-foreground"
-        >
-          Outros detalhes
-        </h3>
-        <FieldGroup
-          id="appearanceOtherNotes"
-          label="Qualquer outro detalhe físico ou sensorial que a miniatura não mostre"
-        >
-          <Textarea
-            id="appearanceOtherNotes"
-            {...register("appearanceOtherNotes")}
-            className={cn(textareaFieldClassName)}
-            placeholder="Ex.: mãos calejadas de forja; parece mais velho do que a idade na ficha; temperatura da pele; reação ao toque…"
             rows={3}
           />
         </FieldGroup>

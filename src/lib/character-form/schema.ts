@@ -75,9 +75,7 @@ export const characterFormSchema = z.object({
   hiddenMarksAndScars: trimmed,
   firstImpression: trimmed,
   voiceAndSpeech: trimmed,
-  characteristicScent: trimmed,
   movementAndMannerisms: trimmed,
-  appearanceOtherNotes: trimmed,
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -106,9 +104,7 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   hiddenMarksAndScars: "",
   firstImpression: "",
   voiceAndSpeech: "",
-  characteristicScent: "",
   movementAndMannerisms: "",
-  appearanceOtherNotes: "",
 };
 
 const LEGACY_GOALS_KEYS = [
@@ -207,9 +203,7 @@ const appearanceStepSchema = characterFormSchema.pick({
   hiddenMarksAndScars: true,
   firstImpression: true,
   voiceAndSpeech: true,
-  characteristicScent: true,
   movementAndMannerisms: true,
-  appearanceOtherNotes: true,
 });
 
 /** Zod schema slice validated before leaving each step (extend per milestone). */
@@ -240,9 +234,7 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "hiddenMarksAndScars",
     "firstImpression",
     "voiceAndSpeech",
-    "characteristicScent",
     "movementAndMannerisms",
-    "appearanceOtherNotes",
   ],
   freeNotes: [],
 };
@@ -385,9 +377,7 @@ export function validateStepValues(
       hiddenMarksAndScars: values.hiddenMarksAndScars ?? "",
       firstImpression: values.firstImpression ?? "",
       voiceAndSpeech: values.voiceAndSpeech ?? "",
-      characteristicScent: values.characteristicScent ?? "",
       movementAndMannerisms: values.movementAndMannerisms ?? "",
-      appearanceOtherNotes: values.appearanceOtherNotes ?? "",
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];

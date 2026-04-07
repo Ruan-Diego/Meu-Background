@@ -6,6 +6,7 @@
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-04-07 | M1-F08 (Appearance / comportamento além da miniatura) ships as open text areas + Hero Forge link; UX debt is explicit in UI and specs | MVP scope limits coaching; the product requirement is to *facilitate* writing — this step is flagged for M3-style prompts, examples, and structure (see **M3-F07** in ROADMAP) |
 | 2026-04-07 | No standalone “Step: Relationships” in the wizard or roadmap; former M1-F08–F15 renumbered to M1-F07–F14 | Family and relationship ties live in step 2 (Origin & Background) via `relatives[]`; the old empty Relationships step duplicated that intent |
 | 2026-04-07 | Theme switching uses `next-themes` with class-based dark mode | Keeps App Router theming simple, avoids custom hydration work, and matches the token strategy in `globals.css` |
 | 2026-04-06 | Next.js 15 with static export | No backend needed; deploy to any static host; React 19 features available |
@@ -23,6 +24,10 @@ _None currently._
 ## Lessons Learned
 
 _None yet — project just initialized._
+
+## Planned improvements (tracked)
+
+- **Appearance step (M1-F08):** Evolve from textarea-only toward question prompts, optional static examples, expandable “how to fill” copy, progressive disclosure, and/or smaller structured fields — aligned with Milestone 3 narrative guidance. Microcopy and motion polish may appear in M2 where they do not duplicate M3 coaching scope.
 
 ## Deferred Ideas
 
