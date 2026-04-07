@@ -46,6 +46,12 @@ const lifeGoalRowSchema = z.object({
   description: trimmed,
 });
 
+/** Notas livres: rótulo curto + corpo (M1-F09). */
+const freeNoteRowSchema = z.object({
+  topic: trimmed,
+  description: trimmed,
+});
+
 /**
  * Single source of truth for the character form. Further steps add fields
  * in M1-F05+ and register keys under the matching step in `STEP_FIELD_PATHS`.
@@ -76,6 +82,7 @@ export const characterFormSchema = z.object({
   firstImpression: trimmed,
   voiceAndSpeech: trimmed,
   movementAndMannerisms: trimmed,
+  freeNotes: z.array(freeNoteRowSchema),
 });
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
@@ -105,6 +112,7 @@ export const defaultCharacterFormValues: CharacterFormValues = {
   firstImpression: "",
   voiceAndSpeech: "",
   movementAndMannerisms: "",
+  freeNotes: [],
 };
 
 const LEGACY_GOALS_KEYS = [
@@ -144,6 +152,21 @@ function coerceLifeGoalRows(raw: unknown): CharacterFormValues["lifeGoals"] {
   });
 }
 
+function coerceFreeNoteRows(raw: unknown): CharacterFormValues["freeNotes"] {
+  if (!Array.isArray(raw)) return defaultCharacterFormValues.freeNotes;
+  return raw.map((row) => {
+    if (row && typeof row === "object") {
+      const r = row as Record<string, unknown>;
+      return {
+        topic: typeof r.topic === "string" ? r.topic : "",
+        description:
+          typeof r.description === "string" ? r.description : "",
+      };
+    }
+    return { topic: "", description: "" };
+  });
+}
+
 /**
  * Merge persisted draft into defaults; drops removed fields and coerces
  * pre–M1-F07 string shapes to empty arrays. Output matches `characterFormSchema`.
@@ -157,11 +180,13 @@ export function mergeInitialFormValues(
   }
   const shortTermGoals = coerceShortTermGoalRows(d.shortTermGoals);
   const lifeGoals = coerceLifeGoalRows(d.lifeGoals);
+  const freeNotes = coerceFreeNoteRows(d.freeNotes);
   const merged = {
     ...defaultCharacterFormValues,
     ...d,
     shortTermGoals,
     lifeGoals,
+    freeNotes,
   };
   const parsed = characterFormSchema.safeParse(merged);
   return parsed.success ? parsed.data : defaultCharacterFormValues;
@@ -206,6 +231,10 @@ const appearanceStepSchema = characterFormSchema.pick({
   movementAndMannerisms: true,
 });
 
+const freeNotesStepSchema = characterFormSchema.pick({
+  freeNotes: true,
+});
+
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   basic: basicStepSchema,
@@ -213,7 +242,7 @@ export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   personality: personalityStepSchema,
   goals: goalsStepSchema,
   appearance: appearanceStepSchema,
-  freeNotes: z.object({}),
+  freeNotes: freeNotesStepSchema,
 };
 
 /** RHF field names belonging to each step — used with `trigger()` before next. */
@@ -312,6 +341,15 @@ export function getTriggerPathsForStepIndex(
     return paths;
   }
 
+  if (step.id === "freeNotes") {
+    const paths: string[] = [];
+    const notes = values.freeNotes ?? [];
+    notes.forEach((_, i) => {
+      paths.push(`freeNotes.${i}.topic`, `freeNotes.${i}.description`);
+    });
+    return paths;
+  }
+
   return [...STEP_FIELD_PATHS[step.id]];
 }
 
@@ -378,6 +416,18 @@ export function validateStepValues(
       firstImpression: values.firstImpression ?? "",
       voiceAndSpeech: values.voiceAndSpeech ?? "",
       movementAndMannerisms: values.movementAndMannerisms ?? "",
+    });
+    if (parsed.success) return { ok: true };
+    const first = parsed.error.issues[0];
+    return {
+      ok: false,
+      message: first?.message ?? "Verifique os campos desta etapa.",
+    };
+  }
+
+  if (stepId === "freeNotes") {
+    const parsed = schema.safeParse({
+      freeNotes: values.freeNotes ?? [],
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];

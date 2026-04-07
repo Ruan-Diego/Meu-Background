@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { OriginBackgroundFields } from "@/components/character-form/origin-background-fields";
 import { AppearanceFields } from "@/components/character-form/appearance-fields";
+import { FreeNotesFields } from "@/components/character-form/free-notes-fields";
 import { GoalsMotivationsFields } from "@/components/character-form/goals-motivations-fields";
 import { PersonalityTraitsFields } from "@/components/character-form/personality-traits-fields";
 import { FormProgress } from "@/components/character-form/form-progress";
@@ -191,11 +192,11 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                   <GoalsMotivationsFields />
                 ) : step?.id === "appearance" ? (
                   <AppearanceFields />
+                ) : step?.id === "freeNotes" ? (
+                  <FreeNotesFields />
                 ) : (
                   <p className="text-body text-muted-foreground">
-                    Os campos desta etapa entram nas tarefas M1-F09 em diante.
-                    Use a navegação para percorrer o fluxo, a barra de progresso
-                    e os atalhos de teclado.
+                    Esta etapa ainda não tem campos definidos.
                   </p>
                 )}
 
