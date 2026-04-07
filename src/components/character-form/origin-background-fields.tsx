@@ -255,10 +255,10 @@ export function OriginBackgroundFields() {
                           id={`relatives-${field.id}-background`}
                           label="Background"
                         >
-                          <Input
+                          <Textarea
                             id={`relatives-${field.id}-background`}
-                            type="text"
                             autoComplete="off"
+                            rows={3}
                             aria-invalid={
                               rowErrors?.background ? true : undefined
                             }
@@ -267,7 +267,7 @@ export function OriginBackgroundFields() {
                                 ? `relatives-${field.id}-background-error`
                                 : undefined
                             }
-                            className={cn(inputFieldClassName)}
+                            className={cn(textareaFieldClassName)}
                             {...register(`relatives.${index}.background`)}
                           />
                           {rowErrors?.background ? (

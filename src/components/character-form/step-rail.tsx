@@ -29,7 +29,7 @@ export function StepRail({
                 variant="ghost"
                 onClick={() => onStepSelect(index)}
                 className={cn(
-                  "h-auto min-h-0 w-full flex-col items-stretch justify-start gap-0 rounded-2xl border px-3 py-2.5 text-left font-normal whitespace-normal transition-colors",
+                  "h-auto min-h-0 w-full flex-col items-stretch justify-start gap-0 rounded-2xl border py-2.5 pl-5 pr-3 text-left font-normal whitespace-normal transition-colors",
                   isCurrent &&
                     "border-primary/50 bg-primary/5 shadow-sm shadow-primary/10 hover:bg-primary/10",
                   !isCurrent &&

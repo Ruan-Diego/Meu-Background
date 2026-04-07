@@ -51,7 +51,10 @@ function PresetChip({
       onPressedChange={() => onToggle()}
       variant="outline"
       className={cn(
-        "h-auto min-h-0 rounded-full border px-3 py-1.5 text-sm font-medium data-[state=on]:border-primary data-[state=on]:bg-primary/15 data-[state=on]:text-foreground data-[state=off]:border-border data-[state=off]:bg-background data-[state=off]:text-muted-foreground data-[state=off]:hover:border-ring data-[state=off]:hover:text-foreground"
+        "h-auto min-h-0 rounded-full border px-3 py-1.5 text-sm font-medium",
+        "data-[state=off]:border-border data-[state=off]:bg-background data-[state=off]:text-muted-foreground data-[state=off]:hover:border-ring data-[state=off]:hover:text-foreground",
+        "data-[state=on]:border-primary data-[state=on]:bg-primary/15 data-[state=on]:text-foreground data-[state=on]:hover:border-primary data-[state=on]:hover:bg-primary/20 data-[state=on]:hover:text-foreground",
+        "aria-pressed:border-primary aria-pressed:bg-primary/15 aria-pressed:text-foreground aria-pressed:hover:border-primary aria-pressed:hover:bg-primary/20 aria-pressed:hover:text-foreground"
       )}
     >
       {label}
