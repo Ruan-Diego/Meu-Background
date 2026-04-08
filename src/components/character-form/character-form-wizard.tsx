@@ -48,10 +48,9 @@ export function CharacterFormWizard({ className }: { className?: string }) {
 
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
-    defaultValues: mergeInitialFormValues(
-      useCharacterStore.getState().draft as Partial<CharacterFormValues> &
-        Record<string, unknown>
-    ),
+    // Match SSR: persist may already have rehydrated on the client before mount,
+    // which would mismatch server HTML. Draft is applied in useLayoutEffect after hydration.
+    defaultValues: mergeInitialFormValues({}),
     mode: "onTouched",
   });
 
@@ -294,10 +293,10 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                         O preview à direita mostra o documento completo. Escolha o
                         formato para baixar.
                       </p>
-                      <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-2">
-                        <MarkdownExportButton className="w-full justify-center" />
-                        <PlainTextExportButton className="w-full justify-center" />
-                        <PdfExportButton />
+                      <div className="grid w-full max-w-2xl grid-cols-1 gap-3 min-w-0 sm:grid-cols-3 sm:items-stretch sm:gap-3">
+                        <MarkdownExportButton className="h-full min-h-9 min-w-0 justify-center whitespace-normal text-balance py-2.5" />
+                        <PlainTextExportButton className="h-full min-h-9 min-w-0 justify-center whitespace-normal text-balance py-2.5" />
+                        <PdfExportButton className="min-h-9 min-w-0" />
                       </div>
                     </div>
                   ) : null}

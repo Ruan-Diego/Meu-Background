@@ -48,11 +48,16 @@ export function PdfExportButton({
   };
 
   return (
-    <div className={cn("flex w-full flex-col gap-1", className)}>
+    <div
+      className={cn(
+        "flex h-full min-w-0 w-full flex-col gap-1 sm:min-h-0",
+        className
+      )}
+    >
       <Button
         type="button"
         variant="outline"
-        className="w-full justify-center"
+        className="h-full min-h-9 w-full justify-center whitespace-normal text-balance py-2.5"
         disabled={doc.isEmpty || isGenerating}
         onClick={handleClick}
       >
