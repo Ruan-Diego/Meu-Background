@@ -16,8 +16,10 @@ const PDF_EXPORT_ERROR =
 
 export function PdfExportButton({
   className,
+  buttonClassName,
 }: {
   className?: string;
+  buttonClassName?: string;
 } = {}) {
   const { getValues } = useFormContext<CharacterFormValues>();
   const doc = buildCharacterDocument(getValues());
@@ -57,7 +59,11 @@ export function PdfExportButton({
       <Button
         type="button"
         variant="outline"
-        className="h-full min-h-9 w-full justify-center whitespace-normal text-balance py-2.5"
+        className={cn(
+          "w-full justify-center whitespace-normal text-balance",
+          buttonClassName ??
+            "h-auto min-h-9 gap-2 rounded-lg py-2.5 text-sm font-medium"
+        )}
         disabled={doc.isEmpty || isGenerating}
         onClick={handleClick}
       >
@@ -75,7 +81,7 @@ export function PdfExportButton({
       {error ? (
         <p
           role="alert"
-          className="text-caption text-destructive"
+          className="rounded-lg border border-destructive/25 bg-destructive/10 px-2.5 py-2 text-caption text-destructive"
         >
           {error}
         </p>

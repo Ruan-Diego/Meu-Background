@@ -1,12 +1,23 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileCode2,
+  FileText,
+  FileType,
+  Sparkles,
+} from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { DocumentPreview } from "@/components/character-form/document-preview";
+import {
+  ExportFormatTile,
+  exportDownloadButtonClassName,
+} from "@/components/character-form/export-format-tile";
 import { MarkdownExportButton } from "@/components/character-form/markdown-export-button";
 import { PdfExportButton } from "@/components/character-form/pdf-export-button";
 import { PlainTextExportButton } from "@/components/character-form/plain-text-export-button";
@@ -288,15 +299,54 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                   ) : step?.id === "freeNotes" ? (
                     <FreeNotesFields />
                   ) : step?.id === "export" ? (
-                    <div className="space-y-5">
-                      <p className="text-body text-muted-foreground text-pretty">
-                        O preview à direita mostra o documento completo. Escolha o
-                        formato para baixar.
-                      </p>
-                      <div className="grid w-full max-w-2xl grid-cols-1 gap-3 min-w-0 sm:grid-cols-3 sm:items-stretch sm:gap-3">
-                        <MarkdownExportButton className="h-full min-h-9 min-w-0 justify-center whitespace-normal text-balance py-2.5" />
-                        <PlainTextExportButton className="h-full min-h-9 min-w-0 justify-center whitespace-normal text-balance py-2.5" />
-                        <PdfExportButton className="min-h-9 min-w-0" />
+                    <div className="space-y-6">
+                      <div className="flex gap-3 rounded-2xl border border-primary/20 bg-primary/6 p-4 dark:bg-primary/9">
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                          <Sparkles
+                            className="size-5"
+                            strokeWidth={1.75}
+                            aria-hidden
+                          />
+                        </span>
+                        <div className="min-w-0 space-y-1">
+                          <p className="text-sm font-semibold text-foreground">
+                            Quase lá — escolha como baixar
+                          </p>
+                          <p className="text-body text-muted-foreground text-pretty leading-relaxed">
+                            O preview ao lado mostra o documento completo. Cada
+                            opção gera um arquivo pronto no seu dispositivo, sem
+                            servidor.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid w-full max-w-3xl grid-cols-1 gap-4 min-w-0 sm:grid-cols-3 sm:items-stretch">
+                        <ExportFormatTile
+                          icon={FileCode2}
+                          title="Markdown"
+                          description="Ótimo para Notion, Obsidian ou repositórios."
+                        >
+                          <MarkdownExportButton
+                            className={exportDownloadButtonClassName}
+                          />
+                        </ExportFormatTile>
+                        <ExportFormatTile
+                          icon={FileText}
+                          title="Texto puro"
+                          description="Compatível com qualquer editor de texto."
+                        >
+                          <PlainTextExportButton
+                            className={exportDownloadButtonClassName}
+                          />
+                        </ExportFormatTile>
+                        <ExportFormatTile
+                          icon={FileType}
+                          title="PDF"
+                          description="Layout fixo para imprimir ou arquivar."
+                        >
+                          <PdfExportButton
+                            buttonClassName={exportDownloadButtonClassName}
+                          />
+                        </ExportFormatTile>
                       </div>
                     </div>
                   ) : null}
