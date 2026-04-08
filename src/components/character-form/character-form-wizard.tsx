@@ -23,6 +23,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
   characterFormSchema,
@@ -245,114 +246,128 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   return (
     <div data-character-wizard className={cn("space-y-6", className)}>
       <FormProvider {...form}>
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          className="space-y-6"
-          noValidate
-        >
-          <FormProgress currentStepIndex={currentStepIndex} />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]">
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="order-1 min-w-0 space-y-6"
+            noValidate
+          >
+            <FormProgress currentStepIndex={currentStepIndex} />
 
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
-            <StepRail
-              currentStepIndex={currentStepIndex}
-              onStepSelect={goToStep}
-              className="order-2 xl:order-1"
-            />
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
+              <StepRail
+                currentStepIndex={currentStepIndex}
+                onStepSelect={goToStep}
+                className="order-2 xl:order-1"
+              />
 
-            <Card className="surface-panel order-1 overflow-hidden xl:order-2">
-              <CardHeader className="border-b border-border/70">
-                <p className="text-caption font-medium text-muted-foreground">
-                  Etapa {step?.indexLabel} de {STEP_COUNT}
-                </p>
-                <h2
-                  ref={headingRef}
-                  tabIndex={-1}
-                  className="mt-1 text-title text-balance text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  {step?.title}
-                </h2>
-                <CardDescription>{step?.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6 pt-6">
-                {step?.id === "basic" ? (
-                  <BasicInfoFields />
-                ) : step?.id === "origin" ? (
-                  <OriginBackgroundFields />
-                ) : step?.id === "personality" ? (
-                  <PersonalityTraitsFields />
-                ) : step?.id === "goals" ? (
-                  <GoalsMotivationsFields />
-                ) : step?.id === "appearance" ? (
-                  <AppearanceFields />
-                ) : step?.id === "freeNotes" ? (
-                  <FreeNotesFields />
-                ) : step?.id === "review" ? (
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap justify-end gap-2">
-                      <MarkdownExportButton />
-                      <PlainTextExportButton />
-                      <PdfExportButton />
-                    </div>
-                    <DocumentPreview />
-                  </div>
-                ) : (
-                  <p className="text-body text-muted-foreground">
-                    Esta etapa ainda não tem campos definidos.
+              <Card className="surface-panel order-1 overflow-hidden xl:order-2">
+                <CardHeader className="border-b border-border/70">
+                  <p className="text-caption font-medium text-muted-foreground">
+                    Etapa {step?.indexLabel} de {STEP_COUNT}
                   </p>
-                )}
-
-                {rootError ? (
-                  <p
-                    role="alert"
-                    className="text-body text-destructive"
+                  <h2
+                    ref={headingRef}
+                    tabIndex={-1}
+                    className="mt-1 text-title text-balance text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    {rootError}
-                  </p>
-                ) : null}
+                    {step?.title}
+                  </h2>
+                  <CardDescription>{step?.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6 pt-6">
+                  {step?.id === "basic" ? (
+                    <BasicInfoFields />
+                  ) : step?.id === "origin" ? (
+                    <OriginBackgroundFields />
+                  ) : step?.id === "personality" ? (
+                    <PersonalityTraitsFields />
+                  ) : step?.id === "goals" ? (
+                    <GoalsMotivationsFields />
+                  ) : step?.id === "appearance" ? (
+                    <AppearanceFields />
+                  ) : step?.id === "freeNotes" ? (
+                    <FreeNotesFields />
+                  ) : step?.id === "review" ? (
+                    <div className="space-y-4">
+                      <p className="text-body text-muted-foreground text-pretty">
+                        Confira o documento no painel à direita. Quando estiver
+                        pronto, exporte no formato desejado.
+                      </p>
+                      <div className="flex flex-wrap justify-end gap-2">
+                        <MarkdownExportButton />
+                        <PlainTextExportButton />
+                        <PdfExportButton />
+                      </div>
+                    </div>
+                  ) : null}
 
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-caption text-muted-foreground">
-                    Atalhos (fora de campos de texto): Ctrl + Shift + ← / →
-                    (anterior / próxima); Ctrl + Shift + Home / End (primeira /
-                    última etapa).
-                  </p>
-                  <div className="flex flex-wrap gap-2 sm:justify-end">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="default"
-                      disabled={isFirst}
-                      onClick={goPrev}
+                  {rootError ? (
+                    <p
+                      role="alert"
+                      className="text-body text-destructive"
                     >
-                      <ChevronLeft data-icon="inline-start" />
-                      Anterior
-                    </Button>
-                    {!isLast ? (
+                      {rootError}
+                    </p>
+                  ) : null}
+
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-caption text-muted-foreground">
+                      Atalhos (fora de campos de texto): Ctrl + Shift + ← / →
+                      (anterior / próxima); Ctrl + Shift + Home / End (primeira /
+                      última etapa).
+                    </p>
+                    <div className="flex flex-wrap gap-2 sm:justify-end">
                       <Button
                         type="button"
+                        variant="outline"
                         size="default"
-                        onClick={() => {
-                          void goNext();
-                        }}
+                        disabled={isFirst}
+                        onClick={goPrev}
                       >
-                        Próxima
-                        <ChevronRight data-icon="inline-end" />
+                        <ChevronLeft data-icon="inline-start" />
+                        Anterior
                       </Button>
-                    ) : (
-                      <Button
-                        type="button"
-                        size="default"
-                        onClick={() => persistDraft()}
-                      >
-                        Guardar rascunho
-                      </Button>
-                    )}
+                      {!isLast ? (
+                        <Button
+                          type="button"
+                          size="default"
+                          onClick={() => {
+                            void goNext();
+                          }}
+                        >
+                          Próxima
+                          <ChevronRight data-icon="inline-end" />
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          size="default"
+                          onClick={() => persistDraft()}
+                        >
+                          Guardar rascunho
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </form>
+                </CardContent>
+              </Card>
+            </div>
+          </form>
+
+          <Card className="order-2 flex min-h-0 min-w-0 flex-col overflow-hidden border-border/70 lg:sticky lg:top-28 lg:max-h-[min(40rem,calc(100vh-7rem))] lg:self-start">
+            <CardHeader className="shrink-0 border-b border-border/70">
+              <CardTitle>Preview do documento</CardTitle>
+              <CardDescription>
+                Atualiza enquanto você preenche as etapas. Exportação na etapa
+                Revisão.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="min-h-0 flex-1 overflow-y-auto pt-6">
+              <DocumentPreview />
+            </CardContent>
+          </Card>
+        </div>
       </FormProvider>
     </div>
   );

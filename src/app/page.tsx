@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { FORM_STEPS } from "@/lib/character-form/steps";
 import { cn } from "@/lib/utils";
 
 const highlights = [
@@ -39,7 +40,7 @@ export default function Home() {
         <section className="grid items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
           <div className="space-y-6">
             <span className="inline-flex rounded-full border border-border/70 bg-card/80 px-3 py-1 text-caption font-medium text-muted-foreground">
-              MVP Foundation · M1-F02
+              Backstory de RPG · tudo no navegador
             </span>
             <div className="space-y-4">
               <h1 className="text-display max-w-3xl">
@@ -64,13 +65,13 @@ export default function Home() {
                 <ArrowRight aria-hidden />
               </Link>
               <Link
-                href="/criar"
+                href="#como-funciona"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
                   "inline-flex rounded-full px-5"
                 )}
               >
-                Ver layout do editor
+                Como funciona
               </Link>
             </div>
           </div>
@@ -80,47 +81,39 @@ export default function Home() {
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-caption font-medium text-primary">
-                    Estrutura do documento
+                    O que você percorre
                   </p>
-                  <CardTitle>Um shell pronto para o MVP</CardTitle>
+                  <CardTitle>Sete etapas até a revisão</CardTitle>
                 </div>
                 <span className="rounded-full bg-primary/12 px-3 py-1 text-caption font-medium text-primary">
-                  Responsivo
+                  Salvo localmente
                 </span>
               </div>
               <CardDescription>
-                A base visual já separa navegação, conteúdo principal e espaço
-                para o preview que será conectado nas próximas tarefas.
+                Cada bloco abaixo corresponde a uma etapa real do editor: do
+                nome do personagem à exportação do documento.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 pt-6">
-              {[
-                "Informações básicas",
-                "Origem e passado",
-                "Personalidade e traços",
-                "Relacionamentos",
-                "Objetivos e aparência",
-              ].map((step, index) => (
+            <CardContent className="max-h-[min(28rem,55vh)] space-y-3 overflow-y-auto pt-6">
+              {FORM_STEPS.map((s) => (
                 <div
-                  key={step}
-                  className="flex items-center justify-between rounded-2xl border border-border/70 bg-background/70 px-4 py-3"
+                  key={s.id}
+                  className="rounded-2xl border border-border/70 bg-background/70 px-4 py-3"
                 >
-                  <div>
-                    <p className="text-caption text-muted-foreground">
-                      Etapa {index + 1}
-                    </p>
-                    <p className="font-medium">{step}</p>
-                  </div>
-                  <span className="text-caption rounded-full bg-secondary px-2.5 py-1 text-secondary-foreground">
-                    Em breve
-                  </span>
+                  <p className="text-caption text-muted-foreground">
+                    Etapa {s.indexLabel}
+                  </p>
+                  <p className="font-medium">{s.title}</p>
                 </div>
               ))}
             </CardContent>
           </Card>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-3">
+        <section
+          id="como-funciona"
+          className="grid gap-4 scroll-mt-28 md:grid-cols-3"
+        >
           {highlights.map((item) => {
             const Icon = item.icon;
 

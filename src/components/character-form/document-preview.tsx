@@ -1,10 +1,13 @@
 "use client";
 
 import { FileText } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { Badge } from "@/components/ui/badge";
-import type { CharacterFormValues } from "@/lib/character-form/schema";
+import {
+  mergeInitialFormValues,
+  type CharacterFormValues,
+} from "@/lib/character-form/schema";
 import {
   buildCharacterDocument,
   type DocumentBlock,
@@ -152,8 +155,11 @@ function EmptyState() {
 }
 
 export function DocumentPreview() {
-  const { getValues } = useFormContext<CharacterFormValues>();
-  const values = getValues();
+  const { control } = useFormContext<CharacterFormValues>();
+  const raw = useWatch({ control });
+  const values = mergeInitialFormValues(
+    (raw ?? {}) as Partial<CharacterFormValues> & Record<string, unknown>
+  );
   const doc = buildCharacterDocument(values);
 
   if (doc.isEmpty) return <EmptyState />;

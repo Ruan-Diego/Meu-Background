@@ -19,7 +19,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </p>
           </div>
           <p className="text-caption text-muted-foreground">
-            Milestone 1: fundação do fluxo guiado.
+            Rascunhos ficam no seu dispositivo — sem conta obrigatória.
           </p>
         </div>
       </footer>
