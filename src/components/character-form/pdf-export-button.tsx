@@ -9,11 +9,18 @@ import { characterDocumentPdfFilename } from "@/lib/character-form/document-file
 import { buildCharacterDocument } from "@/lib/character-form/document-sections";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { downloadBlobFile } from "@/lib/download-text-file";
+import { cn } from "@/lib/utils";
 
 const PDF_EXPORT_ERROR =
   "Não foi possível gerar o PDF. Tente de novo em instantes.";
 
-export function PdfExportButton() {
+export function PdfExportButton({
+  className,
+  buttonClassName,
+}: {
+  className?: string;
+  buttonClassName?: string;
+} = {}) {
   const { getValues } = useFormContext<CharacterFormValues>();
   const doc = buildCharacterDocument(getValues());
   const [isGenerating, setIsGenerating] = useState(false);
@@ -43,10 +50,20 @@ export function PdfExportButton() {
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div
+      className={cn(
+        "flex h-full min-w-0 w-full flex-col gap-1 sm:min-h-0",
+        className
+      )}
+    >
       <Button
         type="button"
         variant="outline"
+        className={cn(
+          "w-full justify-center whitespace-normal text-center text-sm leading-snug",
+          buttonClassName ??
+            "h-auto min-h-9 gap-2 rounded-lg py-2.5 text-sm font-medium"
+        )}
         disabled={doc.isEmpty || isGenerating}
         onClick={handleClick}
       >
@@ -64,7 +81,7 @@ export function PdfExportButton() {
       {error ? (
         <p
           role="alert"
-          className="max-w-[min(100%,20rem)] text-right text-caption text-destructive"
+          className="rounded-lg border border-destructive/25 bg-destructive/10 px-2.5 py-2 text-caption text-destructive"
         >
           {error}
         </p>

@@ -9,8 +9,13 @@ import { characterDocumentToMarkdown } from "@/lib/character-form/document-markd
 import { buildCharacterDocument } from "@/lib/character-form/document-sections";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { downloadTextFile } from "@/lib/download-text-file";
+import { cn } from "@/lib/utils";
 
-export function MarkdownExportButton() {
+export function MarkdownExportButton({
+  className,
+}: {
+  className?: string;
+} = {}) {
   const { getValues } = useFormContext<CharacterFormValues>();
   const doc = buildCharacterDocument(getValues());
 
@@ -28,6 +33,7 @@ export function MarkdownExportButton() {
     <Button
       type="button"
       variant="outline"
+      className={cn(className)}
       disabled={doc.isEmpty}
       onClick={handleClick}
     >
