@@ -311,44 +311,37 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                     </p>
                   ) : null}
 
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-caption text-muted-foreground">
-                      Atalhos (fora de campos de texto): Ctrl + Shift + ← / →
-                      (anterior / próxima); Ctrl + Shift + Home / End (primeira /
-                      última etapa).
-                    </p>
-                    <div className="flex flex-wrap gap-2 sm:justify-end">
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="default"
+                      disabled={isFirst}
+                      onClick={goPrev}
+                    >
+                      <ChevronLeft data-icon="inline-start" />
+                      Anterior
+                    </Button>
+                    {!isLast ? (
                       <Button
                         type="button"
-                        variant="outline"
                         size="default"
-                        disabled={isFirst}
-                        onClick={goPrev}
+                        onClick={() => {
+                          void goNext();
+                        }}
                       >
-                        <ChevronLeft data-icon="inline-start" />
-                        Anterior
+                        Próxima
+                        <ChevronRight data-icon="inline-end" />
                       </Button>
-                      {!isLast ? (
-                        <Button
-                          type="button"
-                          size="default"
-                          onClick={() => {
-                            void goNext();
-                          }}
-                        >
-                          Próxima
-                          <ChevronRight data-icon="inline-end" />
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          size="default"
-                          onClick={() => persistDraft()}
-                        >
-                          Guardar rascunho
-                        </Button>
-                      )}
-                    </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="default"
+                        onClick={() => persistDraft()}
+                      >
+                        Guardar rascunho
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
