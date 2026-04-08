@@ -235,7 +235,7 @@ const freeNotesStepSchema = characterFormSchema.pick({
   freeNotes: true,
 });
 
-const reviewStepSchema = z.object({});
+const exportStepSchema = z.object({});
 
 /** Zod schema slice validated before leaving each step (extend per milestone). */
 export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
@@ -245,7 +245,7 @@ export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
   goals: goalsStepSchema,
   appearance: appearanceStepSchema,
   freeNotes: freeNotesStepSchema,
-  review: reviewStepSchema,
+  export: exportStepSchema,
 };
 
 /** RHF field names belonging to each step — used with `trigger()` before next. */
@@ -269,7 +269,7 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
     "movementAndMannerisms",
   ],
   freeNotes: [],
-  review: [],
+  export: [],
 };
 
 /** Paths to pass to RHF `trigger()` for the step (includes dynamic array fields for `origin`). */
@@ -365,7 +365,7 @@ export function validateStepValues(
   stepId: FormStepId,
   values: CharacterFormValues
 ): { ok: true } | { ok: false; message: string } {
-  if (stepId === "review") return { ok: true };
+  if (stepId === "export") return { ok: true };
 
   const schema = stepSchemas[stepId];
 

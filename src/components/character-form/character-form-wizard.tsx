@@ -288,15 +288,15 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                     <AppearanceFields />
                   ) : step?.id === "freeNotes" ? (
                     <FreeNotesFields />
-                  ) : step?.id === "review" ? (
-                    <div className="space-y-4">
+                  ) : step?.id === "export" ? (
+                    <div className="space-y-5">
                       <p className="text-body text-muted-foreground text-pretty">
-                        Confira o documento no painel à direita. Quando estiver
-                        pronto, exporte no formato desejado.
+                        O preview à direita mostra o documento completo. Escolha o
+                        formato para baixar.
                       </p>
-                      <div className="flex flex-wrap justify-end gap-2">
-                        <MarkdownExportButton />
-                        <PlainTextExportButton />
+                      <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-2">
+                        <MarkdownExportButton className="w-full justify-center" />
+                        <PlainTextExportButton className="w-full justify-center" />
                         <PdfExportButton />
                       </div>
                     </div>
@@ -352,8 +352,8 @@ export function CharacterFormWizard({ className }: { className?: string }) {
             <CardHeader className="shrink-0 border-b border-border/70">
               <CardTitle>Preview do documento</CardTitle>
               <CardDescription>
-                Atualiza enquanto você preenche as etapas. Exportação na etapa
-                Revisão.
+                Atualiza enquanto você preenche as etapas. Use a etapa
+                Exportação para baixar o arquivo.
               </CardDescription>
             </CardHeader>
             <CardContent className="min-h-0 flex-1 overflow-y-auto pt-6">

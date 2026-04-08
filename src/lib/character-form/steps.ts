@@ -5,7 +5,7 @@ export type FormStepId =
   | "goals"
   | "appearance"
   | "freeNotes"
-  | "review";
+  | "export";
 
 export type FormStepMeta = {
   id: FormStepId;
@@ -60,11 +60,11 @@ export const FORM_STEPS: readonly FormStepMeta[] = [
     description: "Qualquer detalhe que não couber nas etapas anteriores.",
   },
   {
-    id: "review",
+    id: "export",
     indexLabel: 7,
-    title: "Revisão",
+    title: "Exportação",
     description:
-      "Veja o documento completo do seu personagem antes de exportar.",
+      "Baixe o documento em Markdown, texto ou PDF. O preview à direita acompanha tudo o que você preencheu.",
   },
 ] as const;
 
