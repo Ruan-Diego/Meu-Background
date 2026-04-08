@@ -60,7 +60,7 @@ export function PdfExportButton({
         type="button"
         variant="outline"
         className={cn(
-          "w-full justify-center whitespace-normal text-balance",
+          "w-full justify-center whitespace-normal text-center text-sm leading-snug",
           buttonClassName ??
             "h-auto min-h-9 gap-2 rounded-lg py-2.5 text-sm font-medium"
         )}

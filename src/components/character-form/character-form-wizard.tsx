@@ -319,7 +319,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                           </p>
                         </div>
                       </div>
-                      <div className="grid w-full max-w-3xl grid-cols-1 gap-4 min-w-0 sm:grid-cols-3 sm:items-stretch">
+                      <div className="grid w-full min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:items-stretch xl:grid-cols-3">
                         <ExportFormatTile
                           icon={FileCode2}
                           title="Markdown"

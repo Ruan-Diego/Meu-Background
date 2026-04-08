@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /** Shared styles for download actions inside export tiles */
 export const exportDownloadButtonClassName = cn(
-  "h-auto min-h-11 w-full justify-center gap-2 rounded-xl px-3 whitespace-normal text-balance py-3 text-sm font-semibold shadow-sm",
+  "h-auto min-h-11 w-full justify-center gap-2 rounded-xl px-3 whitespace-normal py-3 text-center text-sm font-semibold leading-snug shadow-sm",
   "border-primary/20 bg-background/90 transition-[background-color,box-shadow,border-color,transform] duration-200",
   "hover:border-primary/40 hover:bg-primary/8 hover:shadow-md",
   "active:translate-y-px disabled:hover:translate-y-0 disabled:hover:border-border disabled:hover:bg-transparent disabled:hover:shadow-sm"
@@ -35,21 +35,22 @@ export function ExportFormatTile({
         className
       )}
     >
-      <div className="flex items-start gap-3">
-        <span
-          aria-hidden
-          className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/15"
-        >
-          <Icon className="size-5" strokeWidth={1.75} />
-        </span>
-        <div className="min-w-0 space-y-1 pt-0.5">
-          <p className="text-sm font-semibold tracking-tight text-foreground">
+      {/* Ícone + título numa linha; descrição em largura total do card (evita coluna estreita em grelha 3×) */}
+      <div className="min-w-0 space-y-2.5">
+        <div className="flex items-center gap-2.5">
+          <span
+            aria-hidden
+            className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/15"
+          >
+            <Icon className="size-5" strokeWidth={1.75} />
+          </span>
+          <p className="min-w-0 text-sm font-semibold tracking-tight text-foreground">
             {title}
           </p>
-          <p className="text-caption leading-relaxed text-muted-foreground text-pretty">
-            {description}
-          </p>
         </div>
+        <p className="text-caption leading-normal text-muted-foreground text-pretty">
+          {description}
+        </p>
       </div>
       <div className="mt-auto flex min-w-0 flex-col gap-2">{children}</div>
     </div>
