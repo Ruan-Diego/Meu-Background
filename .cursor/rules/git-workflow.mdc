@@ -7,8 +7,8 @@ alwaysApply: true
 
 ## Before implementing a feature
 
-1. Ensure `main` is current: `git checkout main && git pull` (when using a remote).
-2. Create a **dedicated branch** from `main` before editing code:
+1. Ensure `develop` is current: `git checkout develop && git pull` (when using a remote).
+2. Create a **dedicated branch** from `develop` before editing code:
    - Pattern: `feature/<milestone>-<short-kebab-case>`
    - Examples: `feature/m1-f02-design-system`, `feature/m1-f03-multi-step-form`
 3. Use one branch per roadmap item (or per small, coherent slice). Do not mix unrelated features.
@@ -19,14 +19,14 @@ alwaysApply: true
 2. **Commit** with a clear message:
    - Prefer Conventional Commits: `feat(M1-F02): …`, `fix: …`, `chore: …`
    - Include the roadmap ID in the subject when it maps cleanly (e.g. `M1-F02`).
-3. **Ask if it's to Merge into `main`** so the default branch always reflects completed work:
-   - `git checkout main && git merge <feature-branch>` (fast-forward when possible).
-4. If the user uses pull requests, **push the feature branch** and open a PR; after approval, merge via GitHub (or merge locally first and push `main` — keep `main` and remote in sync with the team’s process).
+3. **Ask if it's to Merge into `develop`** so the default branch always reflects completed work:
+   - `git checkout develop && git merge <feature-branch>` (fast-forward when possible).
+4. If the user uses pull requests, **push the feature branch** and open a PR; after approval, merge via GitHub (or merge locally first and push `develop` — keep `develop` and remote in sync with the team’s process).
 5. **Do not** delete the branch after merge
-6. If the user aproves the merge, after the merge **push everything to main**
+6. If the user aproves the merge, after the merge **push everything to develop**
 
 
 ## Agent behavior
 
-- At the **start** of a new feature task: run git commands to create the branch (do not implement on `main` first).
-- At the **end** of the task: commit on that branch, then **ask if it's merge that branch into `main`** before handing off. Use a short merge message if Git asks for one.
+- At the **start** of a new feature task: run git commands to create the branch (do not implement on `develop` first).
+- At the **end** of the task: commit on that branch, then **ask if it's merge that branch into `develop`** before handing off. Use a short merge message if Git asks for one.
