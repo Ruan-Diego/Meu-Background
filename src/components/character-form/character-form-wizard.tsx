@@ -76,7 +76,6 @@ export function CharacterFormWizard({ className }: { className?: string }) {
     reset,
   } = form;
   const isDirtyRef = useRef(isDirty);
-  isDirtyRef.current = isDirty;
 
   const persistDraft = useCallback(() => {
     setDraft(getValues() as CharacterDraft);
@@ -107,10 +106,20 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const watchRef = useRef(watch);
   const scheduleDraftToStoreRef = useRef(scheduleDraftToStore);
   const flushDraftToStoreRef = useRef(flushDraftToStore);
-  resetRef.current = reset;
-  watchRef.current = watch;
-  scheduleDraftToStoreRef.current = scheduleDraftToStore;
-  flushDraftToStoreRef.current = flushDraftToStore;
+
+  useLayoutEffect(() => {
+    isDirtyRef.current = isDirty;
+    resetRef.current = reset;
+    watchRef.current = watch;
+    scheduleDraftToStoreRef.current = scheduleDraftToStore;
+    flushDraftToStoreRef.current = flushDraftToStore;
+  }, [
+    flushDraftToStore,
+    isDirty,
+    reset,
+    scheduleDraftToStore,
+    watch,
+  ]);
 
   useLayoutEffect(() => {
     const applyStoreDraftToForm = () => {
@@ -123,18 +132,28 @@ export function CharacterFormWizard({ className }: { className?: string }) {
       );
     };
 
-    if (useCharacterStore.persist.hasHydrated()) {
-      applyStoreDraftToForm();
-      setFormReady(true);
-    }
-
     let hydrationApplyTimer: ReturnType<typeof setTimeout> | null = null;
-    const unsub = useCharacterStore.persist.onFinishHydration(() => {
+
+    const scheduleFormReady = (applyDraft: boolean) => {
+      if (hydrationApplyTimer != null) {
+        clearTimeout(hydrationApplyTimer);
+      }
       hydrationApplyTimer = setTimeout(() => {
         hydrationApplyTimer = null;
-        applyStoreDraftToForm();
+        if (applyDraft) {
+          applyStoreDraftToForm();
+        }
         setFormReady(true);
       }, 0);
+    };
+
+    if (useCharacterStore.persist.hasHydrated()) {
+      applyStoreDraftToForm();
+      scheduleFormReady(false);
+    }
+
+    const unsub = useCharacterStore.persist.onFinishHydration(() => {
+      scheduleFormReady(true);
     });
     return () => {
       unsub();

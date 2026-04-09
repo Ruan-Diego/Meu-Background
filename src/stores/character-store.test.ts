@@ -22,6 +22,16 @@ describe("useCharacterStore", () => {
     expect(useCharacterStore.getState().draft.characterName).toBe("Store Hero");
   });
 
+  it("should keep other draft fields when characterName is cleared", () => {
+    useCharacterStore.getState().setDraft({
+      characterName: "A",
+      playerName: "Player",
+    });
+    useCharacterStore.getState().setDraft({ characterName: "" });
+    expect(useCharacterStore.getState().draft.characterName).toBe("");
+    expect(useCharacterStore.getState().draft.playerName).toBe("Player");
+  });
+
   it("should clamp setCurrentStepIndex to valid range", () => {
     useCharacterStore.getState().setCurrentStepIndex(STEP_COUNT);
     expect(useCharacterStore.getState().currentStepIndex).toBe(STEP_COUNT - 1);

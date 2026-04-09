@@ -52,6 +52,17 @@ describe("mergeInitialFormValues", () => {
     expect(merged.race).toBe("");
   });
 
+  it("should allow empty characterName without discarding other merged fields", () => {
+    const merged = mergeInitialFormValues({
+      characterName: "",
+      playerName: "Player",
+      race: "Elfo",
+    });
+    expect(merged.characterName).toBe("");
+    expect(merged.playerName).toBe("Player");
+    expect(merged.race).toBe("Elfo");
+  });
+
   it("should strip legacy goal keys before merge", () => {
     const merged = mergeInitialFormValues({
       characterName: "X",

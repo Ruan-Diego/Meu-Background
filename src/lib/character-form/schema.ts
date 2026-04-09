@@ -85,6 +85,15 @@ export const characterFormSchema = z.object({
   freeNotes: z.array(freeNoteRowSchema),
 });
 
+/**
+ * Persist / merge: same shape as {@link characterFormSchema} but allows empty
+ * `characterName` so drafts and `mergeInitialFormValues` do not fall back to
+ * full defaults (wiping the store) while the user clears or edits the name.
+ */
+const characterFormDraftMergeSchema = characterFormSchema.extend({
+  characterName: trimmed,
+});
+
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
 
 export const defaultCharacterFormValues: CharacterFormValues = {
@@ -188,7 +197,7 @@ export function mergeInitialFormValues(
     lifeGoals,
     freeNotes,
   };
-  const parsed = characterFormSchema.safeParse(merged);
+  const parsed = characterFormDraftMergeSchema.safeParse(merged);
   return parsed.success ? parsed.data : defaultCharacterFormValues;
 }
 

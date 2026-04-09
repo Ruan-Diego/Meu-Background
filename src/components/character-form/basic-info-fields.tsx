@@ -25,7 +25,7 @@ export function BasicInfoFields() {
           name="characterName"
           control={control}
           render={({ field }) => (
-            <input
+            <Input
               {...field}
               id="characterName"
               data-testid="character-name-input"
