@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 import {
   FieldError,
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 export function BasicInfoFields() {
   const {
+    control,
     register,
     formState: { errors },
   } = useFormContext<CharacterFormValues>();
@@ -20,16 +21,23 @@ export function BasicInfoFields() {
   return (
     <div className="grid gap-6 sm:grid-cols-2">
       <FieldGroup id="characterName" label="Nome do personagem">
-        <Input
-          id="characterName"
-          type="text"
-          autoComplete="off"
-          aria-invalid={errors.characterName ? true : undefined}
-          aria-describedby={
-            errors.characterName ? "characterName-error" : undefined
-          }
-          className={cn(inputFieldClassName)}
-          {...register("characterName")}
+        <Controller
+          name="characterName"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              id="characterName"
+              data-testid="character-name-input"
+              type="text"
+              autoComplete="off"
+              aria-invalid={errors.characterName ? true : undefined}
+              aria-describedby={
+                errors.characterName ? "characterName-error" : undefined
+              }
+              className={cn(inputFieldClassName)}
+            />
+          )}
         />
         {errors.characterName ? (
           <FieldError
