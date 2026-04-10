@@ -9,7 +9,7 @@ import {
   FileType,
   Sparkles,
 } from "lucide-react";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
@@ -56,6 +56,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const setDraft = useCharacterStore((s) => s.setDraft);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const [formReady, setFormReady] = useState(false);
 
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
@@ -75,7 +76,6 @@ export function CharacterFormWizard({ className }: { className?: string }) {
     reset,
   } = form;
   const isDirtyRef = useRef(isDirty);
-  isDirtyRef.current = isDirty;
 
   const persistDraft = useCallback(() => {
     setDraft(getValues() as CharacterDraft);
@@ -106,10 +106,20 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const watchRef = useRef(watch);
   const scheduleDraftToStoreRef = useRef(scheduleDraftToStore);
   const flushDraftToStoreRef = useRef(flushDraftToStore);
-  resetRef.current = reset;
-  watchRef.current = watch;
-  scheduleDraftToStoreRef.current = scheduleDraftToStore;
-  flushDraftToStoreRef.current = flushDraftToStore;
+
+  useLayoutEffect(() => {
+    isDirtyRef.current = isDirty;
+    resetRef.current = reset;
+    watchRef.current = watch;
+    scheduleDraftToStoreRef.current = scheduleDraftToStore;
+    flushDraftToStoreRef.current = flushDraftToStore;
+  }, [
+    flushDraftToStore,
+    isDirty,
+    reset,
+    scheduleDraftToStore,
+    watch,
+  ]);
 
   useLayoutEffect(() => {
     const applyStoreDraftToForm = () => {
@@ -122,15 +132,34 @@ export function CharacterFormWizard({ className }: { className?: string }) {
       );
     };
 
+    let hydrationApplyTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleFormReady = (applyDraft: boolean) => {
+      if (hydrationApplyTimer != null) {
+        clearTimeout(hydrationApplyTimer);
+      }
+      hydrationApplyTimer = setTimeout(() => {
+        hydrationApplyTimer = null;
+        if (applyDraft) {
+          applyStoreDraftToForm();
+        }
+        setFormReady(true);
+      }, 0);
+    };
+
     if (useCharacterStore.persist.hasHydrated()) {
       applyStoreDraftToForm();
+      scheduleFormReady(false);
     }
 
     const unsub = useCharacterStore.persist.onFinishHydration(() => {
-      applyStoreDraftToForm();
+      scheduleFormReady(true);
     });
     return () => {
       unsub();
+      if (hydrationApplyTimer != null) {
+        clearTimeout(hydrationApplyTimer);
+      }
     };
   }, []);
 
@@ -163,11 +192,12 @@ export function CharacterFormWizard({ className }: { className?: string }) {
     const stepMeta = FORM_STEPS[currentStepIndex];
     if (!stepMeta) return;
 
-    const values = getValues();
+    let values = getValues();
     const paths = getTriggerPathsForStepIndex(currentStepIndex, values);
     if (paths.length > 0) {
       const ok = await trigger(paths as never);
       if (!ok) return;
+      values = getValues();
     }
 
     const zodResult = validateStepValues(stepMeta.id, values);
@@ -261,6 +291,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
             onSubmit={(e) => e.preventDefault()}
             className="order-1 min-w-0 space-y-6"
             noValidate
+            data-ready={formReady || undefined}
           >
             <FormProgress currentStepIndex={currentStepIndex} />
 
@@ -279,6 +310,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                   <h2
                     ref={headingRef}
                     tabIndex={-1}
+                    data-testid="wizard-step-title"
                     className="mt-1 text-title text-balance text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     {step?.title}
@@ -366,6 +398,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                       variant="outline"
                       size="default"
                       disabled={isFirst}
+                      data-testid="wizard-prev"
                       onClick={goPrev}
                     >
                       <ChevronLeft data-icon="inline-start" />
@@ -375,6 +408,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                       <Button
                         type="button"
                         size="default"
+                        data-testid="wizard-next"
                         onClick={() => {
                           void goNext();
                         }}

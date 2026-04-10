@@ -1,0 +1,51 @@
+---
+description: Testing standards — Vitest (unit) + Cypress (E2E)
+alwaysApply: true
+---
+
+# Testing standards (Meu Background)
+
+## General principles
+
+- Every new feature or bug fix **must** include tests before the branch is considered complete.
+- Tests must be deterministic — no reliance on network, timers, or randomness without explicit mocking.
+- Prefer testing **behavior and contracts**, not implementation details.
+
+## Unit tests — Vitest
+
+- Co-locate test files next to their source: `<module>.test.ts`.
+- Use `describe` / `it` blocks with descriptive names that read like sentences.
+- Cover at minimum: happy path, edge cases (empty input, boundary values), and error / validation paths.
+- For pure functions: test input → output directly, no mocking needed.
+- For stores (Zustand): test actions and resulting state transitions.
+- For React components (future): use `@testing-library/react`, query by role / label, never by CSS class.
+
+## E2E tests — Cypress
+
+- One spec per user-facing flow or page, placed in `cypress/e2e/<feature>.cy.ts`.
+- Use `data-testid` attributes for selectors when semantic selectors are not possible.
+- **Never** use `cy.wait(ms)` with arbitrary durations — rely on Cypress built-in retry and assertion timeouts.
+- Wait for `form[data-ready]` (or equivalent hydration signal) before interacting with forms that depend on Zustand persist.
+- Test the critical user journey, not every visual detail.
+
+## Naming conventions
+
+| Kind | Pattern | Example |
+|------|---------|---------|
+| Unit test file | `<module>.test.ts` (co-located) | `schema.test.ts` |
+| E2E spec file | `cypress/e2e/<feature>.cy.ts` | `character-wizard.cy.ts` |
+| Test description | `describe('<Module>')` → `it('should <behavior> when <condition>')` | |
+
+## Agent behavior
+
+- After writing production code for a feature, create or update the corresponding test files **on the same branch, in the same commit**.
+- Before marking a feature as complete, run `npm run test:ci` (unit) and verify no regressions.
+- If a feature touches UI flows, add or update a Cypress spec in `cypress/e2e/`.
+
+## Commands
+
+```bash
+npm run test:ci      # unit tests (Vitest, single run)
+npm run test:e2e     # dev server + Cypress headless
+npm run cypress:open # Cypress interactive runner
+```
