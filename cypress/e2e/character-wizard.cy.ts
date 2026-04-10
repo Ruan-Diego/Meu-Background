@@ -54,6 +54,57 @@ describe("Character form wizard", () => {
     );
   });
 
+  it("should scroll the progress region into view when clicking next", () => {
+    cy.get('[data-testid="character-name-input"]').clear().type("Scroll Next");
+    cy.get('[data-testid="character-name-input"]').blur();
+    cy.scrollTo("bottom");
+    cy.window().its("scrollY").should("be.greaterThan", 100);
+    cy.get('[data-testid="wizard-next"]').click();
+    cy.get('[data-testid="wizard-step-title"]').should(
+      "contain",
+      STEP_TITLES[1]
+    );
+    cy.get('[data-testid="wizard-progress-anchor"]').should(($el) => {
+      const top = $el[0].getBoundingClientRect().top;
+      expect(top, "progress near top below sticky header").to.be.within(0, 120);
+    });
+  });
+
+  it("should scroll the progress region into view when clicking previous", () => {
+    cy.get('[data-testid="character-name-input"]').clear().type("Scroll Prev");
+    cy.get('[data-testid="character-name-input"]').blur();
+    cy.get('[data-testid="wizard-next"]').click();
+    cy.get('[data-testid="wizard-step-title"]').should(
+      "contain",
+      STEP_TITLES[1]
+    );
+    cy.scrollTo("bottom");
+    cy.window().its("scrollY").should("be.greaterThan", 100);
+    cy.get('[data-testid="wizard-prev"]').click();
+    cy.get('[data-testid="wizard-step-title"]').should(
+      "contain",
+      STEP_TITLES[0]
+    );
+    cy.get('[data-testid="wizard-progress-anchor"]').should(($el) => {
+      const top = $el[0].getBoundingClientRect().top;
+      expect(top, "progress near top below sticky header").to.be.within(0, 120);
+    });
+  });
+
+  it("should scroll the progress region into view when selecting a step in the rail", () => {
+    cy.scrollTo("bottom");
+    cy.window().its("scrollY").should("be.greaterThan", 100);
+    cy.contains("button", "Personalidade e traços").click();
+    cy.get('[data-testid="wizard-step-title"]').should(
+      "contain",
+      STEP_TITLES[2]
+    );
+    cy.get('[data-testid="wizard-progress-anchor"]').should(($el) => {
+      const top = $el[0].getBoundingClientRect().top;
+      expect(top, "progress near top below sticky header").to.be.within(0, 120);
+    });
+  });
+
   it("should advance through all steps to export", () => {
     cy.get('[data-testid="character-name-input"]').clear().type("E2E Hero");
     cy.get('[data-testid="character-name-input"]').should("have.value", "E2E Hero");

@@ -99,7 +99,7 @@ Source of truth for scope per milestone: **`ROADMAP.md`**. High-level MVP (M1) e
 |----|---------|----------------|
 | M1-F01 | Project scaffolding | Next.js App Router, TS, Tailwind, Zustand, RHF — see `package.json` / `src/app/`. |
 | M1-F02 | Design system & layout | App shell, theme toggle, tokens — `src/components/layout/`, `globals.css`. |
-| M1-F03 | Multi-step form engine | `character-form-wizard.tsx`: step order, progress, per-step Zod validation, **ArrowLeft/ArrowRight** on document for prev/next. |
+| M1-F03 | Multi-step form engine | `character-form-wizard.tsx`: step order, progress, per-step Zod validation, **ArrowLeft/ArrowRight** on document for prev/next; **scroll to progress** (`scrollIntoView` smooth) after **Próxima**, **Anterior**, or **step rail** click (`scroll-mt` vs sticky header). |
 | M1-F04 | Step: Basic Info | `basic-info-fields.tsx` (+ schema slice). |
 | M1-F05 | Step: Origin & Background | `origin-background-fields.tsx`, relatives, origin constants. |
 | M1-F06 | Step: Personality & Traits | `personality-traits-fields.tsx`, chip options / fear levels. |
@@ -137,7 +137,7 @@ Co-located `*.test.ts` files:
 | Spec | Covers |
 |------|--------|
 | `cypress/e2e/landing.cy.ts` | Home hero, CTA → `/criar`, anchor scroll |
-| `cypress/e2e/character-wizard.cy.ts` | Validation on basic step, back/next field retention, full path to export step + Markdown button visible |
+| `cypress/e2e/character-wizard.cy.ts` | Validation on basic step, back/next field retention, scroll-to-progress after next / previous / step rail, full path to export step + Markdown button visible |
 | `cypress/e2e/auto-save.cy.ts` | Draft name restored after reload (persist flush) |
 
 **Selectors / hydration:** Prefer `data-testid` where present; forms that depend on Zustand persist wait on **`form[data-ready]`** before interaction (see specs above).
@@ -148,7 +148,7 @@ Co-located `*.test.ts` files:
 
 _Last reviewed: 2026-04-10. **Milestone 1 is complete;** next roadmap tranche is **Milestone 2** unless priorities change._
 
-- **Wizard:** **7** steps — basic → origin → personality → goals → appearance → freeNotes → **export** (live preview + three download formats).
+- **Wizard:** **7** steps — basic → origin → personality → goals → appearance → freeNotes → **export** (live preview + three download formats). Choosing a step in the rail or using **Próxima** / **Anterior** scrolls the viewport to the progress block (smooth), with top offset for the sticky site header.
 - **Schema:** Zod-backed model and per-step validation in `schema.ts` — extend when adding fields or steps.
 - **Exports:** Markdown, plain text, and PDF buttons on export step (`markdown-export-button`, `plain-text-export-button`, `pdf-export-button`).
 - **GitHub Pages:** Production build uses `NEXT_BASE_PATH` = `/<repo>` in CI when deploying.

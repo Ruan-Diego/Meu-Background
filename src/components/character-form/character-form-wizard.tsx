@@ -56,7 +56,17 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const setDraft = useCharacterStore((s) => s.setDraft);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const progressAnchorRef = useRef<HTMLDivElement>(null);
   const [formReady, setFormReady] = useState(false);
+
+  const scrollToProgress = useCallback(() => {
+    requestAnimationFrame(() => {
+      progressAnchorRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }, []);
 
   const form = useForm<CharacterFormValues>({
     resolver: zodResolver(characterFormSchema),
@@ -209,11 +219,13 @@ export function CharacterFormWizard({ className }: { className?: string }) {
 
     persistDraft();
     setCurrentStepIndex(clampStepIndex(currentStepIndex + 1));
+    scrollToProgress();
   }, [
     clearErrors,
     currentStepIndex,
     getValues,
     persistDraft,
+    scrollToProgress,
     setCurrentStepIndex,
     setError,
     trigger,
@@ -223,10 +235,12 @@ export function CharacterFormWizard({ className }: { className?: string }) {
     clearErrors("root");
     persistDraft();
     setCurrentStepIndex(clampStepIndex(currentStepIndex - 1));
+    scrollToProgress();
   }, [
     clearErrors,
     currentStepIndex,
     persistDraft,
+    scrollToProgress,
     setCurrentStepIndex,
   ]);
 
@@ -235,8 +249,9 @@ export function CharacterFormWizard({ className }: { className?: string }) {
       clearErrors("root");
       persistDraft();
       setCurrentStepIndex(clampStepIndex(index));
+      scrollToProgress();
     },
-    [clearErrors, persistDraft, setCurrentStepIndex]
+    [clearErrors, persistDraft, scrollToProgress, setCurrentStepIndex]
   );
 
   useEffect(() => {
@@ -293,7 +308,13 @@ export function CharacterFormWizard({ className }: { className?: string }) {
             noValidate
             data-ready={formReady || undefined}
           >
-            <FormProgress currentStepIndex={currentStepIndex} />
+            <div
+              ref={progressAnchorRef}
+              data-testid="wizard-progress-anchor"
+              className="scroll-mt-(--header-height)"
+            >
+              <FormProgress currentStepIndex={currentStepIndex} />
+            </div>
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
               <StepRail
