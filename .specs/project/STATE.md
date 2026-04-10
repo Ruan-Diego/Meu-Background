@@ -37,7 +37,7 @@ Source of truth for scope per milestone: **`ROADMAP.md`**. High-level MVP (M1) e
 |-------|----------------|
 | **Hosting** | Static bundle; `basePath` / `assetPrefix` via **`NEXT_BASE_PATH`** for GitHub Project Pages (`/<repo>`). |
 | **Privacy** | No server-side storage of character data in the core design; data stays on the client. |
-| **Accessibility** | WCAG-oriented work is **M2-F04**; do not assume MVP is fully audited. |
+| **Accessibility** | WCAG-oriented work is **M5-F04**; do not assume MVP is fully audited. |
 | **i18n** | pt-BR default; EN later (`M2-F02`). |
 | **Testing** | **Vitest** (unit) and **Cypress** (E2E) are implemented in-repo; see `.cursor/rules/testing.mdc`. **CI today:** deploy workflow only — **tests are not yet run in GitHub Actions** (still a gap vs ideal pipeline). |
 
@@ -164,6 +164,7 @@ _Last reviewed: 2026-04-10. **Milestone 1 is complete;** next roadmap tranche is
 |------|----------|-----------|
 | 2026-04-10 | **M2-F02:** Custom **`AppIntlProvider`** + `messages/*.json` instead of **next-intl** (for now) | Keeps static export + `basePath` predictable; `loadMessages` in `[locale]/layout.tsx` and client `useIntl().t(path)` with dot paths; revisit next-intl if requirements outgrow this |
 | 2026-04-10 | **Milestone 1** treated as **done** in codebase: all M1-F01–F14 behaviors present plus **Vitest** + **Cypress** baselines | Matches ROADMAP M1 DoD; agents should start new work from **M2** unless explicitly fixing M1 regressions |
+| 2026-04-10 | **Accessibility audit** and **SEO & meta tags** moved from M2 to **Milestone 5** as **M5-F04** / **M5-F05** | Deferred as future work; M2 focuses on i18n + character summary card |
 | 2026-04-07 | M1-F08 (Appearance / comportamento além da miniatura) ships as open text areas + Hero Forge link; UX debt is explicit in UI and specs | MVP scope limits coaching; the product requirement is to *facilitate* writing — this step is flagged for M3-style prompts, examples, and structure (see **M3-F07** in ROADMAP) |
 | 2026-04-07 | No standalone “Step: Relationships” in the wizard or roadmap; former M1-F08–F15 renumbered to M1-F07–F14 | Family and relationship ties live in step 2 (Origin & Background) via `relatives[]`; the old empty Relationships step duplicated that intent |
 | 2026-04-07 | Theme switching uses `next-themes` with class-based dark mode | Keeps App Router theming simple, avoids custom hydration work, and matches the token strategy in `globals.css` |

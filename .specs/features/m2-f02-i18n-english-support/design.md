@@ -84,7 +84,7 @@ Prefer **(1)** for clarity and testability: unit tests call the factory with fix
 
 ### 3.7 Metadata (SEO)
 
-Per-locale `generateMetadata` in `[locale]/layout.tsx` using translated `meta` strings. Full Open Graph / Twitter parity is **M2-F05**; this feature should at least set **title** and **description** per locale.
+Per-locale `generateMetadata` in `[locale]/layout.tsx` using translated `meta` strings. Full Open Graph / Twitter parity is **M5-F05**; this feature should at least set **title** and **description** per locale.
 
 ### 3.8 Cypress / Vitest
 

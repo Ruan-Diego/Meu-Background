@@ -38,8 +38,8 @@ See `handoff.md` and `tasks.md` for the ordered backlog.
 | Additional locales beyond `en` | Roadmap names only pt-BR + English; add more only if ROADMAP is extended |
 | Translating user-authored content | Player’s prose is not machine-translated |
 | Locale-specific RPG systems or templates | **M4-F03** / future template work |
-| SEO / Open Graph per locale | **M2-F05** |
-| Formal WCAG audit of translated strings | **M2-F04** (still avoid obvious regressions) |
+| SEO / Open Graph per locale | **M5-F05** |
+| Formal WCAG audit of translated strings | **M5-F04** (still avoid obvious regressions) |
 | RTL layout | Not required for pt-BR / en |
 | Server-driven negotiation (`Accept-Language`) on static hosting | No edge/server; detection is client or URL-based only |
 

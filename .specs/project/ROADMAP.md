@@ -31,15 +31,13 @@
 
 ## Milestone 2: Polish & UX
 
-> Accessibility, i18n, SEO. **No** in-form coaching or suggestive placeholders here — that is entirely Milestone 3.
+> i18n and visual polish. **No** in-form coaching or suggestive placeholders here — that is entirely Milestone 3.
 
 
 | ID     | Feature                | Description                                            | Size |
 | ------ | ---------------------- | ------------------------------------------------------ | ---- |
 | M2-F02 | i18n: English support  | Add English translation alongside pt-BR                | M    |
 | M2-F03 | Character summary card | Compact visual card with key info (shareable as image) | M    |
-| M2-F04 | Accessibility audit    | WCAG 2.1 AA compliance pass, screen reader testing     | M    |
-| M2-F05 | SEO & meta tags        | Open Graph, Twitter cards, structured data             | S    |
 
 
 ---
@@ -81,7 +79,7 @@
 
 ## Milestone 5: Social & sharing (Future)
 
-> Share characters with your party — still client-first where possible.
+> Share characters with your party — still client-first where possible. Includes deferred **accessibility** and **SEO** work (formerly scoped to M2).
 
 
 | ID     | Feature                   | Description                                                              | Size |
@@ -89,6 +87,8 @@
 | M5-F01 | Shareable links           | Encode character data in URL for easy sharing                            | M    |
 | M5-F02 | Character gallery         | Public gallery of shared characters (requires backend)                   | L    |
 | M5-F03 | Character portrait upload | Optional image upload for character portrait (user-provided assets only) | M    |
+| M5-F04 | Accessibility audit       | WCAG 2.1 AA compliance pass, screen reader testing                       | M    |
+| M5-F05 | SEO & meta tags           | Open Graph, Twitter cards, structured data                               | S    |
 
 
 ---
