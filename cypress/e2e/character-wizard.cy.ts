@@ -12,8 +12,8 @@ describe("Character form wizard", () => {
   beforeEach(() => {
     // Land on a page without the wizard so the previous test's wizard unmount
     // flushes draft to localStorage *before* we clear storage for /criar.
-    cy.visit("/");
-    cy.visit("/criar", {
+    cy.visit("/pt-BR");
+    cy.visit("/pt-BR/criar", {
       onBeforeLoad(win) {
         win.localStorage.clear();
         win.sessionStorage.clear();
@@ -118,5 +118,27 @@ describe("Character form wizard", () => {
     }
     cy.contains("Quase lá — escolha como baixar").should("be.visible");
     cy.contains("button", "Baixar Markdown (.md)").should("be.visible");
+  });
+});
+
+describe("Character form wizard (en)", () => {
+  beforeEach(() => {
+    cy.visit("/en");
+    cy.visit("/en/criar", {
+      onBeforeLoad(win) {
+        win.localStorage.clear();
+        win.sessionStorage.clear();
+      },
+    });
+    cy.get("form[data-ready]", { timeout: 10000 }).should("exist");
+  });
+
+  it("should show English chrome and validation on the basic step", () => {
+    cy.get("html").should("have.attr", "lang", "en");
+    cy.get('[data-testid="wizard-step-title"]').contains("Basic information");
+    cy.get('[data-testid="character-name-input"]').should("be.visible");
+    cy.get('[data-testid="wizard-next"]').click();
+    cy.get("#characterName-error").should("be.visible");
+    cy.contains("Enter the character name");
   });
 });

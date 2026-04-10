@@ -15,6 +15,7 @@ import {
   inputFieldClassName,
   textareaFieldClassName,
 } from "@/components/character-form/form-field-parts";
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { RhfEnumStringSelect } from "@/components/character-form/rhf-select-fields";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,11 +24,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Toggle } from "@/components/ui/toggle";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import {
-  PERSONALITY_FEAR_LEVEL_LABELS,
   PERSONALITY_FEAR_LEVELS,
   TEMPERAMENT_CHIP_OPTIONS,
   VALUES_CHIP_OPTIONS,
 } from "@/lib/character-form/personality-constants";
+import { formatMessage } from "@/lib/i18n/format-message";
+import { getOptionLabel } from "@/lib/i18n/option-labels";
 import { cn } from "@/lib/utils";
 
 const VALUE_PRESET_SET = new Set<string>(VALUES_CHIP_OPTIONS);
@@ -65,9 +67,13 @@ function PresetChip({
 function CustomTagChip({
   label,
   onRemove,
+  removeLabelAria,
+  removeButtonAria,
 }: {
   label: string;
   onRemove: () => void;
+  removeLabelAria: string;
+  removeButtonAria: string;
 }) {
   return (
     <Badge
@@ -78,7 +84,7 @@ function CustomTagChip({
         type="button"
         className="min-w-0 truncate rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         onClick={onRemove}
-        aria-label={`Remover ${label}`}
+        aria-label={removeLabelAria}
       >
         {label}
       </button>
@@ -87,7 +93,7 @@ function CustomTagChip({
         variant="ghost"
         size="icon-xs"
         className="size-7 shrink-0 rounded-full text-muted-foreground hover:bg-background/80 hover:text-foreground"
-        aria-label={`Remover chip ${label}`}
+        aria-label={removeButtonAria}
         onClick={(e) => {
           e.stopPropagation();
           onRemove();
@@ -104,8 +110,11 @@ function ChipPickerSection({
   presetSet,
   tags,
   ariaLabel,
+  presetLabel,
   onTogglePreset,
   onRemoveCustom,
+  customRemoveLabelAria,
+  customRemoveButtonAria,
   draft,
   onDraftChange,
   onAddCustom,
@@ -117,8 +126,11 @@ function ChipPickerSection({
   presetSet: Set<string>;
   tags: string[];
   ariaLabel: string;
+  presetLabel: (presetKey: string) => string;
   onTogglePreset: (label: string) => void;
   onRemoveCustom: (label: string) => void;
+  customRemoveLabelAria: (visibleLabel: string) => string;
+  customRemoveButtonAria: (visibleLabel: string) => string;
   draft: string;
   onDraftChange: (value: string) => void;
   onAddCustom: () => void;
@@ -134,7 +146,7 @@ function ChipPickerSection({
         {presets.map((opt) => (
           <PresetChip
             key={opt}
-            label={opt}
+            label={presetLabel(opt)}
             selected={tags.includes(opt)}
             onToggle={() => onTogglePreset(opt)}
           />
@@ -144,6 +156,8 @@ function ChipPickerSection({
             key={tag}
             label={tag}
             onRemove={() => onRemoveCustom(tag)}
+            removeLabelAria={customRemoveLabelAria(tag)}
+            removeButtonAria={customRemoveButtonAria(tag)}
           />
         ))}
       </div>
@@ -186,6 +200,7 @@ type SingleLineRowErrors = FieldErrors<
 type FearRowErrors = FieldErrors<CharacterFormValues["fears"][number]> | undefined;
 
 export function PersonalityTraitsFields() {
+  const { messages, t } = useIntl();
   const {
     register,
     control,
@@ -285,19 +300,29 @@ export function PersonalityTraitsFields() {
           id="personality-temperament-heading"
           className="text-sm font-semibold text-foreground"
         >
-          Temperamento
+          {t("fields.personality.temperamentHeading")}
         </h3>
         <p className="text-body text-muted-foreground">
-          Escolha sugestões ou inclua chips livres. Clique num chip personalizado
-          ou no X para remover.
+          {t("fields.personality.temperamentIntro")}
         </p>
         <ChipPickerSection
           presets={TEMPERAMENT_CHIP_OPTIONS}
           presetSet={TEMPERAMENT_PRESET_SET}
           tags={temperamentTags}
-          ariaLabel="Temperamento"
+          ariaLabel={t("fields.personality.temperamentHeading")}
+          presetLabel={(key) => getOptionLabel(messages, "temperamentChips", key)}
           onTogglePreset={(opt) => toggleInList("temperamentTags", opt)}
           onRemoveCustom={(tag) => removeFromList("temperamentTags", tag)}
+          customRemoveLabelAria={(visible) =>
+            formatMessage(t("fields.personality.removeChipAria"), {
+              label: visible,
+            })
+          }
+          customRemoveButtonAria={(visible) =>
+            formatMessage(t("fields.personality.removeChipButtonAria"), {
+              label: visible,
+            })
+          }
           draft={customTemperamentDraft}
           onDraftChange={setCustomTemperamentDraft}
           onAddCustom={() =>
@@ -307,9 +332,9 @@ export function PersonalityTraitsFields() {
               () => setCustomTemperamentDraft("")
             )
           }
-          addButtonLabel="Incluir chip"
+          addButtonLabel={t("fields.personality.addChip")}
           inputId="custom-temperament-input"
-          inputLabel="Adicionar temperamento"
+          inputLabel={t("fields.personality.addTemperament")}
         />
       </section>
 
@@ -318,19 +343,29 @@ export function PersonalityTraitsFields() {
           id="personality-values-heading"
           className="text-sm font-semibold text-foreground"
         >
-          Valores
+          {t("fields.personality.valuesHeading")}
         </h3>
         <p className="text-body text-muted-foreground">
-          Marque o que importa e adicione valores livres. Chips extras têm X;
-          também pode clicar no texto para remover.
+          {t("fields.personality.valuesIntro")}
         </p>
         <ChipPickerSection
           presets={VALUES_CHIP_OPTIONS}
           presetSet={VALUE_PRESET_SET}
           tags={valueTags}
-          ariaLabel="Valores"
+          ariaLabel={t("fields.personality.valuesHeading")}
+          presetLabel={(key) => getOptionLabel(messages, "valueChips", key)}
           onTogglePreset={(opt) => toggleInList("valueTags", opt)}
           onRemoveCustom={(tag) => removeFromList("valueTags", tag)}
+          customRemoveLabelAria={(visible) =>
+            formatMessage(t("fields.personality.removeChipAria"), {
+              label: visible,
+            })
+          }
+          customRemoveButtonAria={(visible) =>
+            formatMessage(t("fields.personality.removeChipButtonAria"), {
+              label: visible,
+            })
+          }
           draft={customValueDraft}
           onDraftChange={setCustomValueDraft}
           onAddCustom={() =>
@@ -338,9 +373,9 @@ export function PersonalityTraitsFields() {
               setCustomValueDraft("")
             )
           }
-          addButtonLabel="Incluir chip"
+          addButtonLabel={t("fields.personality.addChip")}
           inputId="custom-value-input"
-          inputLabel="Adicionar valor"
+          inputLabel={t("fields.personality.addValue")}
         />
       </section>
 
@@ -350,7 +385,7 @@ export function PersonalityTraitsFields() {
             id="personality-flaws-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Fraquezas
+            {t("fields.personality.flawsHeading")}
           </h3>
           <Button
             type="button"
@@ -360,12 +395,12 @@ export function PersonalityTraitsFields() {
             onClick={() => flawsArray.append({ text: "", background: "" })}
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar fraqueza
+            {t("fields.personality.addFlaw")}
           </Button>
         </div>
         {flawsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhuma fraqueza adicionada. Inclua pontos fracos, vícios ou limitações.
+            {t("fields.personality.flawsEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -383,7 +418,9 @@ export function PersonalityTraitsFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Fraqueza {index + 1}
+                      {formatMessage(t("fields.personality.flawLabel"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -391,15 +428,21 @@ export function PersonalityTraitsFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => flawsArray.remove(index)}
-                      aria-label={`Remover fraqueza ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.personality.removeFlawAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
-                      <FieldGroup id={`flaws-${field.id}-text`} label="Fraqueza">
+                      <FieldGroup
+                        id={`flaws-${field.id}-text`}
+                        label={t("fields.personality.flawField")}
+                      >
                       <Input
                         id={`flaws-${field.id}-text`}
                         type="text"
@@ -431,19 +474,19 @@ export function PersonalityTraitsFields() {
                         className="w-fit"
                         onClick={() => revealBackground(rowKey)}
                       >
-                        Adicionar background
+                        {t("common.addBackground")}
                       </Button>
                     ) : (
                       <div className="space-y-2">
                         <FieldGroup
                           id={`flaws-${field.id}-background`}
-                          label="Background"
+                          label={t("fields.personality.backgroundLabel")}
                         >
                           <Textarea
                             id={`flaws-${field.id}-background`}
                             autoComplete="off"
                             rows={3}
-                            placeholder="Qual o motivo da sua fraqueza?"
+                            placeholder={t("fields.personality.flawBgPlaceholder")}
                             aria-invalid={
                               rowErrors?.background ? true : undefined
                             }
@@ -478,7 +521,7 @@ export function PersonalityTraitsFields() {
             id="personality-fears-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Medos
+            {t("fields.personality.fearsHeading")}
           </h3>
           <Button
             type="button"
@@ -494,12 +537,12 @@ export function PersonalityTraitsFields() {
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar medo
+            {t("fields.personality.addFear")}
           </Button>
         </div>
         {fearsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum medo adicionado. Descreva o medo e a intensidade para cada um.
+            {t("fields.personality.fearsEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -517,7 +560,9 @@ export function PersonalityTraitsFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Medo {index + 1}
+                      {formatMessage(t("fields.personality.fearLabel"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -525,16 +570,19 @@ export function PersonalityTraitsFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => fearsArray.remove(index)}
-                      aria-label={`Remover medo ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.personality.removeFearAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <FieldGroup
                       id={`fears-${field.id}-description`}
-                      label="Medo"
+                      label={t("fields.personality.fearDescription")}
                     >
                       <Input
                         id={`fears-${field.id}-description`}
@@ -560,7 +608,7 @@ export function PersonalityTraitsFields() {
                     </FieldGroup>
                     <FieldGroup
                       id={`fears-${field.id}-level`}
-                      label="Intensidade"
+                      label={t("fields.personality.intensity")}
                     >
                       <RhfEnumStringSelect
                         control={control}
@@ -568,9 +616,7 @@ export function PersonalityTraitsFields() {
                         id={`fears-${field.id}-level`}
                         options={PERSONALITY_FEAR_LEVELS}
                         optionLabel={(lvl) =>
-                          PERSONALITY_FEAR_LEVEL_LABELS[
-                            lvl as keyof typeof PERSONALITY_FEAR_LEVEL_LABELS
-                          ]
+                          t(`document.fearLevels.${lvl}`) || lvl
                         }
                         aria-invalid={rowErrors?.level ? true : undefined}
                         aria-describedby={
@@ -596,18 +642,18 @@ export function PersonalityTraitsFields() {
                         className="w-fit"
                         onClick={() => revealBackground(rowKey)}
                       >
-                        Adicionar background
+                        {t("common.addBackground")}
                       </Button>
                     ) : (
                       <FieldGroup
                         id={`fears-${field.id}-background`}
-                        label="Background"
+                        label={t("fields.personality.backgroundLabel")}
                       >
                         <Textarea
                           id={`fears-${field.id}-background`}
                           autoComplete="off"
                           rows={3}
-                          placeholder="Qual o motivo do seu medo?"
+                          placeholder={t("fields.personality.fearBgPlaceholder")}
                           aria-invalid={
                             rowErrors?.background ? true : undefined
                           }
@@ -641,7 +687,7 @@ export function PersonalityTraitsFields() {
             id="personality-habits-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Hábitos
+            {t("fields.personality.habitsHeading")}
           </h3>
           <Button
             type="button"
@@ -651,12 +697,12 @@ export function PersonalityTraitsFields() {
             onClick={() => habitsArray.append({ text: "", background: "" })}
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar hábito
+            {t("fields.personality.addHabit")}
           </Button>
         </div>
         {habitsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum hábito adicionado. Rotinas, manias ou costumes do personagem.
+            {t("fields.personality.habitsEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -674,7 +720,9 @@ export function PersonalityTraitsFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Hábito {index + 1}
+                      {formatMessage(t("fields.personality.habitLabel"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -682,15 +730,21 @@ export function PersonalityTraitsFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => habitsArray.remove(index)}
-                      aria-label={`Remover hábito ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.personality.removeHabitAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
-                      <FieldGroup id={`habits-${field.id}-text`} label="Hábito">
+                      <FieldGroup
+                        id={`habits-${field.id}-text`}
+                        label={t("fields.personality.habitField")}
+                      >
                       <Input
                         id={`habits-${field.id}-text`}
                         type="text"
@@ -722,18 +776,18 @@ export function PersonalityTraitsFields() {
                         className="w-fit"
                         onClick={() => revealBackground(rowKey)}
                       >
-                        Adicionar background
+                        {t("common.addBackground")}
                       </Button>
                     ) : (
                       <FieldGroup
                         id={`habits-${field.id}-background`}
-                        label="Background"
+                        label={t("fields.personality.backgroundLabel")}
                       >
                         <Textarea
                           id={`habits-${field.id}-background`}
                           autoComplete="off"
                           rows={3}
-                          placeholder="Qual o motivo do seu hábito?"
+                          placeholder={t("fields.personality.habitBgPlaceholder")}
                           aria-invalid={
                             rowErrors?.background ? true : undefined
                           }
@@ -767,7 +821,7 @@ export function PersonalityTraitsFields() {
             id="personality-quirks-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Peculiaridades
+            {t("fields.personality.quirksHeading")}
           </h3>
           <Button
             type="button"
@@ -777,12 +831,12 @@ export function PersonalityTraitsFields() {
             onClick={() => quirksArray.append({ text: "", background: "" })}
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar peculiaridade
+            {t("fields.personality.addQuirk")}
           </Button>
         </div>
         {quirksArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhuma peculiaridade adicionada. Trejeitos, frases de efeito ou detalhes únicos.
+            {t("fields.personality.quirksEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -800,7 +854,9 @@ export function PersonalityTraitsFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Peculiaridade {index + 1}
+                      {formatMessage(t("fields.personality.quirkLabel"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -808,17 +864,20 @@ export function PersonalityTraitsFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => quirksArray.remove(index)}
-                      aria-label={`Remover peculiaridade ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.personality.removeQuirkAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <FieldGroup
                         id={`quirks-${field.id}-text`}
-                        label="Peculiaridade"
+                        label={t("fields.personality.quirkField")}
                       >
                       <Input
                         id={`quirks-${field.id}-text`}
@@ -851,18 +910,18 @@ export function PersonalityTraitsFields() {
                         className="w-fit"
                         onClick={() => revealBackground(rowKey)}
                       >
-                        Adicionar background
+                        {t("common.addBackground")}
                       </Button>
                     ) : (
                       <FieldGroup
                         id={`quirks-${field.id}-background`}
-                        label="Background"
+                        label={t("fields.personality.backgroundLabel")}
                       >
                         <Textarea
                           id={`quirks-${field.id}-background`}
                           autoComplete="off"
                           rows={3}
-                          placeholder="Qual o motivo da sua peculiaridade?"
+                          placeholder={t("fields.personality.quirkBgPlaceholder")}
                           aria-invalid={
                             rowErrors?.background ? true : undefined
                           }

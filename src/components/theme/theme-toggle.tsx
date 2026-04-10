@@ -4,9 +4,11 @@ import { MoonStar, SunMedium } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
+  const { t } = useIntl();
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -18,9 +20,9 @@ export function ThemeToggle() {
   const nextTheme = isDark ? "light" : "dark";
   const label = mounted
     ? isDark
-      ? "Ativar tema claro"
-      : "Ativar tema escuro"
-    : "Alternar tema";
+      ? t("shell.themeLight")
+      : t("shell.themeDark")
+    : t("shell.themeToggle");
 
   return (
     <Button

@@ -6,12 +6,30 @@ The product is **pt-BR first** (primary audience: Brazilian RPG players), but th
 
 ## Goals
 
-- [ ] Offer **two UI locales:** `pt-BR` (default) and `en`
-- [ ] Let the user **switch language** without losing in-progress character data (same form state; only chrome language changes)
-- [ ] Translate **all user-facing app strings**: marketing home, shell (nav, theme), wizard (steps, field labels, hints, buttons), validation errors, empty states, export controls, preview headings, toasts/errors — **excluding** free-text values the user typed (character name, notes, etc. stay as entered)
-- [ ] Keep **exports and preview** aligned with the active locale (section titles, labels, “unnamed” placeholder, button descriptions — same semantic model as M1-F10 / M1-F11 / M1-F12 / M1-F13)
-- [ ] Work with **static export** (`output: "export"`) and **`NEXT_BASE_PATH`** (GitHub Pages) without requiring a Node server at request time
-- [ ] **Persist** the user’s locale choice across visits (same browser / origin)
+- [x] Offer **two UI locales:** `pt-BR` (default) and `en` — URLs `/pt-BR/…` and `/en/…`, static export builds both
+- [ ] Let the user **switch language** without losing in-progress character data — **TODO:** in-app locale switcher (T8); root `/` already redirects using `localStorage` preference when set
+- [ ] Translate **all user-facing app strings** — **partial:** `messages/*.json`, shell, home, criar page hero, theme toggle; wizard, validation, preview, export step, downloads still largely pt-BR in UI
+- [ ] Keep **exports and preview** aligned with the active locale — **TODO:** document builders / preview / PDF (T7); `document-sections` labels exist for some paths
+- [x] Work with **static export** (`output: "export"`) and **`NEXT_BASE_PATH`** (GitHub Pages) — `generateStaticParams`, client root redirect uses `NEXT_PUBLIC_BASE_PATH`
+- [ ] **Persist** the user’s locale choice across visits — **partial:** read on root redirect (`meu-background-locale`); no switcher UI to write preference yet (T8)
+
+## Implementation status (rolling)
+
+_Last updated: 2026-04-10._
+
+| Area | Status |
+| --- | --- |
+| `[locale]` routing + `generateStaticParams` | Done |
+| Message bundles `pt-BR` / `en` + `AppIntlProvider` / `useIntl()` | Done (baseline namespaces) |
+| Shell, marketing home, criar hero, footer, `html[lang]` from segment | Done |
+| Locale switcher + segment-only navigation | Not started (T8) |
+| Wizard steps, fields, export step UI, options/chips | Not started (T3–T5) |
+| Zod messages + `key={locale}` form reset pattern | Not started (T6) |
+| Markdown / TXT / PDF / filename localized chrome | Not started / WIP in repo (`document-markdown` partial) |
+| Vitest key parity `pt-BR` vs `en` | Not started (T9) |
+| E2E `/pt-BR/…`, smoke `/en` | Done (baseline) |
+
+See `handoff.md` and `tasks.md` for the ordered backlog.
 
 ## Out of Scope
 
@@ -123,21 +141,21 @@ The product is **pt-BR first** (primary audience: Brazilian RPG players), but th
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| I18N-01 | P1: Locale switch and persistence | Execute | Pending |
-| I18N-02 | P1: Routed locales and static hosting | Execute | Pending |
-| I18N-03 | P1: Complete string coverage | Execute | Pending |
-| I18N-04 | P2: Document `lang` | Execute | Pending |
-| I18N-05 | P2: Testing / key parity | Execute | Pending |
+| I18N-01 | P1: Locale switch and persistence | Execute | **Partial** — preference read on `/` redirect; mid-flow switcher and “switch without losing draft” UI not shipped |
+| I18N-02 | P1: Routed locales and static hosting | Execute | **Partial** — both locales in static output, deep links load correct segment; optional extra smoke with `NEXT_BASE_PATH` in CI (T9) |
+| I18N-03 | P1: Complete string coverage | Execute | **In progress** — home/shell/criar hero from messages; wizard, validation, preview, exports still incomplete |
+| I18N-04 | P2: Document `lang` | Execute | **Partial** — `lang` follows URL locale (`/pt-BR`, `/en`); verify again after locale switcher (T8) |
+| I18N-05 | P2: Testing / key parity | Execute | **Partial** — E2E + unit tests for locale paths; automated message key parity test still TODO |
 
-**Coverage:** 5 total, unmapped to tasks until `tasks.md` is executed.
+**Coverage:** 5 total; work breakdown and verification steps in `tasks.md` (T1–T9).
 
 ---
 
 ## Success Criteria
 
 - [ ] User can use the entire create flow in English with no Portuguese UI leakage in chrome, validation, preview, or exports
-- [ ] `npm run build` succeeds with static export and both locales
-- [ ] Locale preference survives reload; draft survives locale switch
+- [x] `npm run build` succeeds with static export and both locales
+- [ ] Locale preference survives reload; draft survives locale switch — **reload + preference:** partial via root redirect + `localStorage`; **draft + switch:** pending T8
 - [ ] Automated test guards message bundle parity (I18N-05)
 
 ---

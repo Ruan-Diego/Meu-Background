@@ -7,11 +7,13 @@ import {
   FieldGroup,
   inputFieldClassName,
 } from "@/components/character-form/form-field-parts";
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Input } from "@/components/ui/input";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
 import { cn } from "@/lib/utils";
 
 export function BasicInfoFields() {
+  const { t } = useIntl();
   const {
     control,
     register,
@@ -20,7 +22,10 @@ export function BasicInfoFields() {
 
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      <FieldGroup id="characterName" label="Nome do personagem">
+      <FieldGroup
+        id="characterName"
+        label={t("fields.basic.characterName")}
+      >
         <Controller
           name="characterName"
           control={control}
@@ -47,7 +52,7 @@ export function BasicInfoFields() {
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="playerName" label="Nome do jogador">
+      <FieldGroup id="playerName" label={t("fields.basic.playerName")}>
         <Input
           id="playerName"
           type="text"
@@ -67,7 +72,7 @@ export function BasicInfoFields() {
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="age" label="Idade">
+      <FieldGroup id="age" label={t("fields.basic.age")}>
         <Input
           id="age"
           type="text"
@@ -83,7 +88,7 @@ export function BasicInfoFields() {
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="race" label="Raça">
+      <FieldGroup id="race" label={t("fields.basic.race")}>
         <Input
           id="race"
           type="text"
@@ -98,7 +103,7 @@ export function BasicInfoFields() {
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="characterClass" label="Classe">
+      <FieldGroup id="characterClass" label={t("fields.basic.characterClass")}>
         <Input
           id="characterClass"
           type="text"
@@ -118,7 +123,7 @@ export function BasicInfoFields() {
         ) : null}
       </FieldGroup>
 
-      <FieldGroup id="occupation" label="Ocupação atual">
+      <FieldGroup id="occupation" label={t("fields.basic.occupation")}>
         <Input
           id="occupation"
           type="text"

@@ -1,8 +1,10 @@
 "use client";
 
 import { FileText } from "lucide-react";
+import { useMemo } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Badge } from "@/components/ui/badge";
 import {
   mergeInitialFormValues,
@@ -15,8 +17,19 @@ import {
   type DocumentHeader,
   type DocumentSection,
 } from "@/lib/character-form/document-sections";
+import { buildDocumentLabels } from "@/lib/i18n/document-labels";
+import { formatMessage } from "@/lib/i18n/format-message";
+import type { Messages } from "@/lib/i18n/messages-loader";
 
-function PreviewHeader({ header }: { header: DocumentHeader }) {
+function PreviewHeader({
+  header,
+  unnamedLabel,
+  byPlayerTemplate,
+}: {
+  header: DocumentHeader;
+  unnamedLabel: string;
+  byPlayerTemplate: string;
+}) {
   const hasName = header.characterName.trim().length > 0;
   const hasPlayer = header.playerName.trim().length > 0;
   const hasMeta = header.meta.length > 0;
@@ -27,13 +40,13 @@ function PreviewHeader({ header }: { header: DocumentHeader }) {
     <header className="space-y-2 border-b border-border/50 pb-6">
       <h2 className="text-title wrap-break-word text-foreground">
         {hasName ? header.characterName : (
-          <span className="text-muted-foreground/60 italic">Sem nome</span>
+          <span className="text-muted-foreground/60 italic">{unnamedLabel}</span>
         )}
       </h2>
 
       {hasPlayer && (
         <p className="text-body text-muted-foreground">
-          por {header.playerName}
+          {formatMessage(byPlayerTemplate, { player: header.playerName })}
         </p>
       )}
 
@@ -136,37 +149,46 @@ function SectionRenderer({ section }: { section: DocumentSection }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex flex-col items-center gap-4 py-12 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/60">
         <FileText className="h-7 w-7 text-muted-foreground/60" />
       </div>
       <div className="space-y-1">
-        <p className="text-body font-medium text-foreground">
-          Nenhum dado preenchido
-        </p>
-        <p className="text-caption text-muted-foreground">
-          Preencha o formulário para ver o preview do documento.
-        </p>
+        <p className="text-body font-medium text-foreground">{title}</p>
+        <p className="text-caption text-muted-foreground">{body}</p>
       </div>
     </div>
   );
 }
 
 export function DocumentPreview() {
+  const { messages, t } = useIntl();
+  const documentLabels = useMemo(
+    () => buildDocumentLabels(messages as Messages),
+    [messages],
+  );
   const { control } = useFormContext<CharacterFormValues>();
   const raw = useWatch({ control });
   const values = mergeInitialFormValues(
     (raw ?? {}) as Partial<CharacterFormValues> & Record<string, unknown>
   );
-  const doc = buildCharacterDocument(values);
+  const doc = buildCharacterDocument(values, documentLabels);
 
-  if (doc.isEmpty) return <EmptyState />;
+  if (doc.isEmpty) {
+    return (
+      <EmptyState title={t("preview.emptyTitle")} body={t("preview.emptyBody")} />
+    );
+  }
 
   return (
     <article className="space-y-8">
-      <PreviewHeader header={doc.header} />
+      <PreviewHeader
+        header={doc.header}
+        unnamedLabel={t("preview.unnamedCharacter")}
+        byPlayerTemplate={t("preview.byPlayer")}
+      />
       {doc.sections.map((section) => (
         <SectionRenderer key={section.id} section={section} />
       ))}

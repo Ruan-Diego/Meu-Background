@@ -131,14 +131,16 @@ Co-located `*.test.ts` files:
 | Markdown export | `src/lib/character-form/document-markdown.test.ts` |
 | Plain text export | `src/lib/character-form/document-plain-text.test.ts` |
 | Download filenames | `src/lib/character-form/document-filename.test.ts` |
+| i18n message key parity (pt-BR vs en) | `src/lib/i18n/messages-parity.test.ts` |
+| i18n option label helper | `src/lib/i18n/option-labels.test.ts` |
 
 ### E2E — Cypress (`npm run test:e2e`)
 
 | Spec | Covers |
 |------|--------|
-| `cypress/e2e/landing.cy.ts` | Home hero, CTA → `/criar`, anchor scroll |
-| `cypress/e2e/character-wizard.cy.ts` | Validation on basic step, back/next field retention, scroll-to-progress after next / previous / step rail, full path to export step + Markdown button visible |
-| `cypress/e2e/auto-save.cy.ts` | Draft name restored after reload (persist flush) |
+| `cypress/e2e/landing.cy.ts` | Home hero on `/pt-BR`, CTA → `/pt-BR/criar`, `/en` lang + English hero, anchor scroll |
+| `cypress/e2e/character-wizard.cy.ts` | Flows on `/pt-BR/criar` (validation, navigation, scroll, export step); English smoke on `/en/criar` (lang, basic step title, validation copy) |
+| `cypress/e2e/auto-save.cy.ts` | Draft name restored after reload (persist flush) on `/pt-BR/criar` |
 
 **Selectors / hydration:** Prefer `data-testid` where present; forms that depend on Zustand persist wait on **`form[data-ready]`** before interaction (see specs above).
 
@@ -152,6 +154,7 @@ _Last reviewed: 2026-04-10. **Milestone 1 is complete;** next roadmap tranche is
 - **Schema:** Zod-backed model and per-step validation in `schema.ts` — extend when adding fields or steps.
 - **Exports:** Markdown, plain text, and PDF buttons on export step (`markdown-export-button`, `plain-text-export-button`, `pdf-export-button`).
 - **GitHub Pages:** Production build uses `NEXT_BASE_PATH` = `/<repo>` in CI when deploying.
+- **M2-F02 (ready for merge, branch `feature/m2-f02-i18n-english-support`):** App routes under **`/[locale]`** (`pt-BR`, `en`) with `generateStaticParams`. Root **`/`** uses **`RootLocaleRedirect`** + **`meu-background-locale`**. **`AppIntlProvider`** + **`useIntl()`**; **`LocaleSwitcher`** in **`site-header`**; nav **`aria-label`** from **`shell.mainNavAria`**. **Exports** (PDF / Markdown / TXT) use **`buildDocumentLabels`**, **`buildSerializationLabels`** (MD/TXT), **`buildPdfChromeLabels`**, localized filenames via **`filename.emptyBasename`**. **Wizard** uses messages for steps, progress, step rail, export tiles, preview card, nav buttons; **`createCharacterFormSchema(validation)`** per locale with **`CharacterFormWizard key={locale}`** on **`LocalizedCriarPage`** so resolver matches messages. **`DocumentPreview`** uses document labels + **`preview.*`**. **Form field UIs** (`*-fields.tsx`, **`rhf-select-fields`**) read copy from **`fields.*`**, **`common.*`**, **`document.fearLevels.*`**, and **`getOptionLabel`** for country/chip options. **Tests:** **`messages-parity.test.ts`**, EN schema cases in **`schema.test.ts`**, Cypress EN wizard smoke. **Verified 2026-04-10:** **`npm run test:ci`**, **`npm run build`** (with and without **`NEXT_BASE_PATH=/Meu-Background`**), E2E specs green — see **`handoff.md`** for E2E port/teardown note.
 
 ---
 
@@ -159,6 +162,7 @@ _Last reviewed: 2026-04-10. **Milestone 1 is complete;** next roadmap tranche is
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-04-10 | **M2-F02:** Custom **`AppIntlProvider`** + `messages/*.json` instead of **next-intl** (for now) | Keeps static export + `basePath` predictable; `loadMessages` in `[locale]/layout.tsx` and client `useIntl().t(path)` with dot paths; revisit next-intl if requirements outgrow this |
 | 2026-04-10 | **Milestone 1** treated as **done** in codebase: all M1-F01–F14 behaviors present plus **Vitest** + **Cypress** baselines | Matches ROADMAP M1 DoD; agents should start new work from **M2** unless explicitly fixing M1 regressions |
 | 2026-04-07 | M1-F08 (Appearance / comportamento além da miniatura) ships as open text areas + Hero Forge link; UX debt is explicit in UI and specs | MVP scope limits coaching; the product requirement is to *facilitate* writing — this step is flagged for M3-style prompts, examples, and structure (see **M3-F07** in ROADMAP) |
 | 2026-04-07 | No standalone “Step: Relationships” in the wizard or roadmap; former M1-F08–F15 renumbered to M1-F07–F14 | Family and relationship ties live in step 2 (Origin & Background) via `relatives[]`; the old empty Relationships step duplicated that intent |
@@ -193,7 +197,7 @@ _Short entries: symptom → cause → fix. Newest first._
 
 | Date | Problem | Resolution |
 |------|---------|------------|
-| — | — | _None recorded yet._ |
+| 2026-04-10 | `npm run test:e2e` exit code 1 apesar de Cypress “All specs passed” | `start-server-and-test` teardown (`taskkill`) falhou quando outro processo já ocupava a porta 3000 e o PID filho não existia mais. **Specs estavam verdes**; liberar a porta 3000 antes do E2E evita o ruído. |
 
 ---
 
