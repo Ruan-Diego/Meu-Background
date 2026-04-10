@@ -6,9 +6,11 @@
 
 ## O que é
 
-**Meu Background** é um site gratuito e **sem cadastro**: você preenche um fluxo guiado e monta um **background de personagem** para RPG de mesa (D&D, Pathfinder, sistemas genéricos, etc.). Tudo roda no **seu navegador** — os dados ficam salvos localmente enquanto você edita — e no fim você **baixa** o resultado em **Markdown**, **texto** ou **PDF**, com **preview ao vivo** do documento.
+**Meu Background** é um site gratuito e **sem cadastro**: você preenche um fluxo guiado e monta um **background de personagem** para RPG de mesa. Tudo roda no **seu navegador** — os dados ficam salvos localmente enquanto você edita — e no fim você **baixa** o resultado em **Markdown**, **texto** ou **PDF**, com **preview ao vivo** do documento.
 
-Ideal para jogadores que querem uma história organizada e para mestres que recebem um texto pronto para a mesa.
+O foco é **organizar** a informação para o **mestre** e para o **jogador**, e **guiar** quem está começando ou já tem experiência a montar uma história **completa** e ao mesmo tempo **concisa** — fácil de ler na mesa e de usar na campanha.
+
+**Hoje** alguns campos e opções são específicos do mundo **Deorum**. **No futuro**, a ideia é ter **seleção de mundo/configuração de mesa** para que outras campanhas e sistemas possam usar o mesmo fluxo sem ficarem presos a um cenário só.
 
 ## O que já dá para fazer
 
@@ -20,7 +22,9 @@ Ideal para jogadores que querem uma história organizada e para mestres que rece
 
 ## Para onde o projeto vai
 
-O MVP cobre fluxo completo e exportação. As próximas ondas de trabalho tendem a **polir experiência** (animações, acessibilidade, talvez outro idioma) e, mais adiante, **enriquecer o apoio dentro do formulário** para quem está escrevendo — sempre com conteúdo pensado pelo produto, **sem** geração automática de história por IA. O detalhamento oficial está no **[roadmap](.specs/project/ROADMAP.md)**.
+O MVP cobre fluxo completo e exportação. Por cima disso, entram melhorias de **experiência** (por exemplo animações, acessibilidade, outro idioma), **enriquecimento do apoio dentro do formulário** para quem escreve — sempre com conteúdo pensado pelo produto, **sem** geração automática de história por IA — e a evolução para **várias mesas/mundos**, como citado acima.
+
+O **[roadmap](.specs/project/ROADMAP.md)** é um **rascunho de direções**: ideias do que *pode* ser feito ao longo do tempo, **não** um compromisso fixo nem garantia de ordem ou escopo — prioridades mudam conforme o uso e o feedback.
 
 ## Tech stack
 
@@ -59,7 +63,7 @@ npm run build
 ## Documentação do projeto
 
 - [`.specs/project/PROJECT.md`](.specs/project/PROJECT.md) — visão, objetivos e escopo do produto  
-- [`.specs/project/ROADMAP.md`](.specs/project/ROADMAP.md) — marcos, features e ideias futuras  
+- [`.specs/project/ROADMAP.md`](.specs/project/ROADMAP.md) — ideias e marcos possíveis (planejamento, não promessa)  
 - [`.specs/project/STATE.md`](.specs/project/STATE.md) — decisões, lições e estado atual (útil para quem contribui)  
 - [`AGENTS.md`](AGENTS.md) — guia rápido para ferramentas de IA / contribuidores no repositório  
 
