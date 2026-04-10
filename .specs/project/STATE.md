@@ -198,6 +198,7 @@ _Short entries: symptom → cause → fix. Newest first._
 | Date | Problem | Resolution |
 |------|---------|------------|
 | 2026-04-10 | `npm run test:e2e` exit code 1 apesar de Cypress “All specs passed” | `start-server-and-test` teardown (`taskkill`) falhou quando outro processo já ocupava a porta 3000 e o PID filho não existia mais. **Specs estavam verdes**; liberar a porta 3000 antes do E2E evita o ruído. |
+| 2026-04-10 | React 19 aviso “Encountered a script tag…” ao trocar idioma | `next-themes` renderiza um `<script>` de hidratação; com `ThemeProvider` dentro de `[locale]/layout`, cada mudança de locale remontava o provider. **`ThemeProvider` foi movido para `src/app/layout.tsx`** (raiz), assim o script não é recriado na navegação entre `/pt-BR` e `/en`. |
 
 ---
 

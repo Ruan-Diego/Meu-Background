@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { AppIntlProvider } from "@/components/i18n/app-intl-provider";
 import { LocaleHtmlLang } from "@/components/i18n/locale-html-lang";
 import { AppShell } from "@/components/layout/app-shell";
-import { ThemeProvider } from "@/components/theme/theme-provider";
 import { type Locale, isLocale, locales } from "@/lib/i18n/config";
 import { getMessageValue } from "@/lib/i18n/format-message";
 import { loadMessages } from "@/lib/i18n/messages-loader";
@@ -52,16 +51,9 @@ export default async function LocaleLayout({
   const messages = await loadMessages(locale);
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <AppIntlProvider locale={locale} messages={messages}>
-        <LocaleHtmlLang />
-        <AppShell>{children}</AppShell>
-      </AppIntlProvider>
-    </ThemeProvider>
+    <AppIntlProvider locale={locale} messages={messages}>
+      <LocaleHtmlLang />
+      <AppShell>{children}</AppShell>
+    </AppIntlProvider>
   );
 }
