@@ -1,0 +1,45 @@
+---
+description: Keep .specs/project/STATE.md current; mandatory full update after merge to main
+alwaysApply: true
+---
+
+# Project state (STATE.md) — agent obligations
+
+The file **`.specs/project/STATE.md`** is the shared, persistent memory for this repo. Every agent must treat it as the first-class place to record **context**, **what is already done**, **how problems were solved**, **decisions**, **requirements and business rules** (summary), **app fundamentals**, and **tools / patterns** the team adopted.
+
+## When to open and update STATE
+
+1. **During any substantive task** — Before considering work complete, ask: *“Does STATE need an update?”* If yes, edit STATE in the **same branch / same effort** as the code or docs (preferably in the same commit as the feature when it is small and coherent).
+
+   Update when any of the following applies (including small or “obvious” items — brief entries are enough):
+
+   - New or changed **features** (even small).
+   - **Notable refactors** or behavior changes (large or small) that affect how the app works or how agents should reason about it.
+   - **Lessons learned** — tricks, pitfalls, “do not do X”, verification notes.
+   - **Problems encountered** and **how they were resolved** (error messages, root cause, fix — short bullets).
+   - New or changed **functional** / **non-functional** expectations, **business rules**, or **product fundamentals** that are not obvious from code alone.
+   - New **dependencies**, **CLI/scripts**, **CI**, **testing** conventions, or **architectural** choices agents must know.
+
+2. **After a merge into `main`** — **Always** perform a **full pass** on STATE: consolidate **everything** that reached `main` in that merge (and related promotion), so the next agent has a single trustworthy snapshot. Do not skip this because the changes “were already in the PR description.”
+
+   - If your workflow merges to `develop` first and only later promotes to `main`, still treat **the merge into `main`** as the mandatory trigger for that consolidated update (you may append incrementally on `develop`, but **`main` must not lag** on STATE).
+
+## What STATE should make obvious (minimum bar)
+
+Agents reading STATE alone should quickly see:
+
+| Area | Intent |
+|------|--------|
+| **Decisions** | What was chosen and why (keep the existing decisions table or equivalent). |
+| **Done / in progress** | What shipped or changed recently; link to roadmap IDs (`M1-Fxx`) when applicable. |
+| **Resolved issues** | Past breakages, env quirks, build/test failures — and the fix. |
+| **Requirements & rules** | Short summary of functional / non-functional expectations and business rules; point to `.specs/` or ROADMAP for detail when specs are canonical. |
+| **Stack & patterns** | Tools, libraries, testing commands, branch naming — whatever you decided and future agents must not rediscover by trial. |
+
+Prefer **short, dated bullets** over long prose. Prefer **updating existing sections** (e.g. Lessons, Decisions, TODOs) over duplicating ROADMAP content — STATE is **memory for agents**, not a full spec duplicate.
+
+## Agent behavior (summary)
+
+- End of meaningful work: **check STATE**; append or revise if anything above changed.
+- After **merge to `main`**: **mandatory** STATE update covering all integrated changes.
+- If nothing new applies, it is acceptable to add a one-line note under the relevant section (e.g. “No STATE changes this task — doc-only / typo fix only”) only when that is genuinely true; skip noisy no-op entries when the task was trivial and STATE already reflects reality.
