@@ -9,13 +9,16 @@ import {
   inputFieldClassName,
   textareaFieldClassName,
 } from "@/components/character-form/form-field-parts";
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
+import { formatMessage } from "@/lib/i18n/format-message";
 import { cn } from "@/lib/utils";
 
 export function FreeNotesFields() {
+  const { t } = useIntl();
   const {
     register,
     control,
@@ -34,7 +37,7 @@ export function FreeNotesFields() {
           id="free-notes-heading"
           className="text-sm font-semibold text-foreground"
         >
-          Tópicos livres
+          {t("fields.freeNotes.heading")}
         </h3>
         <Button
           type="button"
@@ -49,14 +52,13 @@ export function FreeNotesFields() {
           }
         >
           <Plus data-icon="inline-start" className="size-4" />
-          Adicionar tópico
+          {t("fields.freeNotes.addTopic")}
         </Button>
       </div>
 
       {fields.length === 0 ? (
         <p className="text-body text-muted-foreground">
-          Nenhuma nota adicionada. Use o botão acima para incluir blocos com
-          título e descrição.
+          {t("fields.freeNotes.empty")}
         </p>
       ) : (
         <ul className="space-y-4">
@@ -69,7 +71,9 @@ export function FreeNotesFields() {
               >
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <span className="text-caption font-medium text-muted-foreground">
-                    Bloco {index + 1}
+                    {formatMessage(t("fields.freeNotes.blockLabel"), {
+                      n: index + 1,
+                    })}
                   </span>
                   <Button
                     type="button"
@@ -77,16 +81,19 @@ export function FreeNotesFields() {
                     size="sm"
                     className="text-destructive hover:text-destructive"
                     onClick={() => remove(index)}
-                    aria-label={`Remover nota ${index + 1}`}
+                    aria-label={formatMessage(
+                      t("fields.freeNotes.removeNoteAria"),
+                      { n: index + 1 },
+                    )}
                   >
                     <Trash2 className="size-4" />
-                    Remover
+                    {t("common.remove")}
                   </Button>
                 </div>
                 <div className="space-y-4">
                   <FieldGroup
                     id={`freeNotes-${field.id}-topic`}
-                    label="Tópico"
+                    label={t("fields.freeNotes.topicLabel")}
                   >
                     <Input
                       id={`freeNotes-${field.id}-topic`}
@@ -111,7 +118,7 @@ export function FreeNotesFields() {
 
                   <FieldGroup
                     id={`freeNotes-${field.id}-description`}
-                    label="Descrição"
+                    label={t("common.description")}
                   >
                     <Textarea
                       id={`freeNotes-${field.id}-description`}

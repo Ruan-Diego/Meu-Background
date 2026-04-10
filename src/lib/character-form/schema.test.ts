@@ -2,13 +2,17 @@ import { describe, expect, it } from "vitest";
 
 import {
   characterFormSchema,
+  createCharacterFormSchema,
   defaultCharacterFormValues,
   getTriggerPathsForStepIndex,
   mergeInitialFormValues,
   validateStepValues,
   type CharacterFormValues,
+  type ValidationMessages,
 } from "@/lib/character-form/schema";
 import { FORM_STEPS } from "@/lib/character-form/steps";
+
+import enMessages from "../../../messages/en.json";
 
 const minimalValid: CharacterFormValues = {
   ...defaultCharacterFormValues,
@@ -97,6 +101,39 @@ describe("mergeInitialFormValues", () => {
       birthCountry: "not-a-valid-country",
     } as Parameters<typeof mergeInitialFormValues>[0]);
     expect(merged).toEqual(defaultCharacterFormValues);
+  });
+});
+
+describe("createCharacterFormSchema (en messages)", () => {
+  const enValidation = enMessages.validation as ValidationMessages;
+  const enBundle = createCharacterFormSchema(enValidation);
+
+  it("should surface English validation for empty character name", () => {
+    const parsed = enBundle.characterFormSchema.safeParse({
+      ...minimalValid,
+      characterName: "",
+    });
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) {
+      expect(parsed.error.issues[0]?.message).toBe(
+        enValidation.characterNameRequired,
+      );
+    }
+  });
+
+  it("should use English step validation when context uses EN step schemas", () => {
+    const result = validateStepValues(
+      "basic",
+      { ...minimalValid, characterName: "" },
+      {
+        stepSchemas: enBundle.stepSchemas,
+        stepGeneric: enValidation.stepGeneric,
+      },
+    );
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.message).toBe(enValidation.characterNameRequired);
+    }
   });
 });
 

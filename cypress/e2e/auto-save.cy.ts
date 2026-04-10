@@ -1,7 +1,7 @@
 describe("Auto-save draft", () => {
   beforeEach(() => {
-    cy.visit("/");
-    cy.visit("/criar", {
+    cy.visit("/pt-BR");
+    cy.visit("/pt-BR/criar", {
       onBeforeLoad(win) {
         win.localStorage.clear();
         win.sessionStorage.clear();

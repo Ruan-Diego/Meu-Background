@@ -14,13 +14,16 @@ import {
   inputFieldClassName,
   textareaFieldClassName,
 } from "@/components/character-form/form-field-parts";
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
+import { formatMessage } from "@/lib/i18n/format-message";
 import { cn } from "@/lib/utils";
 
 export function GoalsMotivationsFields() {
+  const { t } = useIntl();
   const {
     register,
     control,
@@ -71,7 +74,7 @@ export function GoalsMotivationsFields() {
             id="goals-metas-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Metas
+            {t("fields.goals.shortTermHeading")}
           </h3>
           <Button
             type="button"
@@ -86,13 +89,13 @@ export function GoalsMotivationsFields() {
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar meta
+            {t("fields.goals.addShortTerm")}
           </Button>
         </div>
 
         {shortTermArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhuma meta adicionada. Use o botão acima para incluir.
+            {t("fields.goals.shortTermEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -110,7 +113,9 @@ export function GoalsMotivationsFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Meta {index + 1}
+                      {formatMessage(t("fields.goals.shortTermRow"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -118,16 +123,19 @@ export function GoalsMotivationsFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => shortTermArray.remove(index)}
-                      aria-label={`Remover meta ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.goals.removeShortTermAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="space-y-4">
                     <FieldGroup
                       id={`shortTermGoals-${field.id}-meta`}
-                      label="Meta"
+                      label={t("fields.goals.metaLabel")}
                     >
                       <Input
                         id={`shortTermGoals-${field.id}-meta`}
@@ -159,7 +167,7 @@ export function GoalsMotivationsFields() {
                           className="w-fit"
                           onClick={() => revealMetaDescription(field.id)}
                         >
-                          Adicionar descrição
+                          {t("fields.goals.addDescription")}
                         </Button>
                       ) : null}
                       <div
@@ -167,7 +175,7 @@ export function GoalsMotivationsFields() {
                       >
                         <FieldGroup
                           id={`shortTermGoals-${field.id}-description`}
-                          label="Descrição"
+                          label={t("common.description")}
                         >
                           <Textarea
                             id={`shortTermGoals-${field.id}-description`}
@@ -209,7 +217,7 @@ export function GoalsMotivationsFields() {
             id="goals-life-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Objetivo de vida
+            {t("fields.goals.lifeHeading")}
           </h3>
           <Button
             type="button"
@@ -224,13 +232,13 @@ export function GoalsMotivationsFields() {
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar objetivo
+            {t("fields.goals.addLife")}
           </Button>
         </div>
 
         {lifeGoalsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum objetivo adicionado. Use o botão acima para incluir.
+            {t("fields.goals.lifeEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -248,7 +256,9 @@ export function GoalsMotivationsFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Objetivo {index + 1}
+                      {formatMessage(t("fields.goals.lifeRow"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -256,16 +266,18 @@ export function GoalsMotivationsFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => lifeGoalsArray.remove(index)}
-                      aria-label={`Remover objetivo de vida ${index + 1}`}
+                      aria-label={formatMessage(t("fields.goals.removeLifeAria"), {
+                        n: index + 1,
+                      })}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="space-y-4">
                     <FieldGroup
                       id={`lifeGoals-${field.id}-objective`}
-                      label="Objetivo"
+                      label={t("fields.goals.objectiveLabel")}
                     >
                       <Input
                         id={`lifeGoals-${field.id}-objective`}
@@ -299,7 +311,7 @@ export function GoalsMotivationsFields() {
                           className="w-fit"
                           onClick={() => revealLifeDescription(field.id)}
                         >
-                          Adicionar descrição
+                          {t("fields.goals.addDescription")}
                         </Button>
                       ) : null}
                       <div
@@ -307,7 +319,7 @@ export function GoalsMotivationsFields() {
                       >
                         <FieldGroup
                           id={`lifeGoals-${field.id}-description`}
-                          label="Descrição"
+                          label={t("common.description")}
                         >
                           <Textarea
                             id={`lifeGoals-${field.id}-description`}

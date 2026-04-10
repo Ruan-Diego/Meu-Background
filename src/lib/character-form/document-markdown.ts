@@ -1,8 +1,18 @@
+import { formatMessage } from "@/lib/i18n/format-message";
+import type { DocumentSerializationLabels } from "@/lib/i18n/document-labels";
+import { buildSerializationLabels } from "@/lib/i18n/document-labels";
+import type { Messages } from "@/lib/i18n/messages-loader";
 import type {
   CharacterDocument,
   DocumentBlock,
   DocumentEntry,
 } from "@/lib/character-form/document-sections";
+
+import ptMessages from "../../../messages/pt-BR.json";
+
+const defaultSerializationLabels = buildSerializationLabels(
+  ptMessages as Messages
+);
 
 /**
  * Escape inline markdown so user text can sit inside **bold** or *italics*
@@ -56,7 +66,10 @@ function renderEntryLines(entry: DocumentEntry): string[] {
   return lines;
 }
 
-function blockToMarkdown(block: DocumentBlock): string {
+function blockToMarkdown(
+  block: DocumentBlock,
+  labels: DocumentSerializationLabels
+): string {
   switch (block.type) {
     case "text": {
       const body = sanitizeUserParagraph(block.value.trim());
@@ -74,21 +87,28 @@ function blockToMarkdown(block: DocumentBlock): string {
       const body = block.body.trim()
         ? sanitizeUserParagraph(block.body.trim())
         : "";
-      return `### ${escapeInline(block.heading.trim() || "Nota")}\n\n${body}`;
+      const heading =
+        block.heading.trim() || labels.defaultNoteHeading;
+      return `### ${escapeInline(heading)}\n\n${body}`;
     }
   }
 }
 
-function headerToMarkdown(header: CharacterDocument["header"]): string {
+function headerToMarkdown(
+  header: CharacterDocument["header"],
+  labels: DocumentSerializationLabels
+): string {
   const titleRaw = header.characterName.trim();
-  const title = titleRaw ? escapeInline(titleRaw) : "Sem nome";
+  const title = titleRaw
+    ? escapeInline(titleRaw)
+    : escapeInline(labels.unnamedCharacter);
   const parts: string[] = [`# ${title}`];
 
   if (header.playerName.trim()) {
-    parts.push(
-      "",
-      `*Por ${escapeInline(header.playerName.trim())}*`
-    );
+    const byLine = formatMessage(labels.byPlayerMarkdown, {
+      player: header.playerName.trim(),
+    });
+    parts.push("", `*${escapeInline(byLine)}*`);
   }
 
   if (header.meta.length > 0) {
@@ -104,12 +124,17 @@ function headerToMarkdown(header: CharacterDocument["header"]): string {
 /**
  * Serialize the canonical character document to GitHub-flavored Markdown.
  */
-export function characterDocumentToMarkdown(doc: CharacterDocument): string {
-  const chunks: string[] = [headerToMarkdown(doc.header)];
+export function characterDocumentToMarkdown(
+  doc: CharacterDocument,
+  labels: DocumentSerializationLabels = defaultSerializationLabels
+): string {
+  const chunks: string[] = [headerToMarkdown(doc.header, labels)];
 
   for (const section of doc.sections) {
     chunks.push("", `## ${escapeInline(section.title)}`, "");
-    const body = section.blocks.map(blockToMarkdown).join("\n\n");
+    const body = section.blocks
+      .map((b) => blockToMarkdown(b, labels))
+      .join("\n\n");
     chunks.push(body);
   }
 

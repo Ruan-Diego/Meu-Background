@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
+import type { PdfChromeLabels } from "@/lib/i18n/document-labels";
 import type {
   CharacterDocument,
   DocumentBlock,
@@ -140,7 +141,13 @@ const styles = StyleSheet.create({
   },
 });
 
-function PdfHeader({ header }: { header: DocumentHeader }) {
+function PdfHeader({
+  header,
+  chrome,
+}: {
+  header: DocumentHeader;
+  chrome: PdfChromeLabels;
+}) {
   const hasName = header.characterName.trim().length > 0;
   const hasPlayer = header.playerName.trim().length > 0;
   const hasMeta = header.meta.length > 0;
@@ -152,10 +159,13 @@ function PdfHeader({ header }: { header: DocumentHeader }) {
       {hasName ? (
         <Text style={styles.title}>{header.characterName}</Text>
       ) : (
-        <Text style={styles.titlePlaceholder}>Sem nome</Text>
+        <Text style={styles.titlePlaceholder}>{chrome.unnamedCharacter}</Text>
       )}
       {hasPlayer && (
-        <Text style={styles.playerLine}>por {header.playerName}</Text>
+        <Text style={styles.playerLine}>
+          {chrome.byPlayerPrefix}
+          {header.playerName}
+        </Text>
       )}
       {hasMeta && (
         <Text style={styles.metaLine}>
@@ -213,7 +223,13 @@ function PdfEntryLines({ entry }: { entry: DocumentEntry }) {
   return <View>{lines}</View>;
 }
 
-function PdfBlock({ block }: { block: DocumentBlock }) {
+function PdfBlock({
+  block,
+  chrome,
+}: {
+  block: DocumentBlock;
+  chrome: PdfChromeLabels;
+}) {
   switch (block.type) {
     case "text":
       return (
@@ -247,7 +263,8 @@ function PdfBlock({ block }: { block: DocumentBlock }) {
         </View>
       );
     case "note": {
-      const heading = block.heading.trim() || "Nota";
+      const heading =
+        block.heading.trim() || chrome.defaultNoteHeading;
       return (
         <View style={styles.blockGroup}>
           <Text style={styles.noteHeading}>{heading}</Text>
@@ -267,17 +284,25 @@ function PdfBlock({ block }: { block: DocumentBlock }) {
   }
 }
 
-function PdfSection({ section }: { section: DocumentSection }) {
+function PdfSection({
+  section,
+  chrome,
+}: {
+  section: DocumentSection;
+  chrome: PdfChromeLabels;
+}) {
   const [firstBlock, ...restBlocks] = section.blocks;
 
   return (
     <View style={styles.sectionRoot}>
       <View style={styles.orphanGroup} minPresenceAhead={96} wrap>
         <Text style={styles.sectionTitle}>{section.title}</Text>
-        {firstBlock ? <PdfBlock block={firstBlock} /> : null}
+        {firstBlock ? (
+          <PdfBlock block={firstBlock} chrome={chrome} />
+        ) : null}
       </View>
       {restBlocks.map((block, i) => (
-        <PdfBlock key={i} block={block} />
+        <PdfBlock key={i} block={block} chrome={chrome} />
       ))}
     </View>
   );
@@ -286,22 +311,26 @@ function PdfSection({ section }: { section: DocumentSection }) {
 export type CharacterDocumentPdfProps = {
   /** Canonical character document (not raw form values). */
   document: CharacterDocument;
+  chrome: PdfChromeLabels;
 };
 
 /**
  * React-PDF tree for a character sheet. Root {@link Document} for use with
  * `pdf()` from `@react-pdf/renderer` (client-only).
  */
-export function CharacterDocumentPdf({ document: doc }: CharacterDocumentPdfProps) {
+export function CharacterDocumentPdf({
+  document: doc,
+  chrome,
+}: CharacterDocumentPdfProps) {
   const titleRaw = doc.header.characterName.trim();
-  const docTitle = titleRaw || "Sem nome";
+  const docTitle = titleRaw || chrome.unnamedCharacter;
 
   return (
-    <Document language="pt-BR" title={docTitle}>
+    <Document language={chrome.documentLanguage} title={docTitle}>
       <Page size="A4" style={styles.page} wrap>
-        <PdfHeader header={doc.header} />
+        <PdfHeader header={doc.header} chrome={chrome} />
         {doc.sections.map((section) => (
-          <PdfSection key={section.id} section={section} />
+          <PdfSection key={section.id} section={section} chrome={chrome} />
         ))}
       </Page>
     </Document>

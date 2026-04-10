@@ -1,6 +1,7 @@
 "use client";
 
 import { createElement } from "react";
+import type { PdfChromeLabels } from "@/lib/i18n/document-labels";
 import type { CharacterDocument } from "@/lib/character-form/document-sections";
 import { CharacterDocumentPdf } from "@/lib/character-form/document-pdf";
 
@@ -11,9 +12,10 @@ import { CharacterDocumentPdf } from "@/lib/character-form/document-pdf";
  */
 export async function generateCharacterPdfBlob(
   doc: CharacterDocument,
+  chrome: PdfChromeLabels
 ): Promise<Blob> {
   const { pdf } = await import("@react-pdf/renderer");
-  const root = createElement(CharacterDocumentPdf, { document: doc });
+  const root = createElement(CharacterDocumentPdf, { document: doc, chrome });
   const instance = pdf(
     root as NonNullable<Parameters<typeof pdf>[0]>,
   );

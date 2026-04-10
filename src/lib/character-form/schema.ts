@@ -4,6 +4,8 @@ import { ORIGIN_COUNTRY_OPTIONS } from "@/lib/character-form/origin-constants";
 import { PERSONALITY_FEAR_LEVELS } from "@/lib/character-form/personality-constants";
 import { FORM_STEPS, type FormStepId } from "@/lib/character-form/steps";
 
+import ptMessages from "../../../messages/pt-BR.json";
+
 const trimmed = z.string().trim();
 
 const originCountrySchema = z.union([
@@ -34,65 +36,134 @@ const personalityFearRowSchema = z.object({
   background: trimmed,
 });
 
-/** Metas: linha “Meta” + descrição opcional (revelada no UI). */
 const shortTermGoalRowSchema = z.object({
   meta: trimmed,
   description: trimmed,
 });
 
-/** Objetivo de vida: linha “Objetivo” + descrição opcional. */
 const lifeGoalRowSchema = z.object({
   objective: trimmed,
   description: trimmed,
 });
 
-/** Notas livres: rótulo curto + corpo (M1-F09). */
 const freeNoteRowSchema = z.object({
   topic: trimmed,
   description: trimmed,
 });
 
-/**
- * Single source of truth for the character form. Further steps add fields
- * in M1-F05+ and register keys under the matching step in `STEP_FIELD_PATHS`.
- */
-export const characterFormSchema = z.object({
-  characterName: trimmed.min(1, "Informe o nome do personagem."),
-  playerName: trimmed,
-  age: trimmed,
-  race: trimmed,
-  characterClass: trimmed,
-  birthCountry: originCountrySchema,
-  birthRegion: trimmed,
-  birthCity: trimmed,
-  relatives: z.array(relativeRowSchema),
-  shapingEvents: z.array(shapingEventRowSchema),
-  occupation: trimmed,
-  temperamentTags: z.array(z.string()),
-  valueTags: z.array(z.string()),
-  flaws: z.array(personalitySingleLineRowSchema),
-  fears: z.array(personalityFearRowSchema),
-  habits: z.array(personalitySingleLineRowSchema),
-  quirks: z.array(personalitySingleLineRowSchema),
-  shortTermGoals: z.array(shortTermGoalRowSchema),
-  lifeGoals: z.array(lifeGoalRowSchema),
-  /** Detalhes que a miniatura / Hero Forge não mostram (M1-F08). */
-  heightDescription: trimmed,
-  hiddenMarksAndScars: trimmed,
-  firstImpression: trimmed,
-  voiceAndSpeech: trimmed,
-  movementAndMannerisms: trimmed,
-  freeNotes: z.array(freeNoteRowSchema),
-});
+export type ValidationMessages = {
+  characterNameRequired: string;
+  stepGeneric: string;
+};
 
 /**
- * Persist / merge: same shape as {@link characterFormSchema} but allows empty
- * `characterName` so drafts and `mergeInitialFormValues` do not fall back to
- * full defaults (wiping the store) while the user clears or edits the name.
+ * Build Zod schemas with localized validation copy (M2-F02).
  */
-const characterFormDraftMergeSchema = characterFormSchema.extend({
-  characterName: trimmed,
-});
+export function createCharacterFormSchema(v: ValidationMessages) {
+  const characterFormSchema = z.object({
+    characterName: trimmed.min(1, v.characterNameRequired),
+    playerName: trimmed,
+    age: trimmed,
+    race: trimmed,
+    characterClass: trimmed,
+    birthCountry: originCountrySchema,
+    birthRegion: trimmed,
+    birthCity: trimmed,
+    relatives: z.array(relativeRowSchema),
+    shapingEvents: z.array(shapingEventRowSchema),
+    occupation: trimmed,
+    temperamentTags: z.array(z.string()),
+    valueTags: z.array(z.string()),
+    flaws: z.array(personalitySingleLineRowSchema),
+    fears: z.array(personalityFearRowSchema),
+    habits: z.array(personalitySingleLineRowSchema),
+    quirks: z.array(personalitySingleLineRowSchema),
+    shortTermGoals: z.array(shortTermGoalRowSchema),
+    lifeGoals: z.array(lifeGoalRowSchema),
+    heightDescription: trimmed,
+    hiddenMarksAndScars: trimmed,
+    firstImpression: trimmed,
+    voiceAndSpeech: trimmed,
+    movementAndMannerisms: trimmed,
+    freeNotes: z.array(freeNoteRowSchema),
+  });
+
+  const characterFormDraftMergeSchema = characterFormSchema.extend({
+    characterName: trimmed,
+  });
+
+  const basicStepSchema = characterFormSchema.pick({
+    characterName: true,
+    playerName: true,
+    age: true,
+    race: true,
+    characterClass: true,
+    occupation: true,
+  });
+
+  const originStepSchema = characterFormSchema.pick({
+    birthCountry: true,
+    birthRegion: true,
+    birthCity: true,
+    relatives: true,
+    shapingEvents: true,
+  });
+
+  const personalityStepSchema = characterFormSchema.pick({
+    temperamentTags: true,
+    valueTags: true,
+    flaws: true,
+    fears: true,
+    habits: true,
+    quirks: true,
+  });
+
+  const goalsStepSchema = characterFormSchema.pick({
+    shortTermGoals: true,
+    lifeGoals: true,
+  });
+
+  const appearanceStepSchema = characterFormSchema.pick({
+    heightDescription: true,
+    hiddenMarksAndScars: true,
+    firstImpression: true,
+    voiceAndSpeech: true,
+    movementAndMannerisms: true,
+  });
+
+  const freeNotesStepSchema = characterFormSchema.pick({
+    freeNotes: true,
+  });
+
+  const exportStepSchema = z.object({});
+
+  const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
+    basic: basicStepSchema,
+    origin: originStepSchema,
+    personality: personalityStepSchema,
+    goals: goalsStepSchema,
+    appearance: appearanceStepSchema,
+    freeNotes: freeNotesStepSchema,
+    export: exportStepSchema,
+  };
+
+  return {
+    characterFormSchema,
+    characterFormDraftMergeSchema,
+    stepSchemas,
+  };
+}
+
+export type CharacterFormSchemaBundle = ReturnType<
+  typeof createCharacterFormSchema
+>;
+
+const PT_VALIDATION = ptMessages.validation as ValidationMessages;
+
+/** Default (pt-BR) bundle for types, merge, and tests. */
+export const defaultSchemaBundle = createCharacterFormSchema(PT_VALIDATION);
+
+export const characterFormSchema = defaultSchemaBundle.characterFormSchema;
 
 export type CharacterFormValues = z.infer<typeof characterFormSchema>;
 
@@ -176,10 +247,6 @@ function coerceFreeNoteRows(raw: unknown): CharacterFormValues["freeNotes"] {
   });
 }
 
-/**
- * Merge persisted draft into defaults; drops removed fields and coerces
- * pre–M1-F07 string shapes to empty arrays. Output matches `characterFormSchema`.
- */
 export function mergeInitialFormValues(
   draft: Partial<CharacterFormValues> & Record<string, unknown>
 ): CharacterFormValues {
@@ -197,67 +264,13 @@ export function mergeInitialFormValues(
     lifeGoals,
     freeNotes,
   };
-  const parsed = characterFormDraftMergeSchema.safeParse(merged);
+  const parsed =
+    defaultSchemaBundle.characterFormDraftMergeSchema.safeParse(merged);
   return parsed.success ? parsed.data : defaultCharacterFormValues;
 }
 
-const basicStepSchema = characterFormSchema.pick({
-  characterName: true,
-  playerName: true,
-  age: true,
-  race: true,
-  characterClass: true,
-  occupation: true,
-});
+export const stepSchemas = defaultSchemaBundle.stepSchemas;
 
-const originStepSchema = characterFormSchema.pick({
-  birthCountry: true,
-  birthRegion: true,
-  birthCity: true,
-  relatives: true,
-  shapingEvents: true,
-});
-
-const personalityStepSchema = characterFormSchema.pick({
-  temperamentTags: true,
-  valueTags: true,
-  flaws: true,
-  fears: true,
-  habits: true,
-  quirks: true,
-});
-
-const goalsStepSchema = characterFormSchema.pick({
-  shortTermGoals: true,
-  lifeGoals: true,
-});
-
-const appearanceStepSchema = characterFormSchema.pick({
-  heightDescription: true,
-  hiddenMarksAndScars: true,
-  firstImpression: true,
-  voiceAndSpeech: true,
-  movementAndMannerisms: true,
-});
-
-const freeNotesStepSchema = characterFormSchema.pick({
-  freeNotes: true,
-});
-
-const exportStepSchema = z.object({});
-
-/** Zod schema slice validated before leaving each step (extend per milestone). */
-export const stepSchemas: Record<FormStepId, z.ZodType<unknown>> = {
-  basic: basicStepSchema,
-  origin: originStepSchema,
-  personality: personalityStepSchema,
-  goals: goalsStepSchema,
-  appearance: appearanceStepSchema,
-  freeNotes: freeNotesStepSchema,
-  export: exportStepSchema,
-};
-
-/** RHF field names belonging to each step — used with `trigger()` before next. */
 export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   basic: [
     "characterName",
@@ -281,7 +294,6 @@ export const STEP_FIELD_PATHS: Record<FormStepId, readonly string[]> = {
   export: [],
 };
 
-/** Paths to pass to RHF `trigger()` for the step (includes dynamic array fields for `origin`). */
 export function getTriggerPathsForStepIndex(
   stepIndex: number,
   values: CharacterFormValues
@@ -366,17 +378,22 @@ export function getTriggerPathsForStepIndex(
   return [...STEP_FIELD_PATHS[step.id]];
 }
 
-/**
- * Validates the current step slice with Zod (in addition to RHF `trigger`).
- * Keeps per-step rules explicit when schemas diverge from flat field lists.
- */
+export type ValidateStepContext = {
+  stepSchemas: Record<FormStepId, z.ZodType<unknown>>;
+  stepGeneric: string;
+};
+
 export function validateStepValues(
   stepId: FormStepId,
-  values: CharacterFormValues
+  values: CharacterFormValues,
+  ctx?: ValidateStepContext
 ): { ok: true } | { ok: false; message: string } {
   if (stepId === "export") return { ok: true };
 
-  const schema = stepSchemas[stepId];
+  const stepSchemasResolved =
+    ctx?.stepSchemas ?? defaultSchemaBundle.stepSchemas;
+  const fallback = ctx?.stepGeneric ?? PT_VALIDATION.stepGeneric;
+  const schema = stepSchemasResolved[stepId];
 
   if (stepId === "origin") {
     const parsed = schema.safeParse({
@@ -388,10 +405,7 @@ export function validateStepValues(
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
-    return {
-      ok: false,
-      message: first?.message ?? "Verifique os campos desta etapa.",
-    };
+    return { ok: false, message: first?.message ?? fallback };
   }
 
   if (stepId === "personality") {
@@ -405,10 +419,7 @@ export function validateStepValues(
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
-    return {
-      ok: false,
-      message: first?.message ?? "Verifique os campos desta etapa.",
-    };
+    return { ok: false, message: first?.message ?? fallback };
   }
 
   if (stepId === "goals") {
@@ -418,10 +429,7 @@ export function validateStepValues(
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
-    return {
-      ok: false,
-      message: first?.message ?? "Verifique os campos desta etapa.",
-    };
+    return { ok: false, message: first?.message ?? fallback };
   }
 
   if (stepId === "appearance") {
@@ -434,10 +442,7 @@ export function validateStepValues(
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
-    return {
-      ok: false,
-      message: first?.message ?? "Verifique os campos desta etapa.",
-    };
+    return { ok: false, message: first?.message ?? fallback };
   }
 
   if (stepId === "freeNotes") {
@@ -446,10 +451,7 @@ export function validateStepValues(
     });
     if (parsed.success) return { ok: true };
     const first = parsed.error.issues[0];
-    return {
-      ok: false,
-      message: first?.message ?? "Verifique os campos desta etapa.",
-    };
+    return { ok: false, message: first?.message ?? fallback };
   }
 
   const paths = STEP_FIELD_PATHS[stepId];
@@ -462,8 +464,5 @@ export function validateStepValues(
   const parsed = schema.safeParse(slice);
   if (parsed.success) return { ok: true };
   const first = parsed.error.issues[0];
-  return {
-    ok: false,
-    message: first?.message ?? "Verifique os campos desta etapa.",
-  };
+  return { ok: false, message: first?.message ?? fallback };
 }

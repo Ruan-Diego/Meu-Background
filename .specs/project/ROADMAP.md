@@ -31,12 +31,11 @@
 
 ## Milestone 2: Polish & UX
 
-> Motion, accessibility, i18n, SEO. **No** in-form coaching or suggestive placeholders here — that is entirely Milestone 3.
+> Accessibility, i18n, SEO. **No** in-form coaching or suggestive placeholders here — that is entirely Milestone 3.
 
 
 | ID     | Feature                | Description                                            | Size |
 | ------ | ---------------------- | ------------------------------------------------------ | ---- |
-| M2-F01 | Step transitions       | Framer Motion animations between form steps            | S    |
 | M2-F02 | i18n: English support  | Add English translation alongside pt-BR                | M    |
 | M2-F03 | Character summary card | Compact visual card with key info (shareable as image) | M    |
 | M2-F04 | Accessibility audit    | WCAG 2.1 AA compliance pass, screen reader testing     | M    |

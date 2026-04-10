@@ -1,5 +1,8 @@
-import { FORM_STEPS } from "@/lib/character-form/steps";
+"use client";
+
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Button } from "@/components/ui/button";
+import { FORM_STEPS } from "@/lib/character-form/steps";
 import { cn } from "@/lib/utils";
 
 type StepRailProps = {
@@ -13,9 +16,11 @@ export function StepRail({
   onStepSelect,
   className,
 }: StepRailProps) {
+  const { t } = useIntl();
+
   return (
     <nav
-      aria-label="Etapas do formulário"
+      aria-label={t("stepRail.navLabel")}
       className={cn("flex flex-col gap-1", className)}
     >
       <ol className="grid gap-1 sm:grid-cols-2 xl:grid-cols-1">
@@ -42,10 +47,10 @@ export function StepRail({
                 aria-current={isCurrent ? "step" : undefined}
               >
                 <span className="text-caption text-muted-foreground">
-                  Etapa {step.indexLabel}
+                  {t("common.stepShort")} {step.indexLabel}
                 </span>
                 <span className="mt-0.5 font-medium leading-snug">
-                  {step.title}
+                  {t(`steps.${step.id}.title`)}
                 </span>
               </Button>
             </li>

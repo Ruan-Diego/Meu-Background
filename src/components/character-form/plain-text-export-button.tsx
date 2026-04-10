@@ -1,9 +1,16 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { Button } from "@/components/ui/button";
+import {
+  buildDocumentLabels,
+  buildSerializationLabels,
+} from "@/lib/i18n/document-labels";
+import type { Messages } from "@/lib/i18n/messages-loader";
 import { characterDocumentPlainTextFilename } from "@/lib/character-form/document-filename";
 import { characterDocumentToPlainText } from "@/lib/character-form/document-plain-text";
 import { buildCharacterDocument } from "@/lib/character-form/document-sections";
@@ -17,14 +24,24 @@ export function PlainTextExportButton({
   className?: string;
 } = {}) {
   const { getValues } = useFormContext<CharacterFormValues>();
-  const doc = buildCharacterDocument(getValues());
+  const { messages, t } = useIntl();
+  const documentLabels = useMemo(
+    () => buildDocumentLabels(messages as Messages),
+    [messages],
+  );
+  const serializationLabels = useMemo(
+    () => buildSerializationLabels(messages as Messages),
+    [messages],
+  );
+  const emptyBasename = t("filename.emptyBasename");
+  const doc = buildCharacterDocument(getValues(), documentLabels);
 
   const handleClick = () => {
     if (doc.isEmpty) return;
-    const text = characterDocumentToPlainText(doc);
+    const text = characterDocumentToPlainText(doc, serializationLabels);
     downloadTextFile(
       text,
-      characterDocumentPlainTextFilename(doc),
+      characterDocumentPlainTextFilename(doc, emptyBasename),
       "text/plain"
     );
   };
@@ -38,7 +55,7 @@ export function PlainTextExportButton({
       onClick={handleClick}
     >
       <Download data-icon="inline-start" className="size-4" />
-      Baixar texto (.txt)
+      {t("export.plainTextButton")}
     </Button>
   );
 }

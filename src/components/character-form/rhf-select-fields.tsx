@@ -18,6 +18,10 @@ type RhfCountrySelectProps<T extends FieldValues> = {
   name: FieldPath<T>;
   id: string;
   options: readonly string[];
+  /** Shown when no value is selected (trigger + empty option). */
+  selectPlaceholder: string;
+  /** Map stored option value to visible label (e.g. localized country name). */
+  formatOptionLabel?: (value: string) => string;
   "aria-invalid"?: boolean | undefined;
   "aria-describedby"?: string | undefined;
   triggerClassName?: string;
@@ -28,6 +32,8 @@ export function RhfCountrySelect<T extends FieldValues>({
   name,
   id,
   options,
+  selectPlaceholder,
+  formatOptionLabel = (v) => v,
   "aria-invalid": ariaInvalid,
   "aria-describedby": ariaDescribedBy,
   triggerClassName,
@@ -53,13 +59,13 @@ export function RhfCountrySelect<T extends FieldValues>({
             aria-invalid={ariaInvalid}
             aria-describedby={ariaDescribedBy}
           >
-            <SelectValue placeholder="Selecione…" />
+            <SelectValue placeholder={selectPlaceholder} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={EMPTY_VALUE}>Selecione…</SelectItem>
+            <SelectItem value={EMPTY_VALUE}>{selectPlaceholder}</SelectItem>
             {options.map((opt) => (
               <SelectItem key={opt} value={opt}>
-                {opt}
+                {formatOptionLabel(opt)}
               </SelectItem>
             ))}
           </SelectContent>

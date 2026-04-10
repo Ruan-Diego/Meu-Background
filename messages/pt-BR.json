@@ -1,0 +1,342 @@
+{
+  "meta": {
+    "titleDefault": "Meu Background",
+    "titleTemplate": "{title} · Meu Background",
+    "description": "Crie histórias completas e bonitas para seus personagens de RPG — passo a passo.",
+    "criarTitle": "Criar personagem"
+  },
+  "common": {
+    "next": "Próxima",
+    "prev": "Anterior",
+    "saveDraft": "Guardar rascunho",
+    "remove": "Remover",
+    "addBackground": "Adicionar background",
+    "description": "Descrição",
+    "selectPlaceholder": "Selecione…",
+    "stepShort": "Etapa",
+    "of": "de"
+  },
+  "shell": {
+    "mainNavAria": "Navegação principal",
+    "brandSubtitle": "Backstories de RPG, passo a passo",
+    "navHome": "Início",
+    "navCreate": "Criar",
+    "footerTitle": "Meu Background",
+    "footerTagline": "Estrutura, preview e exportação para histórias de personagem.",
+    "footerPrivacy": "Rascunhos ficam no seu dispositivo — sem conta obrigatória.",
+    "themeLight": "Ativar tema claro",
+    "themeDark": "Ativar tema escuro",
+    "themeToggle": "Alternar tema"
+  },
+  "localeSwitcher": {
+    "label": "Idioma",
+    "ptBR": "Português (Brasil)",
+    "en": "English"
+  },
+  "home": {
+    "badge": "Backstory de RPG · tudo no navegador",
+    "heroTitle": "Histórias de personagem completas, passo a passo.",
+    "heroLead": "Organize origem, personalidade, relacionamentos e objetivos em um fluxo claro, acompanhe o preview ao vivo e exporte a versão final direto do navegador.",
+    "ctaPrimary": "Começar agora",
+    "ctaSecondary": "Como funciona",
+    "card1Title": "Fluxo guiado",
+    "card1Body": "Cada etapa organiza um pilar importante do backstory para você não esquecer nada.",
+    "card2Title": "Preview vivo",
+    "card2Body": "Veja o documento tomar forma enquanto preenche os dados do personagem.",
+    "card3Title": "Exportações prontas",
+    "card3Body": "Baixe a história final em Markdown, texto puro ou PDF sem depender de backend."
+  },
+  "criarPage": {
+    "badge": "Editor do personagem",
+    "title": "Monte o backstory com etapas, validação e preview ao vivo.",
+    "lead": "Use a coluna da esquerda para preencher cada seção; à direita, o documento é atualizado conforme você avança. Na última etapa, exporte em Markdown, texto ou PDF."
+  },
+  "steps": {
+    "basic": {
+      "title": "Informações básicas",
+      "description": "Nome do personagem e do jogador, idade, raça e classe — foco no retrato do personagem."
+    },
+    "origin": {
+      "title": "Origem e histórico",
+      "description": "Lugar de origem, família, classe social e eventos marcantes."
+    },
+    "personality": {
+      "title": "Personalidade e traços",
+      "description": "Temperamento, valores, fraquezas, medos, hábitos e peculiaridades."
+    },
+    "goals": {
+      "title": "Objetivos e motivações",
+      "description": "Metas de curto prazo e objetivos de vida, em blocos de descrição."
+    },
+    "appearance": {
+      "title": "Aparência e Comportamento",
+      "description": "O que a referência visual não conta: altura, marcas escondidas, impressão, voz e hábitos corporais."
+    },
+    "freeNotes": {
+      "title": "Notas livres",
+      "description": "Qualquer detalhe que não couber nas etapas anteriores."
+    },
+    "export": {
+      "title": "Exportação",
+      "description": "Baixe o documento em Markdown, texto ou PDF. O preview à direita acompanha tudo o que você preencheu."
+    }
+  },
+  "formProgress": {
+    "label": "Progresso do formulário",
+    "progressTitle": "Progresso"
+  },
+  "stepRail": {
+    "navLabel": "Etapas do formulário"
+  },
+  "wizard": {
+    "stepHeading": "Etapa {current} de {total}",
+    "exportCalloutTitle": "Quase lá — escolha como baixar",
+    "exportCalloutBody": "O preview ao lado mostra o documento completo. Cada opção gera um arquivo pronto no seu dispositivo, sem servidor.",
+    "exportTileMarkdownTitle": "Markdown",
+    "exportTileMarkdownDesc": "Ótimo para Notion, Obsidian ou repositórios.",
+    "exportTileTextTitle": "Texto puro",
+    "exportTileTextDesc": "Compatível com qualquer editor de texto.",
+    "exportTilePdfTitle": "PDF",
+    "exportTilePdfDesc": "Layout fixo para imprimir ou arquivar.",
+    "previewTitle": "Preview do documento",
+    "previewDescription": "Atualiza enquanto você preenche as etapas. Use a etapa Exportação para baixar o arquivo."
+  },
+  "preview": {
+    "unnamedCharacter": "Sem nome",
+    "byPlayer": "por {player}",
+    "emptyTitle": "Documento vazio",
+    "emptyBody": "Preencha as etapas à esquerda para ver o preview aqui."
+  },
+  "fields": {
+    "basic": {
+      "characterName": "Nome do personagem",
+      "playerName": "Nome do jogador",
+      "age": "Idade",
+      "race": "Raça",
+      "characterClass": "Classe",
+      "occupation": "Ocupação atual"
+    },
+    "origin": {
+      "locationHeading": "Local de origem",
+      "country": "País",
+      "region": "Região",
+      "regionPlaceholder": "Sugestões ou texto livre",
+      "city": "Cidade",
+      "relativesHeading": "Parentes e vínculos",
+      "addRelative": "Adicionar vínculo",
+      "relativesEmpty": "Nenhum vínculo adicionado. Use o botão acima para incluir pais, melhores amigos, parentes próximos ou outros vínculos importantes.",
+      "bondLabel": "Vínculo {n}",
+      "removeBondAria": "Remover vínculo {n}",
+      "kinship": "Vínculo",
+      "name": "Nome",
+      "eventsHeading": "Eventos marcantes",
+      "addEvent": "Adicionar evento",
+      "eventsEmpty": "Nenhum evento adicionado. Inclua momentos que moldaram o seu personagem.",
+      "eventLabel": "Evento {n}",
+      "removeEventAria": "Remover evento {n}",
+      "eventName": "Nome do evento",
+      "myAge": "Minha idade",
+      "occupation": "Ocupação"
+    },
+    "personality": {
+      "temperamentHeading": "Temperamento",
+      "temperamentIntro": "Escolha sugestões ou inclua chips livres. Clique num chip personalizado ou no X para remover.",
+      "valuesHeading": "Valores",
+      "valuesIntro": "Marque o que importa e adicione valores livres. Chips extras têm X; também pode clicar no texto para remover.",
+      "addChip": "Incluir chip",
+      "addTemperament": "Adicionar temperamento",
+      "addValue": "Adicionar valor",
+      "flawsHeading": "Fraquezas",
+      "addFlaw": "Adicionar fraqueza",
+      "flawsEmpty": "Nenhuma fraqueza adicionada. Inclua pontos fracos, vícios ou limitações.",
+      "flawLabel": "Fraqueza {n}",
+      "removeFlawAria": "Remover fraqueza {n}",
+      "flawField": "Fraqueza",
+      "flawBgPlaceholder": "Qual o motivo da sua fraqueza?",
+      "fearsHeading": "Medos",
+      "addFear": "Adicionar medo",
+      "fearsEmpty": "Nenhum medo adicionado. Descreva o medo e a intensidade para cada um.",
+      "fearLabel": "Medo {n}",
+      "removeFearAria": "Remover medo {n}",
+      "fearDescription": "Medo",
+      "intensity": "Intensidade",
+      "fearBgPlaceholder": "Qual o motivo do seu medo?",
+      "habitsHeading": "Hábitos",
+      "addHabit": "Adicionar hábito",
+      "habitsEmpty": "Nenhum hábito adicionado. Rotinas, manias ou costumes do personagem.",
+      "habitLabel": "Hábito {n}",
+      "removeHabitAria": "Remover hábito {n}",
+      "habitField": "Hábito",
+      "habitBgPlaceholder": "Qual o motivo do seu hábito?",
+      "quirksHeading": "Peculiaridades",
+      "addQuirk": "Adicionar peculiaridade",
+      "quirksEmpty": "Nenhuma peculiaridade adicionada. Trejeitos, frases de efeito ou detalhes únicos.",
+      "quirkLabel": "Peculiaridade {n}",
+      "removeQuirkAria": "Remover peculiaridade {n}",
+      "quirkField": "Peculiaridade",
+      "quirkBgPlaceholder": "Qual o motivo da sua peculiaridade?",
+      "removeChipAria": "Remover {label}",
+      "removeChipButtonAria": "Remover chip {label}",
+      "backgroundLabel": "Background"
+    },
+    "goals": {
+      "shortTermHeading": "Metas",
+      "addShortTerm": "Adicionar meta",
+      "shortTermEmpty": "Nenhuma meta adicionada. Use o botão acima para incluir.",
+      "shortTermRow": "Meta {n}",
+      "removeShortTermAria": "Remover meta {n}",
+      "metaLabel": "Meta",
+      "addDescription": "Adicionar descrição",
+      "lifeHeading": "Objetivo de vida",
+      "addLife": "Adicionar objetivo",
+      "lifeEmpty": "Nenhum objetivo adicionado. Use o botão acima para incluir.",
+      "lifeRow": "Objetivo {n}",
+      "removeLifeAria": "Remover objetivo de vida {n}",
+      "objectiveLabel": "Objetivo"
+    },
+    "appearance": {
+      "heroNote": "A aparência visível (rosto, pele, roupas, armadura, cabelo etc.) fica na {heroForgeLink}, onde você monta a miniatura de referência. Aqui descreva só o que a miniatura ou a imagem não mostram bem na mesa ou na história.",
+      "heroForgeLinkText": "Hero Forge",
+      "mvpTitle": "Sobre esta etapa (MVP)",
+      "mvpBody": "Por enquanto ela é só caixas de texto: dá trabalho e você precisa pensar sozinho em cada bloco. Isso não é o nível de apoio que o app pretende ter — a ideia é facilitar a criação do background com perguntas, exemplos opcionais, dicas e talvez campos menores ou revelação progressiva, como nas outras etapas. Melhorias estão planejadas nas próximas fases do produto (polish e orientação na narrativa).",
+      "mvpEmphasis": "facilitar a criação do background",
+      "bodyHeading": "Corpo",
+      "heightLabel": "Altura e proporção",
+      "heightPlaceholder": "Ex.: mais alto que a média do grupo; parece compacto mas é pesado; envergadura que chama atenção em multidão…",
+      "marksLabel": "Cicatrizes, tatuagens ou marcas sob roupa / armadura",
+      "marksPlaceholder": "Ex.: queimadura no ombro coberta pela couraça; runa íntima; dedo torto de briga antiga…",
+      "presenceHeading": "Presença e sensação",
+      "firstImpressionsLabel": "Primeiras impressões",
+      "firstImpressionsPlaceholder": "Ex.: ar de cansaço mesmo calmo; parece sempre avaliando a saída; calor humano que desarma; aura que desperta desconfiança…",
+      "voiceLabel": "Voz e jeito de falar",
+      "voicePlaceholder": "Ex.: voz rouca baixa; fala rápido quando nervoso; sotaque do litoral; pausas longas antes de responder…",
+      "movementLabel": "Como se move, postura, tiques ou gestos habituais",
+      "movementPlaceholder": "Ex.: manca leve; passos silenciosos; costas muito eretas; roça o anel quando pensa; evita olhar nos olhos…"
+    },
+    "freeNotes": {
+      "heading": "Tópicos livres",
+      "addTopic": "Adicionar tópico",
+      "empty": "Nenhuma nota adicionada. Use o botão acima para incluir blocos com título e descrição.",
+      "blockLabel": "Bloco {n}",
+      "removeNoteAria": "Remover nota {n}",
+      "topicLabel": "Tópico"
+    }
+  },
+  "validation": {
+    "characterNameRequired": "Informe o nome do personagem.",
+    "stepGeneric": "Verifique os campos desta etapa."
+  },
+  "export": {
+    "markdownButton": "Baixar Markdown (.md)",
+    "plainTextButton": "Baixar texto (.txt)",
+    "pdfButton": "Baixar PDF (.pdf)",
+    "pdfGenerating": "Gerando PDF…",
+    "pdfError": "Não foi possível gerar o PDF. Tente de novo em instantes."
+  },
+  "document": {
+    "headerMeta": {
+      "age": "Idade",
+      "race": "Raça",
+      "class": "Classe",
+      "occupation": "Ocupação"
+    },
+    "sections": {
+      "origin": {
+        "title": "Origem e Histórico",
+        "birthPlace": "Local de nascimento",
+        "relatives": "Parentes e vínculos",
+        "events": "Eventos marcantes",
+        "occupation": "Ocupação"
+      },
+      "personality": {
+        "title": "Personalidade e Traços",
+        "temperament": "Temperamento",
+        "values": "Valores",
+        "flaws": "Fraquezas",
+        "fears": "Medos",
+        "habits": "Hábitos",
+        "quirks": "Peculiaridades"
+      },
+      "goals": {
+        "title": "Objetivos e Motivações",
+        "shortTerm": "Metas de curto prazo",
+        "life": "Objetivos de vida"
+      },
+      "appearance": {
+        "title": "Aparência e Comportamento",
+        "height": "Altura e porte",
+        "hiddenMarks": "Marcas e cicatrizes escondidas",
+        "firstImpression": "Primeira impressão",
+        "voice": "Voz e fala",
+        "movement": "Movimentos e maneirismos"
+      },
+      "freeNotes": {
+        "title": "Notas Livres"
+      }
+    },
+    "defaults": {
+      "eventName": "Evento",
+      "noteHeading": "Nota",
+      "shapingAgeTemplate": "aos {age}"
+    },
+    "fearLevels": {
+      "leve": "Leve",
+      "medio": "Médio",
+      "alto": "Alto",
+      "fobia": "Fobia"
+    },
+    "serialization": {
+      "unnamedCharacter": "Sem nome",
+      "byPlayerMarkdown": "Por {player}",
+      "byPlayerPlain": "Por {player}",
+      "defaultNoteHeading": "Nota"
+    },
+    "pdf": {
+      "unnamedCharacter": "Sem nome",
+      "byPlayerPrefix": "por ",
+      "defaultNoteHeading": "Nota"
+    }
+  },
+  "options": {
+    "originCountry": {
+      "Braazar do norte": "Braazar do norte",
+      "Braazar do sul": "Braazar do sul",
+      "Zindrad": "Zindrad",
+      "Veteris": "Veteris",
+      "Yama": "Yama",
+      "Aina Leste": "Aina Leste",
+      "Aina Oeste": "Aina Oeste"
+    },
+    "temperamentChips": {
+      "Irritado": "Irritado",
+      "Calmo": "Calmo",
+      "Briguento": "Briguento",
+      "Alegre": "Alegre",
+      "Reservado": "Reservado",
+      "Impulsivo": "Impulsivo",
+      "Paciente": "Paciente",
+      "Cético": "Cético",
+      "Otimista": "Otimista",
+      "Melancólico": "Melancólico",
+      "Curioso": "Curioso",
+      "Orgulhoso": "Orgulhoso"
+    },
+    "valueChips": {
+      "Riqueza": "Riqueza",
+      "Honestidade": "Honestidade",
+      "Tempo": "Tempo",
+      "Aventura": "Aventura",
+      "Família": "Família",
+      "Conhecimento": "Conhecimento",
+      "Poder": "Poder",
+      "Liberdade": "Liberdade",
+      "Justiça": "Justiça",
+      "Amizade": "Amizade",
+      "Fé": "Fé",
+      "Lealdade": "Lealdade"
+    }
+  },
+  "filename": {
+    "emptyBasename": "personagem"
+  }
+}

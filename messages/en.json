@@ -1,0 +1,342 @@
+{
+  "meta": {
+    "titleDefault": "Meu Background",
+    "titleTemplate": "{title} · Meu Background",
+    "description": "Create rich, structured backstories for your RPG characters — step by step.",
+    "criarTitle": "Create character"
+  },
+  "common": {
+    "next": "Next",
+    "prev": "Back",
+    "saveDraft": "Save draft",
+    "remove": "Remove",
+    "addBackground": "Add background",
+    "description": "Description",
+    "selectPlaceholder": "Select…",
+    "stepShort": "Step",
+    "of": "of"
+  },
+  "shell": {
+    "mainNavAria": "Main navigation",
+    "brandSubtitle": "RPG backstories, step by step",
+    "navHome": "Home",
+    "navCreate": "Create",
+    "footerTitle": "Meu Background",
+    "footerTagline": "Structure, preview, and export for character stories.",
+    "footerPrivacy": "Drafts stay on your device — no account required.",
+    "themeLight": "Switch to light theme",
+    "themeDark": "Switch to dark theme",
+    "themeToggle": "Toggle theme"
+  },
+  "localeSwitcher": {
+    "label": "Language",
+    "ptBR": "Portuguese (Brazil)",
+    "en": "English"
+  },
+  "home": {
+    "badge": "RPG backstory · all in the browser",
+    "heroTitle": "Complete character stories, step by step.",
+    "heroLead": "Organize origin, personality, relationships, and goals in a clear flow, watch the live preview, and export the final version right from your browser.",
+    "ctaPrimary": "Get started",
+    "ctaSecondary": "How it works",
+    "card1Title": "Guided flow",
+    "card1Body": "Each step covers an important pillar of the backstory so you do not miss anything.",
+    "card2Title": "Live preview",
+    "card2Body": "See the document take shape as you fill in your character.",
+    "card3Title": "Ready-to-use exports",
+    "card3Body": "Download the final story as Markdown, plain text, or PDF with no backend required."
+  },
+  "criarPage": {
+    "badge": "Character editor",
+    "title": "Build your backstory with steps, validation, and a live preview.",
+    "lead": "Use the left column to fill each section; on the right, the document updates as you go. On the last step, export as Markdown, plain text, or PDF."
+  },
+  "steps": {
+    "basic": {
+      "title": "Basic information",
+      "description": "Character and player names, age, race, and class — a portrait of who they are."
+    },
+    "origin": {
+      "title": "Origin and history",
+      "description": "Place of origin, family, social background, and defining events."
+    },
+    "personality": {
+      "title": "Personality and traits",
+      "description": "Temperament, values, weaknesses, fears, habits, and quirks."
+    },
+    "goals": {
+      "title": "Goals and motivations",
+      "description": "Short-term goals and life objectives in short description blocks."
+    },
+    "appearance": {
+      "title": "Appearance and behavior",
+      "description": "What the reference image does not show: height, hidden marks, first impression, voice, and mannerisms."
+    },
+    "freeNotes": {
+      "title": "Free notes",
+      "description": "Anything that does not fit the earlier steps."
+    },
+    "export": {
+      "title": "Export",
+      "description": "Download the document as Markdown, text, or PDF. The preview on the right reflects everything you entered."
+    }
+  },
+  "formProgress": {
+    "label": "Form progress",
+    "progressTitle": "Progress"
+  },
+  "stepRail": {
+    "navLabel": "Form steps"
+  },
+  "wizard": {
+    "stepHeading": "Step {current} of {total}",
+    "exportCalloutTitle": "Almost there — choose how to download",
+    "exportCalloutBody": "The preview shows the full document. Each option saves a file on your device — no server involved.",
+    "exportTileMarkdownTitle": "Markdown",
+    "exportTileMarkdownDesc": "Great for Notion, Obsidian, or repositories.",
+    "exportTileTextTitle": "Plain text",
+    "exportTileTextDesc": "Works in any text editor.",
+    "exportTilePdfTitle": "PDF",
+    "exportTilePdfDesc": "Fixed layout for printing or archiving.",
+    "previewTitle": "Document preview",
+    "previewDescription": "Updates as you complete the steps. Use the Export step to download the file."
+  },
+  "preview": {
+    "unnamedCharacter": "Unnamed",
+    "byPlayer": "by {player}",
+    "emptyTitle": "Empty document",
+    "emptyBody": "Fill in the steps on the left to see the preview here."
+  },
+  "fields": {
+    "basic": {
+      "characterName": "Character name",
+      "playerName": "Player name",
+      "age": "Age",
+      "race": "Race / ancestry",
+      "characterClass": "Class",
+      "occupation": "Current occupation"
+    },
+    "origin": {
+      "locationHeading": "Place of origin",
+      "country": "Country",
+      "region": "Region",
+      "regionPlaceholder": "Suggestions or free text",
+      "city": "City",
+      "relativesHeading": "Family and bonds",
+      "addRelative": "Add bond",
+      "relativesEmpty": "No bonds added yet. Use the button above to add parents, close friends, relatives, or other important ties.",
+      "bondLabel": "Bond {n}",
+      "removeBondAria": "Remove bond {n}",
+      "kinship": "Relationship",
+      "name": "Name",
+      "eventsHeading": "Defining events",
+      "addEvent": "Add event",
+      "eventsEmpty": "No events added yet. Include moments that shaped your character.",
+      "eventLabel": "Event {n}",
+      "removeEventAria": "Remove event {n}",
+      "eventName": "Event name",
+      "myAge": "My age at the time",
+      "occupation": "Occupation"
+    },
+    "personality": {
+      "temperamentHeading": "Temperament",
+      "temperamentIntro": "Pick suggestions or add custom chips. Click a custom chip or the X to remove.",
+      "valuesHeading": "Values",
+      "valuesIntro": "Mark what matters and add free-form values. Custom chips have an X; you can also click the label to remove.",
+      "addChip": "Add chip",
+      "addTemperament": "Add temperament",
+      "addValue": "Add value",
+      "flawsHeading": "Weaknesses",
+      "addFlaw": "Add weakness",
+      "flawsEmpty": "No weaknesses added yet. Include flaws, vices, or limitations.",
+      "flawLabel": "Weakness {n}",
+      "removeFlawAria": "Remove weakness {n}",
+      "flawField": "Weakness",
+      "flawBgPlaceholder": "What drives this weakness?",
+      "fearsHeading": "Fears",
+      "addFear": "Add fear",
+      "fearsEmpty": "No fears added yet. Describe each fear and its intensity.",
+      "fearLabel": "Fear {n}",
+      "removeFearAria": "Remove fear {n}",
+      "fearDescription": "Fear",
+      "intensity": "Intensity",
+      "fearBgPlaceholder": "What fuels this fear?",
+      "habitsHeading": "Habits",
+      "addHabit": "Add habit",
+      "habitsEmpty": "No habits added yet. Routines, tics, or everyday patterns.",
+      "habitLabel": "Habit {n}",
+      "removeHabitAria": "Remove habit {n}",
+      "habitField": "Habit",
+      "habitBgPlaceholder": "What reinforces this habit?",
+      "quirksHeading": "Quirks",
+      "addQuirk": "Add quirk",
+      "quirksEmpty": "No quirks added yet. Catchphrases, odd habits, or unique details.",
+      "quirkLabel": "Quirk {n}",
+      "removeQuirkAria": "Remove quirk {n}",
+      "quirkField": "Quirk",
+      "quirkBgPlaceholder": "Where does this quirk come from?",
+      "removeChipAria": "Remove {label}",
+      "removeChipButtonAria": "Remove chip {label}",
+      "backgroundLabel": "Background"
+    },
+    "goals": {
+      "shortTermHeading": "Short-term goals",
+      "addShortTerm": "Add goal",
+      "shortTermEmpty": "No goals added yet. Use the button above to add one.",
+      "shortTermRow": "Goal {n}",
+      "removeShortTermAria": "Remove goal {n}",
+      "metaLabel": "Goal",
+      "addDescription": "Add description",
+      "lifeHeading": "Life objective",
+      "addLife": "Add objective",
+      "lifeEmpty": "No life objectives added yet. Use the button above to add one.",
+      "lifeRow": "Objective {n}",
+      "removeLifeAria": "Remove life objective {n}",
+      "objectiveLabel": "Objective"
+    },
+    "appearance": {
+      "heroNote": "Visible looks (face, skin, clothes, armor, hair, etc.) belong on {heroForgeLink}, where you build the reference miniature. Here, describe only what the miniature or image does not show well at the table or in the story.",
+      "heroForgeLinkText": "Hero Forge",
+      "mvpTitle": "About this step (MVP)",
+      "mvpBody": "For now this step is only text boxes: it takes effort and you think through each block on your own. That is not the level of support the app aims for — the goal is to make backstory creation easier with prompts, optional examples, tips, and maybe smaller fields or progressive disclosure, like other steps. Improvements are planned in later product phases (polish and narrative guidance).",
+      "mvpEmphasis": "make backstory creation easier",
+      "bodyHeading": "Body",
+      "heightLabel": "Height and build",
+      "heightPlaceholder": "E.g. taller than the party average; looks compact but heavy; a presence that stands out in a crowd…",
+      "marksLabel": "Scars, tattoos, or marks hidden under clothes / armor",
+      "marksPlaceholder": "E.g. shoulder burn hidden by armor; intimate rune; crooked finger from an old fight…",
+      "presenceHeading": "Presence and feel",
+      "firstImpressionsLabel": "First impressions",
+      "firstImpressionsPlaceholder": "E.g. looks tired even when calm; always scanning for exits; warmth that disarms; an aura that raises suspicion…",
+      "voiceLabel": "Voice and speech",
+      "voicePlaceholder": "E.g. low rasp; talks fast when nervous; coastal accent; long pauses before answering…",
+      "movementLabel": "Movement, posture, tics, or habitual gestures",
+      "movementPlaceholder": "E.g. slight limp; silent steps; very straight back; twists a ring when thinking; avoids eye contact…"
+    },
+    "freeNotes": {
+      "heading": "Free-form topics",
+      "addTopic": "Add topic",
+      "empty": "No notes yet. Use the button above to add titled blocks with descriptions.",
+      "blockLabel": "Block {n}",
+      "removeNoteAria": "Remove note {n}",
+      "topicLabel": "Topic"
+    }
+  },
+  "validation": {
+    "characterNameRequired": "Enter the character name.",
+    "stepGeneric": "Check the fields in this step."
+  },
+  "export": {
+    "markdownButton": "Download Markdown (.md)",
+    "plainTextButton": "Download plain text (.txt)",
+    "pdfButton": "Download PDF (.pdf)",
+    "pdfGenerating": "Generating PDF…",
+    "pdfError": "Could not generate the PDF. Please try again in a moment."
+  },
+  "document": {
+    "headerMeta": {
+      "age": "Age",
+      "race": "Race",
+      "class": "Class",
+      "occupation": "Occupation"
+    },
+    "sections": {
+      "origin": {
+        "title": "Origin and history",
+        "birthPlace": "Place of birth",
+        "relatives": "Family and bonds",
+        "events": "Defining events",
+        "occupation": "Occupation"
+      },
+      "personality": {
+        "title": "Personality and traits",
+        "temperament": "Temperament",
+        "values": "Values",
+        "flaws": "Weaknesses",
+        "fears": "Fears",
+        "habits": "Habits",
+        "quirks": "Quirks"
+      },
+      "goals": {
+        "title": "Goals and motivations",
+        "shortTerm": "Short-term goals",
+        "life": "Life objectives"
+      },
+      "appearance": {
+        "title": "Appearance and behavior",
+        "height": "Height and build",
+        "hiddenMarks": "Hidden scars and marks",
+        "firstImpression": "First impression",
+        "voice": "Voice and speech",
+        "movement": "Movement and mannerisms"
+      },
+      "freeNotes": {
+        "title": "Free notes"
+      }
+    },
+    "defaults": {
+      "eventName": "Event",
+      "noteHeading": "Note",
+      "shapingAgeTemplate": "at age {age}"
+    },
+    "fearLevels": {
+      "leve": "Mild",
+      "medio": "Moderate",
+      "alto": "Severe",
+      "fobia": "Phobia"
+    },
+    "serialization": {
+      "unnamedCharacter": "Unnamed",
+      "byPlayerMarkdown": "By {player}",
+      "byPlayerPlain": "By {player}",
+      "defaultNoteHeading": "Note"
+    },
+    "pdf": {
+      "unnamedCharacter": "Unnamed",
+      "byPlayerPrefix": "by ",
+      "defaultNoteHeading": "Note"
+    }
+  },
+  "options": {
+    "originCountry": {
+      "Braazar do norte": "North Braazar",
+      "Braazar do sul": "South Braazar",
+      "Zindrad": "Zindrad",
+      "Veteris": "Veteris",
+      "Yama": "Yama",
+      "Aina Leste": "Aina East",
+      "Aina Oeste": "Aina West"
+    },
+    "temperamentChips": {
+      "Irritado": "Irritable",
+      "Calmo": "Calm",
+      "Briguento": "Combative",
+      "Alegre": "Cheerful",
+      "Reservado": "Reserved",
+      "Impulsivo": "Impulsive",
+      "Paciente": "Patient",
+      "Cético": "Skeptical",
+      "Otimista": "Optimistic",
+      "Melancólico": "Melancholic",
+      "Curioso": "Curious",
+      "Orgulhoso": "Proud"
+    },
+    "valueChips": {
+      "Riqueza": "Wealth",
+      "Honestidade": "Honesty",
+      "Tempo": "Time",
+      "Aventura": "Adventure",
+      "Família": "Family",
+      "Conhecimento": "Knowledge",
+      "Poder": "Power",
+      "Liberdade": "Freedom",
+      "Justiça": "Justice",
+      "Amizade": "Friendship",
+      "Fé": "Faith",
+      "Lealdade": "Loyalty"
+    }
+  },
+  "filename": {
+    "emptyBasename": "character"
+  }
+}

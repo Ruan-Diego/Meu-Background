@@ -9,9 +9,17 @@ import {
   FileType,
   Sparkles,
 } from "lucide-react";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { BasicInfoFields } from "@/components/character-form/basic-info-fields";
 import { DocumentPreview } from "@/components/character-form/document-preview";
 import {
@@ -37,13 +45,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  characterFormSchema,
+  createCharacterFormSchema,
   getTriggerPathsForStepIndex,
   mergeInitialFormValues,
   validateStepValues,
   type CharacterFormValues,
+  type ValidationMessages,
 } from "@/lib/character-form/schema";
 import { FORM_STEPS, STEP_COUNT, clampStepIndex } from "@/lib/character-form/steps";
+import { formatMessage } from "@/lib/i18n/format-message";
 import { cn } from "@/lib/utils";
 import {
   type CharacterDraft,
@@ -55,11 +65,28 @@ export function CharacterFormWizard({ className }: { className?: string }) {
   const setCurrentStepIndex = useCharacterStore((s) => s.setCurrentStepIndex);
   const setDraft = useCharacterStore((s) => s.setDraft);
 
+  const { messages, t } = useIntl();
+  const validationMessages = messages.validation as ValidationMessages;
+  const schemaBundle = useMemo(
+    () => createCharacterFormSchema(validationMessages),
+    [validationMessages],
+  );
+
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const progressAnchorRef = useRef<HTMLDivElement>(null);
   const [formReady, setFormReady] = useState(false);
 
+  const scrollToProgress = useCallback(() => {
+    requestAnimationFrame(() => {
+      progressAnchorRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }, []);
+
   const form = useForm<CharacterFormValues>({
-    resolver: zodResolver(characterFormSchema),
+    resolver: zodResolver(schemaBundle.characterFormSchema),
     // Match SSR: persist may already have rehydrated on the client before mount,
     // which would mismatch server HTML. Draft is applied in useLayoutEffect after hydration.
     defaultValues: mergeInitialFormValues({}),
@@ -200,7 +227,10 @@ export function CharacterFormWizard({ className }: { className?: string }) {
       values = getValues();
     }
 
-    const zodResult = validateStepValues(stepMeta.id, values);
+    const zodResult = validateStepValues(stepMeta.id, values, {
+      stepSchemas: schemaBundle.stepSchemas,
+      stepGeneric: validationMessages.stepGeneric,
+    });
     if (!zodResult.ok) {
       setError("root", { message: zodResult.message });
       return;
@@ -209,24 +239,30 @@ export function CharacterFormWizard({ className }: { className?: string }) {
 
     persistDraft();
     setCurrentStepIndex(clampStepIndex(currentStepIndex + 1));
+    scrollToProgress();
   }, [
     clearErrors,
     currentStepIndex,
     getValues,
     persistDraft,
+    schemaBundle.stepSchemas,
+    scrollToProgress,
     setCurrentStepIndex,
     setError,
     trigger,
+    validationMessages.stepGeneric,
   ]);
 
   const goPrev = useCallback(() => {
     clearErrors("root");
     persistDraft();
     setCurrentStepIndex(clampStepIndex(currentStepIndex - 1));
+    scrollToProgress();
   }, [
     clearErrors,
     currentStepIndex,
     persistDraft,
+    scrollToProgress,
     setCurrentStepIndex,
   ]);
 
@@ -235,8 +271,9 @@ export function CharacterFormWizard({ className }: { className?: string }) {
       clearErrors("root");
       persistDraft();
       setCurrentStepIndex(clampStepIndex(index));
+      scrollToProgress();
     },
-    [clearErrors, persistDraft, setCurrentStepIndex]
+    [clearErrors, persistDraft, scrollToProgress, setCurrentStepIndex]
   );
 
   useEffect(() => {
@@ -293,7 +330,13 @@ export function CharacterFormWizard({ className }: { className?: string }) {
             noValidate
             data-ready={formReady || undefined}
           >
-            <FormProgress currentStepIndex={currentStepIndex} />
+            <div
+              ref={progressAnchorRef}
+              data-testid="wizard-progress-anchor"
+              className="scroll-mt-(--header-height)"
+            >
+              <FormProgress currentStepIndex={currentStepIndex} />
+            </div>
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
               <StepRail
@@ -305,7 +348,12 @@ export function CharacterFormWizard({ className }: { className?: string }) {
               <Card className="surface-panel order-1 overflow-hidden xl:order-2">
                 <CardHeader className="border-b border-border/70">
                   <p className="text-caption font-medium text-muted-foreground">
-                    Etapa {step?.indexLabel} de {STEP_COUNT}
+                    {step
+                      ? formatMessage(t("wizard.stepHeading"), {
+                          current: step.indexLabel,
+                          total: STEP_COUNT,
+                        })
+                      : null}
                   </p>
                   <h2
                     ref={headingRef}
@@ -313,9 +361,11 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                     data-testid="wizard-step-title"
                     className="mt-1 text-title text-balance text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    {step?.title}
+                    {step ? t(`steps.${step.id}.title`) : ""}
                   </h2>
-                  <CardDescription>{step?.description}</CardDescription>
+                  <CardDescription>
+                    {step ? t(`steps.${step.id}.description`) : null}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   {step?.id === "basic" ? (
@@ -342,20 +392,18 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                         </span>
                         <div className="min-w-0 space-y-1">
                           <p className="text-sm font-semibold text-foreground">
-                            Quase lá — escolha como baixar
+                            {t("wizard.exportCalloutTitle")}
                           </p>
                           <p className="text-body text-muted-foreground text-pretty leading-relaxed">
-                            O preview ao lado mostra o documento completo. Cada
-                            opção gera um arquivo pronto no seu dispositivo, sem
-                            servidor.
+                            {t("wizard.exportCalloutBody")}
                           </p>
                         </div>
                       </div>
                       <div className="grid w-full min-w-0 grid-cols-1 gap-4">
                         <ExportFormatTile
                           icon={FileCode2}
-                          title="Markdown"
-                          description="Ótimo para Notion, Obsidian ou repositórios."
+                          title={t("wizard.exportTileMarkdownTitle")}
+                          description={t("wizard.exportTileMarkdownDesc")}
                         >
                           <MarkdownExportButton
                             className={exportDownloadButtonClassName}
@@ -363,8 +411,8 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                         </ExportFormatTile>
                         <ExportFormatTile
                           icon={FileText}
-                          title="Texto puro"
-                          description="Compatível com qualquer editor de texto."
+                          title={t("wizard.exportTileTextTitle")}
+                          description={t("wizard.exportTileTextDesc")}
                         >
                           <PlainTextExportButton
                             className={exportDownloadButtonClassName}
@@ -372,8 +420,8 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                         </ExportFormatTile>
                         <ExportFormatTile
                           icon={FileType}
-                          title="PDF"
-                          description="Layout fixo para imprimir ou arquivar."
+                          title={t("wizard.exportTilePdfTitle")}
+                          description={t("wizard.exportTilePdfDesc")}
                         >
                           <PdfExportButton
                             buttonClassName={exportDownloadButtonClassName}
@@ -402,7 +450,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                       onClick={goPrev}
                     >
                       <ChevronLeft data-icon="inline-start" />
-                      Anterior
+                      {t("common.prev")}
                     </Button>
                     {!isLast ? (
                       <Button
@@ -413,7 +461,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                           void goNext();
                         }}
                       >
-                        Próxima
+                        {t("common.next")}
                         <ChevronRight data-icon="inline-end" />
                       </Button>
                     ) : (
@@ -422,7 +470,7 @@ export function CharacterFormWizard({ className }: { className?: string }) {
                         size="default"
                         onClick={() => persistDraft()}
                       >
-                        Guardar rascunho
+                        {t("common.saveDraft")}
                       </Button>
                     )}
                   </div>
@@ -433,11 +481,8 @@ export function CharacterFormWizard({ className }: { className?: string }) {
 
           <Card className="order-2 flex min-h-0 min-w-0 flex-col overflow-hidden border-border/70 lg:sticky lg:top-28 lg:max-h-[min(40rem,calc(100vh-7rem))] lg:self-start">
             <CardHeader className="shrink-0 border-b border-border/70">
-              <CardTitle>Preview do documento</CardTitle>
-              <CardDescription>
-                Atualiza enquanto você preenche as etapas. Use a etapa
-                Exportação para baixar o arquivo.
-              </CardDescription>
+              <CardTitle>{t("wizard.previewTitle")}</CardTitle>
+              <CardDescription>{t("wizard.previewDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="min-h-0 flex-1 overflow-y-auto pt-6">
               <DocumentPreview />

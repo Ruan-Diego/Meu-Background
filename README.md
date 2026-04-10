@@ -22,7 +22,7 @@ O foco é **organizar** a informação para o **mestre** e para o **jogador**, e
 
 ## Para onde o projeto vai
 
-O MVP cobre fluxo completo e exportação. Por cima disso, entram melhorias de **experiência** (por exemplo animações, acessibilidade, outro idioma), **enriquecimento do apoio dentro do formulário** para quem escreve — sempre com conteúdo pensado pelo produto, **sem** geração automática de história por IA — e a evolução para **várias mesas/mundos**, como citado acima.
+O MVP cobre fluxo completo e exportação. Por cima disso, entram melhorias de **experiência** (por exemplo acessibilidade, outro idioma), **enriquecimento do apoio dentro do formulário** para quem escreve — sempre com conteúdo pensado pelo produto, **sem** geração automática de história por IA — e a evolução para **várias mesas/mundos**, como citado acima.
 
 O **[roadmap](.specs/project/ROADMAP.md)** é um **rascunho de direções**: ideias do que *pode* ser feito ao longo do tempo, **não** um compromisso fixo nem garantia de ordem ou escopo — prioridades mudam conforme o uso e o feedback.
 
@@ -37,7 +37,6 @@ O **[roadmap](.specs/project/ROADMAP.md)** é um **rascunho de direções**: ide
 | Formulários | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) |
 | Estado | [Zustand](https://zustand-demo.pmnd.rs/) |
 | PDF | [@react-pdf/renderer](https://react-pdf.org/) |
-| Animação | [Framer Motion](https://www.framer.com/motion/) |
 | Testes | [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) + [Cypress](https://www.cypress.io/) (E2E) |
 
 ## Como rodar localmente

@@ -1,5 +1,13 @@
+import { formatMessage } from "@/lib/i18n/format-message";
+import type { DocumentBuildLabels } from "@/lib/i18n/document-labels";
+import { buildDocumentLabels } from "@/lib/i18n/document-labels";
+import type { Messages } from "@/lib/i18n/messages-loader";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
-import { PERSONALITY_FEAR_LEVEL_LABELS } from "@/lib/character-form/personality-constants";
+import type { PersonalityFearLevel } from "@/lib/character-form/personality-constants";
+
+import ptMessages from "../../../messages/pt-BR.json";
+
+export type { DocumentBuildLabels };
 
 // ---------------------------------------------------------------------------
 // Types — shared between preview (M1-F10) and future exports (M1-F11/12/13)
@@ -36,6 +44,8 @@ export type CharacterDocument = {
   isEmpty: boolean;
 };
 
+const defaultDocumentLabels = buildDocumentLabels(ptMessages as Messages);
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -61,8 +71,12 @@ function arrayHasContent<T extends Record<string, unknown>>(
 // Section builders (wizard order)
 // ---------------------------------------------------------------------------
 
-function buildOriginSection(v: CharacterFormValues): DocumentSection | null {
+function buildOriginSection(
+  v: CharacterFormValues,
+  L: DocumentBuildLabels
+): DocumentSection | null {
   const blocks: DocumentBlock[] = [];
+  const s = L.sections.origin;
 
   const placeParts = [v.birthCountry, v.birthRegion, v.birthCity].filter(
     nonEmpty
@@ -70,7 +84,7 @@ function buildOriginSection(v: CharacterFormValues): DocumentSection | null {
   if (placeParts.length > 0) {
     blocks.push({
       type: "text",
-      label: "Local de nascimento",
+      label: s.birthPlace,
       value: placeParts.join(" · "),
     });
   }
@@ -83,7 +97,7 @@ function buildOriginSection(v: CharacterFormValues): DocumentSection | null {
         detail: r.background || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Parentes e vínculos", entries });
+      blocks.push({ type: "entries", label: s.relatives, entries });
     }
   }
 
@@ -98,39 +112,43 @@ function buildOriginSection(v: CharacterFormValues): DocumentSection | null {
           nonEmpty(e.description)
       )
       .map((e) => ({
-        primary: e.eventName || "Evento",
-        secondary: nonEmpty(e.myAge) ? `aos ${e.myAge}` : undefined,
+        primary: e.eventName || L.defaults.eventName,
+        secondary: nonEmpty(e.myAge)
+          ? formatMessage(L.defaults.shapingAgeTemplate, { age: e.myAge.trim() })
+          : undefined,
         detail: e.description || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Eventos marcantes", entries });
+      blocks.push({ type: "entries", label: s.events, entries });
     }
   }
 
   if (nonEmpty(v.occupation)) {
-    blocks.push({ type: "text", label: "Ocupação", value: v.occupation });
+    blocks.push({ type: "text", label: s.occupation, value: v.occupation });
   }
 
   return blocks.length > 0
-    ? { id: "origin", title: "Origem e Histórico", blocks }
+    ? { id: "origin", title: s.title, blocks }
     : null;
 }
 
 function buildPersonalitySection(
-  v: CharacterFormValues
+  v: CharacterFormValues,
+  L: DocumentBuildLabels
 ): DocumentSection | null {
   const blocks: DocumentBlock[] = [];
+  const s = L.sections.personality;
 
   if (v.temperamentTags.length > 0) {
     blocks.push({
       type: "tags",
-      label: "Temperamento",
+      label: s.temperament,
       tags: v.temperamentTags,
     });
   }
 
   if (v.valueTags.length > 0) {
-    blocks.push({ type: "tags", label: "Valores", tags: v.valueTags });
+    blocks.push({ type: "tags", label: s.values, tags: v.valueTags });
   }
 
   if (arrayHasContent(v.flaws, ["text", "background"])) {
@@ -141,7 +159,7 @@ function buildPersonalitySection(
         detail: f.background || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Fraquezas", entries });
+      blocks.push({ type: "entries", label: s.flaws, entries });
     }
   }
 
@@ -153,11 +171,13 @@ function buildPersonalitySection(
       .map((f) => ({
         primary: f.description,
         secondary:
-          PERSONALITY_FEAR_LEVEL_LABELS[f.level] ?? f.level ?? undefined,
+          L.fearLevelLabels[f.level as PersonalityFearLevel] ??
+          f.level ??
+          undefined,
         detail: f.background || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Medos", entries });
+      blocks.push({ type: "entries", label: s.fears, entries });
     }
   }
 
@@ -169,7 +189,7 @@ function buildPersonalitySection(
         detail: h.background || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Hábitos", entries });
+      blocks.push({ type: "entries", label: s.habits, entries });
     }
   }
 
@@ -181,17 +201,21 @@ function buildPersonalitySection(
         detail: q.background || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Peculiaridades", entries });
+      blocks.push({ type: "entries", label: s.quirks, entries });
     }
   }
 
   return blocks.length > 0
-    ? { id: "personality", title: "Personalidade e Traços", blocks }
+    ? { id: "personality", title: s.title, blocks }
     : null;
 }
 
-function buildGoalsSection(v: CharacterFormValues): DocumentSection | null {
+function buildGoalsSection(
+  v: CharacterFormValues,
+  L: DocumentBuildLabels
+): DocumentSection | null {
   const blocks: DocumentBlock[] = [];
+  const s = L.sections.goals;
 
   if (arrayHasContent(v.shortTermGoals, ["meta", "description"])) {
     const entries = v.shortTermGoals
@@ -201,7 +225,7 @@ function buildGoalsSection(v: CharacterFormValues): DocumentSection | null {
         detail: g.description || undefined,
       }));
     if (entries.length > 0) {
-      blocks.push({ type: "entries", label: "Metas de curto prazo", entries });
+      blocks.push({ type: "entries", label: s.shortTerm, entries });
     }
   }
 
@@ -215,28 +239,30 @@ function buildGoalsSection(v: CharacterFormValues): DocumentSection | null {
     if (entries.length > 0) {
       blocks.push({
         type: "entries",
-        label: "Objetivos de vida",
+        label: s.life,
         entries,
       });
     }
   }
 
   return blocks.length > 0
-    ? { id: "goals", title: "Objetivos e Motivações", blocks }
+    ? { id: "goals", title: s.title, blocks }
     : null;
 }
 
 function buildAppearanceSection(
-  v: CharacterFormValues
+  v: CharacterFormValues,
+  L: DocumentBuildLabels
 ): DocumentSection | null {
   const blocks: DocumentBlock[] = [];
+  const s = L.sections.appearance;
 
   const fields: { label: string; key: keyof CharacterFormValues }[] = [
-    { label: "Altura e porte", key: "heightDescription" },
-    { label: "Marcas e cicatrizes escondidas", key: "hiddenMarksAndScars" },
-    { label: "Primeira impressão", key: "firstImpression" },
-    { label: "Voz e fala", key: "voiceAndSpeech" },
-    { label: "Movimentos e maneirismos", key: "movementAndMannerisms" },
+    { label: s.height, key: "heightDescription" },
+    { label: s.hiddenMarks, key: "hiddenMarksAndScars" },
+    { label: s.firstImpression, key: "firstImpression" },
+    { label: s.voice, key: "voiceAndSpeech" },
+    { label: s.movement, key: "movementAndMannerisms" },
   ];
 
   for (const { label, key } of fields) {
@@ -247,25 +273,27 @@ function buildAppearanceSection(
   }
 
   return blocks.length > 0
-    ? { id: "appearance", title: "Aparência e Comportamento", blocks }
+    ? { id: "appearance", title: s.title, blocks }
     : null;
 }
 
 function buildFreeNotesSection(
-  v: CharacterFormValues
+  v: CharacterFormValues,
+  L: DocumentBuildLabels
 ): DocumentSection | null {
   if (!arrayHasContent(v.freeNotes, ["topic", "description"])) return null;
 
+  const noteHeading = L.defaults.noteHeading;
   const blocks: DocumentBlock[] = v.freeNotes
     .filter((n) => nonEmpty(n.topic) || nonEmpty(n.description))
     .map((n) => ({
       type: "note" as const,
-      heading: n.topic || "Nota",
+      heading: n.topic || noteHeading,
       body: n.description,
     }));
 
   return blocks.length > 0
-    ? { id: "freeNotes", title: "Notas Livres", blocks }
+    ? { id: "freeNotes", title: L.sections.freeNotes.title, blocks }
     : null;
 }
 
@@ -279,34 +307,31 @@ function buildFreeNotesSection(
  * Section order follows the wizard: Basic Info (→ header), Origin, Personality,
  * Goals, Appearance, Free Notes. Empty sections are omitted.
  *
- * Reuse this function in export features (M1-F11 Markdown, M1-F12 plain text, M1-F13 PDF) so the document
- * structure is defined in a single place.
+ * Pass {@link DocumentBuildLabels} from the active UI locale so preview and exports stay aligned (M2-F02).
  */
 export function buildCharacterDocument(
-  values: CharacterFormValues
+  values: CharacterFormValues,
+  labels: DocumentBuildLabels = defaultDocumentLabels
 ): CharacterDocument {
+  const hm = labels.headerMeta;
   const header: DocumentHeader = {
     characterName: values.characterName,
     playerName: values.playerName,
     meta: [
-      { label: "Idade", value: values.age },
-      { label: "Raça", value: values.race },
-      { label: "Classe", value: values.characterClass },
-      { label: "Ocupação", value: values.occupation },
+      { label: hm.age, value: values.age },
+      { label: hm.race, value: values.race },
+      { label: hm.characterClass, value: values.characterClass },
+      { label: hm.occupation, value: values.occupation },
     ].filter((m) => nonEmpty(m.value)),
   };
 
-  const builders = [
-    buildOriginSection,
-    buildPersonalitySection,
-    buildGoalsSection,
-    buildAppearanceSection,
-    buildFreeNotesSection,
-  ];
-
-  const sections = builders
-    .map((fn) => fn(values))
-    .filter((s): s is DocumentSection => s !== null);
+  const sections = [
+    buildOriginSection(values, labels),
+    buildPersonalitySection(values, labels),
+    buildGoalsSection(values, labels),
+    buildAppearanceSection(values, labels),
+    buildFreeNotesSection(values, labels),
+  ].filter((s): s is DocumentSection => s !== null);
 
   const hasHeaderContent =
     nonEmpty(header.characterName) ||

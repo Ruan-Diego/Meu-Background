@@ -10,12 +10,15 @@ import {
   inputFieldClassName,
   textareaFieldClassName,
 } from "@/components/character-form/form-field-parts";
+import { useIntl } from "@/components/i18n/app-intl-provider";
 import { RhfCountrySelect } from "@/components/character-form/rhf-select-fields";
 import {
   ORIGIN_COUNTRY_OPTIONS,
   ORIGIN_REGION_SUGGESTIONS,
 } from "@/lib/character-form/origin-constants";
 import type { CharacterFormValues } from "@/lib/character-form/schema";
+import { formatMessage } from "@/lib/i18n/format-message";
+import { getOptionLabel } from "@/lib/i18n/option-labels";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,6 +27,7 @@ import { cn } from "@/lib/utils";
 const REGION_LIST_ID = "origin-region-suggestions";
 
 export function OriginBackgroundFields() {
+  const { messages, t } = useIntl();
   const {
     register,
     control,
@@ -60,15 +64,19 @@ export function OriginBackgroundFields() {
           id="origin-location-heading"
           className="text-sm font-semibold text-foreground"
         >
-          Local de origem
+          {t("fields.origin.locationHeading")}
         </h3>
         <div className="grid gap-6 sm:grid-cols-2">
-          <FieldGroup id="birthCountry" label="País">
+          <FieldGroup id="birthCountry" label={t("fields.origin.country")}>
             <RhfCountrySelect
               control={control}
               name="birthCountry"
               id="birthCountry"
               options={ORIGIN_COUNTRY_OPTIONS}
+              selectPlaceholder={t("common.selectPlaceholder")}
+              formatOptionLabel={(key) =>
+                getOptionLabel(messages, "originCountry", key)
+              }
               aria-invalid={errors.birthCountry ? true : undefined}
               aria-describedby={
                 errors.birthCountry ? "birthCountry-error" : undefined
@@ -82,13 +90,13 @@ export function OriginBackgroundFields() {
             ) : null}
           </FieldGroup>
 
-          <FieldGroup id="birthRegion" label="Região">
+          <FieldGroup id="birthRegion" label={t("fields.origin.region")}>
             <Input
               id="birthRegion"
               type="text"
               list={REGION_LIST_ID}
               autoComplete="off"
-              placeholder="Sugestões ou texto livre"
+              placeholder={t("fields.origin.regionPlaceholder")}
               aria-invalid={errors.birthRegion ? true : undefined}
               aria-describedby={
                 errors.birthRegion ? "birthRegion-error" : undefined
@@ -110,7 +118,7 @@ export function OriginBackgroundFields() {
           </FieldGroup>
 
           <div className="sm:col-span-2">
-            <FieldGroup id="birthCity" label="Cidade">
+            <FieldGroup id="birthCity" label={t("fields.origin.city")}>
               <Input
                 id="birthCity"
                 type="text"
@@ -139,7 +147,7 @@ export function OriginBackgroundFields() {
             id="origin-relatives-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Parentes e vínculos
+            {t("fields.origin.relativesHeading")}
           </h3>
           <Button
             type="button"
@@ -155,14 +163,13 @@ export function OriginBackgroundFields() {
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar vínculo
+            {t("fields.origin.addRelative")}
           </Button>
         </div>
 
         {relativesArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum vínculo adicionado. Use o botão acima para incluir pais, melhores amigos,
-            parentes próximos ou outros vínculos importantes.
+            {t("fields.origin.relativesEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -178,7 +185,9 @@ export function OriginBackgroundFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Vínculo {index + 1}
+                      {formatMessage(t("fields.origin.bondLabel"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -186,16 +195,19 @@ export function OriginBackgroundFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => relativesArray.remove(index)}
-                      aria-label={`Remover vínculo ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.origin.removeBondAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <FieldGroup
                       id={`relatives-${field.id}-kinship`}
-                      label="Vínculo"
+                      label={t("fields.origin.kinship")}
                     >
                       <Input
                         id={`relatives-${field.id}-kinship`}
@@ -217,7 +229,10 @@ export function OriginBackgroundFields() {
                         />
                       ) : null}
                     </FieldGroup>
-                    <FieldGroup id={`relatives-${field.id}-name`} label="Nome">
+                    <FieldGroup
+                      id={`relatives-${field.id}-name`}
+                      label={t("fields.origin.name")}
+                    >
                       <Input
                         id={`relatives-${field.id}-name`}
                         type="text"
@@ -247,13 +262,13 @@ export function OriginBackgroundFields() {
                           className="w-fit"
                           onClick={() => revealRelativeBackground(field.id)}
                         >
-                          Adicionar background
+                          {t("common.addBackground")}
                         </Button>
                       ) : null}
                       <div className={showBackground ? "space-y-2" : "hidden"}>
                         <FieldGroup
                           id={`relatives-${field.id}-background`}
-                          label="Background"
+                          label={t("fields.personality.backgroundLabel")}
                         >
                           <Textarea
                             id={`relatives-${field.id}-background`}
@@ -293,7 +308,7 @@ export function OriginBackgroundFields() {
             id="origin-events-heading"
             className="text-sm font-semibold text-foreground"
           >
-            Eventos marcantes
+            {t("fields.origin.eventsHeading")}
           </h3>
           <Button
             type="button"
@@ -309,13 +324,13 @@ export function OriginBackgroundFields() {
             }
           >
             <Plus data-icon="inline-start" className="size-4" />
-            Adicionar evento
+            {t("fields.origin.addEvent")}
           </Button>
         </div>
 
         {eventsArray.fields.length === 0 ? (
           <p className="text-body text-muted-foreground">
-            Nenhum evento adicionado. Inclua momentos que moldaram o seu personagem.
+            {t("fields.origin.eventsEmpty")}
           </p>
         ) : (
           <ul className="space-y-4">
@@ -328,7 +343,9 @@ export function OriginBackgroundFields() {
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="text-caption font-medium text-muted-foreground">
-                      Evento {index + 1}
+                      {formatMessage(t("fields.origin.eventLabel"), {
+                        n: index + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -336,16 +353,19 @@ export function OriginBackgroundFields() {
                       size="sm"
                       className="text-destructive hover:text-destructive"
                       onClick={() => eventsArray.remove(index)}
-                      aria-label={`Remover evento ${index + 1}`}
+                      aria-label={formatMessage(
+                        t("fields.origin.removeEventAria"),
+                        { n: index + 1 },
+                      )}
                     >
                       <Trash2 className="size-4" />
-                      Remover
+                      {t("common.remove")}
                     </Button>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <FieldGroup
                       id={`shapingEvents-${field.id}-eventName`}
-                      label="Nome do evento"
+                      label={t("fields.origin.eventName")}
                     >
                       <Input
                         id={`shapingEvents-${field.id}-eventName`}
@@ -369,7 +389,7 @@ export function OriginBackgroundFields() {
                     </FieldGroup>
                     <FieldGroup
                       id={`shapingEvents-${field.id}-myAge`}
-                      label="Minha idade"
+                      label={t("fields.origin.myAge")}
                     >
                       <Input
                         id={`shapingEvents-${field.id}-myAge`}
@@ -395,7 +415,7 @@ export function OriginBackgroundFields() {
                     <div className="sm:col-span-2">
                       <FieldGroup
                         id={`shapingEvents-${field.id}-description`}
-                        label="Descrição"
+                        label={t("common.description")}
                       >
                         <Textarea
                           id={`shapingEvents-${field.id}-description`}
