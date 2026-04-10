@@ -36,7 +36,6 @@
 - React Hook Form + Zod — multi-step form management with schema validation
 - Zustand — lightweight global state for character data across steps
 - @react-pdf/renderer — client-side PDF generation
-- Framer Motion — step transitions and micro-interactions
 - Vitest + React Testing Library — unit and component testing
 - Playwright — E2E testing
 

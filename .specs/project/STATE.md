@@ -60,7 +60,6 @@ Source of truth for scope per milestone: **`ROADMAP.md`**. High-level MVP (M1) e
 | **Forms** | **React Hook Form** + **Zod** (`@hookform/resolvers`) |
 | **Client state** | **Zustand** (+ persist middleware) |
 | **PDF** | `@react-pdf/renderer` |
-| **Motion** | `framer-motion` (M2 transitions; may already be present as dependency) |
 | **Theme** | `next-themes`, class-based dark mode |
 
 **Commands (local):**
@@ -200,7 +199,7 @@ _Short entries: symptom → cause → fix. Newest first._
 
 ## Planned improvements (tracked)
 
-- **Appearance step (M1-F08):** Evolve from textarea-only toward question prompts, optional static examples, expandable “how to fill” copy, progressive disclosure, and/or smaller structured fields — aligned with Milestone 3 narrative guidance. Microcopy and motion polish may appear in M2 where they do not duplicate M3 coaching scope.
+- **Appearance step (M1-F08):** Evolve from textarea-only toward question prompts, optional static examples, expandable “how to fill” copy, progressive disclosure, and/or smaller structured fields — aligned with Milestone 3 narrative guidance. Microcopy polish may appear in M2 where it does not duplicate M3 coaching scope.
 
 ---
 
